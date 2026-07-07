@@ -43,7 +43,7 @@ function LeaveForm({ darkMode }) {
 
     const fetchEmployee = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/users");
+        const res = await fetch("https://task-17-b.onrender.com/api/users");
 const data = await res.json();
 
 const user = data.find((emp) => emp.email === email);
@@ -125,7 +125,7 @@ const handleSubmit = async (e) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/leaves",
+      "https://task-17-b.onrender.com/api/leaves",
       {
         leave: {
           employeename: leave.employeename,

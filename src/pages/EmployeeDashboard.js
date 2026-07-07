@@ -25,7 +25,7 @@ function EmployeeDashboard({ darkMode, setDarkMode }) {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://localhost:3000/api/users");
+      const res = await axios.get("https://task-17-b.onrender.com/api/users");
 
       setLeaveData(res.data);
     } catch (error) {

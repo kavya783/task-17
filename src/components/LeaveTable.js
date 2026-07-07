@@ -33,7 +33,7 @@ export default function LeaveTable({
 const updateLeave = async (item, status) => {
   try {
     await axios.put(
-      `http://localhost:3000/api/leaves/${item.id}`,
+      `https://task-17-b.onrender.com/api/leaves/${item.id}`,
       {
         leave: {
           status: status

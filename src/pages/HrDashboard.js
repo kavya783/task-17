@@ -59,7 +59,7 @@ function HrDashboard({ darkMode, setDarkMode }) {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://localhost:3000/api/users");
+      const res = await axios.get("https://task-17-b.onrender.com/api/users");
       setData((res.data || []).map(normalizeEmployee));
     } catch (error) {
       console.log(error);
@@ -79,12 +79,12 @@ function HrDashboard({ darkMode, setDarkMode }) {
       setLoading(true);
 
       if (type === "add") {
-        await axios.post("http://localhost:3000/api/users", formData, {
+        await axios.post("https://task-17-b.onrender.com/api/users", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         toast.success("Employee Added Successfully");
       } else {
-        await axios.put(`http://localhost:3000/api/users/${id}`, formData, {
+        await axios.put(`https://task-17-b.onrender.com/api/users/${id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         toast.success("Employee Updated Successfully");
@@ -104,7 +104,7 @@ function HrDashboard({ darkMode, setDarkMode }) {
     try {
       setLoading(true);
 
-      await axios.delete(`http://localhost:3000/api/users/${id}`);
+      await axios.delete(`https://task-17-b.onrender.com/api/users/${id}`);
       toast.success("Employee Deleted Successfully");
 
       getAllEmployees();

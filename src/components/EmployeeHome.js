@@ -29,7 +29,7 @@ function EmployeeHome() {
   try {
     const email = localStorage.getItem("email");
 
-    const res = await axios.get("http://localhost:3000/api/users");
+    const res = await axios.get("https://task-17-b.onrender.com/api/users");
 
     console.log(res.data);
     console.log(email);

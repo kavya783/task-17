@@ -47,7 +47,7 @@ function LeavePage({ darkMode, setDarkMode }) {
   try {
     setLoading(true);
 
-    const res = await axios.get("http://localhost:3000/api/leaves");
+    const res = await axios.get("https://task-17-b.onrender.com/api/leaves");
 
     console.log(res.data);
 

@@ -38,7 +38,7 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
         setLoading(true);
 
         const res = await fetch(
-          "http://localhost:3000/api/leaves"
+          "https://task-17-b.onrender.com/api/leaves"
         );
         const result = await res.json();
 
