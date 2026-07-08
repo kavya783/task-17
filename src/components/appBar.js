@@ -12,11 +12,13 @@ import {
 
 import Colors from "../colors";
 
+import MenuIcon from "@mui/icons-material/Menu";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import NavBar from "./NavBar";
 
-const AppBarr = ({ roled, darkMode, setDarkMode }) => {
+function AppBarr({ roled, darkMode, setDarkMode }) {
+  const [open, setOpen] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -46,60 +48,111 @@ const AppBarr = ({ roled, darkMode, setDarkMode }) => {
 
   return (
     <>
-      <AppBar
-        position="fixed"
-        sx={{
-          backgroundColor: color.navbar,
-          boxShadow: "none"
-        }}
+     <AppBar
+  position="fixed"
+  sx={{
+    backgroundColor: color.navbar,
+    boxShadow: "none",
+  }}
+>
+  <Toolbar
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+    {/* Left Side */}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        width: { xs: "20%", md: "240px" },
+      }}
+    >
+      <IconButton
+        onClick={() => setOpen(true)}
+        sx={{ display: { xs: "flex", md: "none" } }}
       >
-        <Toolbar sx={{ display: "flex", alignItems: "center", px: 2 }}>
+        <MenuIcon sx={{ color: color.text }} />
+      </IconButton>
+    </Box>
 
-          <Box sx={{ width: 48 }} />
+    {/* Center */}
+    <Typography
+      sx={{
+        flexGrow: 1,
+        textAlign: "center",
+        fontWeight: "bold",
+        fontSize: {
+          xs: "18px",
+          sm: "20px",
+          md: "24px",
+        },
+        color: color.text,
+      }}
+    >
+      {title}
+    </Typography>
 
-          <Box sx={{ flexGrow: 1, textAlign: "center" }}>
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                fontSize: { xs: "18px", md: "24px" },
-                color: color.text
-              }}
-            >
-              {title}
-            </Typography>
-          </Box>
+    {/* Right Side */}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+      }}
+    >
+      <IconButton onClick={toggleDarkMode}>
+        {darkMode ? (
+          <LightModeIcon sx={{ color: color.text }} />
+        ) : (
+          <DarkModeIcon sx={{ color: color.text }} />
+        )}
+      </IconButton>
 
-          <IconButton onClick={toggleDarkMode}>
-            {darkMode ? (
-              <LightModeIcon sx={{ color: color.text }} />
-            ) : (
-              <DarkModeIcon sx={{ color: color.text }} />
-            )}
-          </IconButton>
+      <IconButton onClick={handleOpen}>
+        <Avatar
+          sx={{
+            bgcolor: color.headings,
+            color: color.text,
+            width: 36,
+            height: 36,
+          }}
+        >
+          {firstLetter}
+        </Avatar>
+      </IconButton>
 
-          <Box sx={{ width: 48, display: "flex", justifyContent: "flex-end" }}>
-            <IconButton onClick={handleOpen}>
-              <Avatar
-                sx={{
-                  bgcolor: color.headings,
-                  color: color.text,
-                }}
-              >
-                {firstLetter}
-              </Avatar>
-            </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem disabled>{userEmail}</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      </Menu>
+    </Box>
+  </Toolbar>
+</AppBar>
 
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-              <MenuItem disabled>{userEmail}</MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </Menu>
-          </Box>
+<NavBar
+  darkMode={darkMode}
+  open={open}
+  setOpen={setOpen}
+/>
 
-        </Toolbar>
-      </AppBar>
+<NavBar
+  darkMode={darkMode}
+  open={open}
+  setOpen={setOpen}
+/>
 
    
-     <NavBar darkMode={darkMode} setDarkMode={setDarkMode} />
+     <NavBar darkMode={darkMode} setDarkMode={setDarkMode}
+      open={open}
+  setOpen={setOpen} />
+    
     </>
   );
 };

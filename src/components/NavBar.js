@@ -2,15 +2,13 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
+
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
-
-function NavBar({ darkMode }) {
-  const [open, setOpen] = useState(false);
+function NavBar({ darkMode, open, setOpen }) {
+ 
   const [roled, setRoled] = useState("");
   const location = useLocation();
 
@@ -107,9 +105,7 @@ function NavBar({ darkMode }) {
           zIndex: 1300,
         }}
       >
-        <IconButton onClick={() => setOpen(true)}>
-          <MenuIcon sx={{ color: color.text }} />
-        </IconButton>
+       
       </Box>
 
 
