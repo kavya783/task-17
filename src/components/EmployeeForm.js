@@ -12,7 +12,6 @@ import {
 import Colors from "../colors";
 import CommonButton from "./CommonButton";
 import { toast } from "react-toastify";
-import { hashPassword } from "./HashPassword";
 
 export default function EmployeeForm({
   darkMode,
@@ -73,11 +72,9 @@ export default function EmployeeForm({
     formData.append("salary", employeeSalary);
     formData.append("address", employeeAddress);
 
-    if (employeePassword) {
-      const hashedPassword = await hashPassword(employeePassword);
-      formData.append("password", hashedPassword);
-    }
-
+if (employeePassword) {
+  formData.append("password", employeePassword);
+}
     if (employee.profileImageFile) {
       formData.append("profile_image", employee.profileImageFile);
     }
