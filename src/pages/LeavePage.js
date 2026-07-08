@@ -134,11 +134,11 @@ function LeavePage({ darkMode, setDarkMode }) {
             </Typography>
 
             <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>From Date:</b> {employee.fromDate}
+              <b>From Date:</b> {employee.from_date}
             </Typography>
 
             <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>To Date:</b> {employee.toDate}
+              <b>To Date:</b> {employee.to_date}
             </Typography>
 
             <Typography sx={{ fontSize: Theme.font16SemiBold }}>
