@@ -96,7 +96,7 @@ if (employeePassword) {
       return;
     }
 
-    // 🔥 STORE FILE DIRECTLY (IMPORTANT FIX)
+   
     handleChange({
       target: {
         name: "profileImageFile",

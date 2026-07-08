@@ -125,20 +125,20 @@ const handleSubmit = async (e) => {
 
   try {
     const response = await axios.post(
-      "https://task-17-b.onrender.com/api/leaves",
-      {
-        leave: {
-          employeename: leave.employeename,
-          email: leave.email,
-          leaveType: leave.leaveType,
-         from_date: leave.from_date,
-          to_date: leave.to_Date,
-          reason: leave.reason,
-          status: "pending",
-          profileImage: leave.profileImage
-        }
-      }
-    );
+  "https://task-17-b.onrender.com/api/leaves",
+  {
+    leave: {
+      employeename: leave.employeename,
+      email: leave.email,
+      leaveType: leave.leaveType,
+      from_date: leave.fromDate,
+      to_date: leave.toDate,
+      reason: leave.reason,
+      status: "pending",
+      profileImage: leave.profileImage
+    }
+  }
+);
 
     console.log("SUCCESS:", response.data);
     toast.success("Leave submitted successfully");
