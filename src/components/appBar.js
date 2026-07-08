@@ -16,11 +16,10 @@ import MenuIcon from "@mui/icons-material/Menu";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import NavBar from "./NavBar";
-import { useNavigate } from "react-router-dom";
 
 function AppBarr({ roled, darkMode, setDarkMode }) {
   const [open, setOpen] = useState(false);
-const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const toggleDarkMode = () => {
@@ -42,10 +41,10 @@ const navigate = useNavigate();
   const handleOpen = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
- const handleLogout = () => {
-  localStorage.clear();
-  navigate("/", { replace: true });
-};
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  };
 
   return (
     <>
