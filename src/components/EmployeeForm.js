@@ -1,17 +1,24 @@
 import React, { useState } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+ 
   TextField,
   MenuItem,
   Box,
+  IconButton,
+  Typography,
+  
+   Modal,
+  Paper
 } from "@mui/material";
-
-import Colors from "../colors";
+import  {  useEffect } from "react";
+// import Colors from "../colors";
 import CommonButton from "./CommonButton";
 import { toast } from "react-toastify";
+import EditIcon from "@mui/icons-material/Edit";
+import Avatar from "@mui/material/Avatar";
+import Colors from "../colors";
+import CloseIcon from "@mui/icons-material/Close";
+import { Theme } from "../GlobalStyles";
 
 export default function EmployeeForm({
   darkMode,
@@ -23,14 +30,14 @@ export default function EmployeeForm({
   type,
 }) {
   const [errors, setErrors] = useState({});
-  const color = Colors(darkMode);
+  
   const employeeName = employee.employeename || employee.name || "";
   const employeeEmail = employee.email || "";
   const employeeRole = employee.role || "";
   const employeeSalary = employee.salary || "";
   const employeeAddress = employee.address || "";
   const employeePassword = employee.password || "";
-
+ const color = Colors(darkMode);
   const handleInputChange = (e) => {
     const { name } = e.target;
 
@@ -59,189 +66,324 @@ export default function EmployeeForm({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!validate()) return;
+  if (!validate()) return;
 
-    const formData = new FormData();
+  const formData = new FormData();
 
-    formData.append("name", employeeName);
-    formData.append("email", employeeEmail);
-    formData.append("role", employeeRole);
-    formData.append("salary", employeeSalary);
-    formData.append("address", employeeAddress);
+  formData.append("name", employeeName);
+  formData.append("email", employeeEmail);
+  formData.append("role", employeeRole);
+  formData.append("salary", employeeSalary);
+  formData.append("address", employeeAddress);
 
-if (employeePassword) {
+ if (employeePassword) {
   formData.append("password", employeePassword);
 }
-    if (employee.profileImageFile) {
-      formData.append("profile_image", employee.profileImageFile);
-    }
 
-    submitHandle({ formData, id: employee.id });
-  };
+  if (employee.profileImageFile) {
+    formData.append("profile_image", employee.profileImageFile);
+  }
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  for (let pair of formData.entries()) {
+    console.log(pair[0], pair[1]);
+  }
 
-    if (file.type !== "image/jpeg" && file.type !== "image/png") {
-      toast.error("Only JPG and PNG images are allowed");
-      return;
-    }
+  submitHandle({
+    formData,
+    id: employee.id,
+  });
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image must be less than 2MB");
-      return;
-    }
+};  
 
-   
-    handleChange({
-      target: {
-        name: "profileImageFile",
-        value: file,
-      },
-    });
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    setErrors((prev) => ({
-      ...prev,
-      profileImage: "",
-    }));
-  };
+  if (file.type !== "image/jpeg" && file.type !== "image/png") {
+    toast.error("Only JPG and PNG images are allowed");
+    return;
+  }
 
-  return (
-    <Dialog open={show} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle>
+  if (file.size > 2 * 1024 * 1024) {
+    toast.error("Image must be less than 2MB");
+    return;
+  }
+
+  handleChange({
+    target: {
+      name: "profileImageFile",
+      value: file,
+    },
+  });
+
+  setErrors((prev) => ({
+    ...prev,
+    profileImage: "",
+  }));
+};
+useEffect(() => {
+  if (show) {
+    setErrors({});
+  }
+}, [show]);
+
+ return (
+ <Modal
+  open={show}
+  onClose={handleClose}
+>
+  <Paper
+  elevation={10}
+  sx={{
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: {
+      xs: "70%",
+      sm: "50%",
+      md: "30%",   
+    },
+    maxHeight: "90vh",
+    overflowY: "auto",
+    borderRadius: 4,
+    p: 4,
+  }}
+>
+ 
+
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: 3,
+      }}
+    >
+      <Typography
+       sx={{fontSize:Theme.font20Bold}}
+      >
         {type === "add"
           ? "Add Employee"
           : type === "edit"
           ? "Edit Employee"
-          : "View Employee"}
-      </DialogTitle>
+          : "Employee Details"}
+      </Typography>
 
-      <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Employee Name"
-            name="employeename"
-            value={employeeName}
-            onChange={handleInputChange}
-            fullWidth
-            margin="dense"
-            error={!!errors.employeename}
-            helperText={errors.employeename}
-          />
+      <IconButton onClick={handleClose}>
+        <CloseIcon />
+      </IconButton>
+    </Box>
 
-          <TextField
-            label="Role"
-            select
-            name="role"
-            value={employeeRole}
-            onChange={handleInputChange}
-            fullWidth
-            margin="dense"
-            error={!!errors.role}
-            helperText={errors.role}
+    <Box
+     
+    >
+   
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mb: 4,
+        }}
+      >
+        <Box
+          sx={{
+            position: "relative",
+          }}
+        >
+          <Avatar
+            src={
+              employee.profileImageFile
+                ? URL.createObjectURL(
+                    employee.profileImageFile
+                  )
+                : employee.profile_image_url ||
+                  employee.profileImage
+            }
+            sx={{
+              width: 130,
+              height: 130,
+              border: "4px solid #1976d2",
+              boxShadow: 4,
+              fontSize: 35,
+            }}
           >
-            <MenuItem value="HR">HR</MenuItem>
-            <MenuItem value="Employee">Employee</MenuItem>
-          </TextField>
+            {employeeName?.charAt(0).toUpperCase()}
+          </Avatar>
 
-          <TextField
-            label="Salary"
-            name="salary"
-            value={employeeSalary}
-            onChange={handleInputChange}
-            fullWidth
-            margin="dense"
-            error={!!errors.salary}
-            helperText={errors.salary}
-          />
+          <IconButton
+            component="label"
+            sx={{
+              position: "absolute",
+              bottom: 5,
+              right: 5,
+              bgcolor: color.headings,
+              color: color.text,
+              "&:hover": {
+                bgcolor:  color.headings,
+              },
+            }}
+          >
+            <EditIcon />
 
-          <TextField
-            label="Address"
-            name="address"
-            value={employeeAddress}
-            onChange={handleInputChange}
-            fullWidth
-            margin="dense"
-            error={!!errors.address}
-            helperText={errors.address}
-          />
+            <input
+              hidden
+              type="file"
+              accept="image/png,image/jpeg"
+              onChange={handleImageChange}
+            />
+          </IconButton>
+        </Box>
+      </Box>
 
-          <TextField
-            label="Email"
-            name="email"
-            value={employeeEmail}
-            onChange={handleInputChange}
-            fullWidth
-            margin="dense"
-            error={!!errors.email}
-            helperText={errors.email}
-          />
+      {errors.profileImage && (
+        <Typography
+          color="error"
+          align="center"
+          mb={2}
+        >
+          {errors.profileImage}
+        </Typography>
+      )}
 
-          <TextField
-            label="Password"
-            name="password"
-            type="password"
-            value={employeePassword}
-            onChange={handleInputChange}
-            fullWidth
-            margin="dense"
-            error={!!errors.password}
-            helperText={errors.password}
-          />
 
-          {/* IMAGE UPLOAD */}
-          <Box sx={{ mt: 2 }}>
-            <CommonButton component="label">
-              Upload Image
-              <input
-                type="file"
-                hidden
-                accept="image/png, image/jpeg"
-                onChange={handleImageChange}
-              />
-            </CommonButton>
-          </Box>
+     <form onSubmit={handleSubmit}>
 
-          {errors.profileImage && (
-            <p style={{ color: "red", fontSize: "12px" }}>
-              {errors.profileImage}
-            </p>
-          )}
 
-          {/* PREVIEW */}
-          {(employee.profileImageFile || employee.profile_image_url || employee.profileImage) && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <img
-                src={
-                  employee.profileImageFile
-                    ? URL.createObjectURL(employee.profileImageFile)
-                    : employee.profile_image_url || employee.profileImage
-                }
-                alt="preview"
-                style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: "50%",
-                }}
-              />
-            </Box>
-          )}
+  <Box
+    sx={{
+      display: "flex",
+      gap: 2,
+      flexDirection: { xs: "column", md: "row" },
+      mb: 2,
+      mt:2
+    }}
+  >
+    <TextField
+      label="Employee Name"
+      name="employeename"
+      value={employeeName}
+      onChange={handleInputChange}
+      error={!!errors.employeename}
+      helperText={errors.employeename}
+      fullWidth
+    />
 
-          <DialogActions>
-            <CommonButton onClick={handleClose}>Cancel</CommonButton>
+    <TextField
+      label="Email"
+      name="email"
+      value={employeeEmail}
+      onChange={handleInputChange}
+      error={!!errors.email}
+      helperText={errors.email}
+      fullWidth
+    />
+  </Box>
 
-            {type !== "view" && (
-              <CommonButton type="submit">
-                {type === "add" ? "Add Employee" : "Update Employee"}
-              </CommonButton>
-            )}
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
+ 
+  <Box
+    sx={{
+      display: "flex",
+      gap: 2,
+      flexDirection: { xs: "column", md: "row" },
+      mb: 2,
+    }}
+  >
+    <TextField
+      select
+      label="Role"
+      name="role"
+      value={employeeRole}
+      onChange={handleInputChange}
+      error={!!errors.role}
+      helperText={errors.role}
+      fullWidth
+    >
+      <MenuItem value="hr">HR</MenuItem>
+      <MenuItem value="employee">Employee</MenuItem>
+    </TextField>
+
+    <TextField
+      label="Salary"
+      name="salary"
+      value={employeeSalary}
+      onChange={handleInputChange}
+      error={!!errors.salary}
+      helperText={errors.salary}
+      fullWidth
+    />
+  </Box>
+ <Box
+    sx={{
+      display: "flex",
+      gap: 2,
+      flexDirection: { xs: "column", md: "row" },
+      mb: 2,
+    }}
+  >
+  {/* Address */}
+  <TextField
+    label="Address"
+    name="address"
+    multiline
+   
+    value={employeeAddress}
+    onChange={handleInputChange}
+    error={!!errors.address}
+    helperText={errors.address}
+    fullWidth
+    sx={{ mb: 2 }}
+  />
+
+  {/* Password */}
+  <TextField
+    label="Password"
+    type="password"
+    name="password"
+    value={employeePassword}
+    onChange={handleInputChange}
+    error={!!errors.password}
+    helperText={
+      type === "edit"
+        ? "Leave blank to keep current password"
+        : errors.password
+    }
+    fullWidth
+    sx={{ mb: 3 }}
+  />
+</Box>
+  {/* Buttons */}
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "flex-end",
+      gap: 2,
+    }}
+  >
+    <CommonButton onClick={handleClose} sx={{color:color.text,bgcolor:color.headings}}>
+      Cancel
+    </CommonButton>
+
+    {type !== "view" && (
+      <CommonButton type="submit" sx={{bgcolor:color.navbar}}>
+        {type === "add"
+          ? "Add Employee"
+          : "Update Employee"}
+      </CommonButton>
+    )}
+  </Box>
+
+</form>
+      {/* Buttons */}
+
+      
+     
+    </Box>
+  </Paper>
+</Modal>
+);
 }

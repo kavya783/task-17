@@ -1,6 +1,6 @@
-export const BASE_URL = "https://task-17-b.onrender.com/api";
+  export const BASE_URL = "http://localhost:3000/api/";
 
-export const STATUS_CODE = {
-  INTERNAL_SERVER_ERROR: 500,
-  SUCCESS: 200,
-};
+  export const STATUS_CODE = {
+    INTERNAL_SERVER_ERROR: 500,
+    SUCCESS: 200,
+  };

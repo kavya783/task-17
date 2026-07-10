@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-
 import {
   Box,
   Typography,
@@ -9,7 +7,10 @@ import {
   DialogContent,
   DialogActions,
   TablePagination,
+  Avatar,
 } from "@mui/material";
+
+import { useDispatch, useSelector } from "react-redux";
 
 import EmployeeTable from "../components/EmployeeTable";
 import EmployeeForm from "../components/EmployeeForm";
@@ -20,11 +21,20 @@ import Loader from "../components/Loader";
 import Colors from "../colors";
 import { toast } from "react-toastify";
 
+import { getEmployeeDataActionInitiate } from "../redux/actions/getEmployeeAction";
+import { addEmployeeDataActionInitiate } from "../redux/actions/addEmployeeAction";
+import { updateEmployeeDataActionInitiate } from "../redux/actions/updateEmployeeAction";
+import { deleteEmployeeDataActionInitiate } from "../redux/actions/deleteEmployeeAction";
+import { Theme } from "../GlobalStyles";
+
 function HrDashboard({ darkMode, setDarkMode }) {
   const color = Colors(darkMode);
 
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+
+  const { data, loading } = useSelector(
+    (state) => state.getemployeedata
+  );
 
   const initialEmployee = {
     id: "",
@@ -46,8 +56,8 @@ function HrDashboard({ darkMode, setDarkMode }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    getAllEmployees();
-  }, []);
+    dispatch(getEmployeeDataActionInitiate());
+  }, [dispatch]);
 
   const normalizeEmployee = (item) => ({
     ...item,
@@ -55,19 +65,7 @@ function HrDashboard({ darkMode, setDarkMode }) {
     profileImage: item.profile_image_url || item.profileImage || "",
   });
 
-  const getAllEmployees = async () => {
-    try {
-      setLoading(true);
-
-      const res = await axios.get("https://task-17-b.onrender.com/api/users");
-      setData((res.data || []).map(normalizeEmployee));
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to load employees");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const employees = data.map(normalizeEmployee);
 
   const handleClose = () => {
     setShow(false);
@@ -76,44 +74,40 @@ function HrDashboard({ darkMode, setDarkMode }) {
 
   const submitHandle = async ({ formData, id }) => {
     try {
-      setLoading(true);
-
       if (type === "add") {
-        await axios.post("https://task-17-b.onrender.com/api/users", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        toast.success("Employee Added Successfully");
+        dispatch(addEmployeeDataActionInitiate(formData));
       } else {
-        await axios.put(`https://task-17-b.onrender.com/api/users/${id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        toast.success("Employee Updated Successfully");
+        dispatch(updateEmployeeDataActionInitiate(formData, id));
       }
 
-      getAllEmployees();
       handleClose();
     } catch (error) {
-      console.log(error);
       toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    try {
-      setLoading(true);
 
-      await axios.delete(`https://task-17-b.onrender.com/api/users/${id}`);
-      toast.success("Employee Deleted Successfully");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this employee?"
+    );
 
-      getAllEmployees();
-    } catch (error) {
-      console.log(error);
-      toast.error("Delete Failed");
-    } finally {
-      setLoading(false);
+
+    if (confirmDelete) {
+
+      try {
+
+        await dispatch(deleteEmployeeDataActionInitiate(id));
+        dispatch(getEmployeeDataActionInitiate());
+
+      } catch (error) {
+
+        toast.error("Delete failed");
+
+      }
+
     }
+
   };
 
   const handleChange = (e) => {
@@ -152,43 +146,193 @@ function HrDashboard({ darkMode, setDarkMode }) {
     setPage(0);
   };
 
-  const paginatedEmployees = data.slice(
+  const paginatedEmployees = employees.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
   if (loading) return <Loader />;
-
   return (
     <>
-      <AppBarr roled="hr" darkMode={darkMode} setDarkMode={setDarkMode} />
+      <AppBarr
+        roled="hr"
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+      />
 
-      <Box sx={{ p: 2, background: color.background, minHeight: "100vh" }}>
+      <Box
+        sx={{
+          p: 2,
+          background: color.background,
+          height:{xs:"100%",sm:"610px",md:"830px",lg:"1260px",xl:"698px"},
+        }}
+      >
         {type === "view" && (
-          <Dialog open={show} onClose={handleClose}>
-            <DialogTitle sx={{ color: color.navbar }}>
+          <Dialog
+            open={show}
+            onClose={handleClose}
+            maxWidth="xs"
+            fullWidth
+          >
+            <DialogTitle
+              sx={{
+                textAlign: "center",
+                fontSize: Theme.font20Bold,
+                bgcolor: color.navbar,
+                color: color.text,
+              }}
+            >
               Employee Details
             </DialogTitle>
 
-            <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Typography><b>Name:</b> {employee.employeename}</Typography>
-              <Typography><b>Role:</b> {employee.role}</Typography>
-              <Typography><b>Salary:</b> {employee.salary}</Typography>
-              <Typography><b>Address:</b> {employee.address}</Typography>
-              <Typography><b>Email:</b> {employee.email}</Typography>
+            <DialogContent sx={{ p: 4 }}>
+
+              {/* Profile Image */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  mb: 4,
+                  mt: 2
+                }}
+              >
+                <Avatar
+                  src={employee.profile_image_url || employee.profileImage}
+                  sx={{
+                    width: 100,
+                    height: 100,
+
+                    bgcolor: color.headings,
+                    border: "4px solid",
+                    borderColor: color.navbar,
+                    boxShadow: 4,
+                  }}
+                >
+                  {employee.employeename?.charAt(0).toUpperCase()}
+                </Avatar>
+              </Box>
+
+              {/* Details */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    borderBottom: "1px solid #ddd",
+                    pb: 1,
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Employee Name:
+                  </Typography>
+
+                  <Typography sx={{ fontSize: Theme.font14Regular }}>
+                    {employee.employeename}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    borderBottom: "1px solid #ddd",
+                    pb: 1,
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Email:
+                  </Typography>
+
+                  <Typography sx={{ fontSize: Theme.font14Regular }}>
+                    {employee.email}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    borderBottom: "1px solid #ddd",
+                    pb: 1,
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Role:
+                  </Typography>
+
+                  <Typography sx={{ fontSize: Theme.font14Regular }}>
+                    {employee.role}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    borderBottom: "1px solid #ddd",
+                    pb: 1,
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Salary:
+                  </Typography>
+
+                  <Typography sx={{ fontSize: Theme.font14Regular }}>
+                    ₹ {employee.salary}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Address:
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      textAlign: "right",
+                      maxWidth: "60%",
+                      fontSize: Theme.font14Regular,
+                    }}
+                  >
+                    {employee.address}
+                  </Typography>
+                </Box>
+
+              </Box>
             </DialogContent>
 
-            <DialogActions>
+            <DialogActions
+              sx={{
+                justifyContent: "center",
+                pb: 3,
+              }}
+            >
               <CommonButton
                 onClick={handleClose}
-                sx={{ backgroundColor: color.navbar, color: color.text }}
+                sx={{
+                  px: 5,
+                  bgcolor: color.navbar,
+                  color: color.text,
+                }}
               >
                 Close
               </CommonButton>
             </DialogActions>
           </Dialog>
         )}
-
         {type !== "view" && (
           <EmployeeForm
             show={show}
@@ -214,13 +358,16 @@ function HrDashboard({ darkMode, setDarkMode }) {
 
         <TablePagination
           component="div"
-          count={data.length}
+          count={employees.length}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{ mt: 2, color: color.text }}
+          sx={{
+            mt: 2,
+            color: color.text,
+          }}
         />
       </Box>
     </>

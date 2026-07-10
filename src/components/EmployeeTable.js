@@ -35,13 +35,24 @@ export default function EmployeeTable({
         <>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, ml: { md: 31, lg: 35, xl: 38 }, mr: { lg: 28, xl: 26 }, mt: 15 }}>
 
-                <Typography sx={{ mr: { xs: 3, sm: 55, md: 40, lg: 10, xl: 5 }, color: color.text, fontSize: Theme.font20Bold }}>
+                <Typography sx={{ mr: { xs: 3, sm: 55, md: 40, lg: 10, xl: 5 }, color: color.text, fontSize: Theme.font24Bold, display: { xs: "none", md: "block" }, }}>
+                    Employee List:
+                </Typography>
+                <Typography sx={{ mr: { xs: 3, sm: 55, md: 40, lg: 10, xl: 5 }, color: color.text, fontSize: Theme.font16Bold, display: { xs: "block", md: "none" }, }}>
                     Employee List:
                 </Typography>
 
+
                 <CommonButton
                     variant="contained"
-                    sx={{ color: color.text, backgroundColor: color.headings, ml: 3, fontSize: Theme.font14Bold }}
+                    sx={{ color: color.text, backgroundColor: color.headings, ml: 3, fontSize: Theme.font12Bold, display: { xs: "block", md: "none" } }}
+                    onClick={handleAdd}
+                >
+                    Add Employee
+                </CommonButton>
+                <CommonButton
+                    variant="contained"
+                    sx={{ color: color.text, backgroundColor: color.headings, ml: 3, fontSize: Theme.font16Bold, display: { xs: "none", md: "block" } }}
                     onClick={handleAdd}
                 >
                     Add Employee
@@ -56,7 +67,7 @@ export default function EmployeeTable({
                             sx={{
                                 mb: 2,
                                 boxShadow: `0px 4px 10px ${color.text}`,
-                                color: color.card
+                                color: color.text
                             }}
                         >
                             <CardContent>
@@ -77,14 +88,14 @@ export default function EmployeeTable({
                                     Name: {item.employeename}
                                 </Typography>
 
-                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Role: {item.role}</Typography>
-                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Salary: {item.salary}</Typography>
+                                <Typography sx={{  color: color.card, fontSize: Theme.font16Bold }}>Role: {item.role}</Typography>
+                                <Typography sx={{  color: color.card, fontSize: Theme.font16Bold }}>Salary: {item.salary}</Typography>
                                 <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Address: {item.address}</Typography>
-                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Email: {item.email}</Typography>
+                                <Typography sx={{  color: color.card, fontSize: Theme.font16Bold }}>Email: {item.email}</Typography>
 
                                 <Box sx={{ display: "flex", gap: 10, mt: 2 }}>
                                     <span onClick={() => handleView(item)}>
-                                        <VisibilityIcon sx={{ fontSize: 24, color: color.card, ml: 2 }} />
+                                        <VisibilityIcon sx={{ fontSize:Theme.font16Bold, color: color.card, ml: 2 }} />
                                     </span>
                                     <span onClick={() => handleEdit(item)}>
                                         <EditIcon sx={{ fontSize: 24, color: color.card }} />
@@ -101,8 +112,17 @@ export default function EmployeeTable({
             ) : (
 
                 <Box sx={{ mt: 2, width: { lg: "66%" }, ml: { md: "25%", lg: "20%" } }}>
+<TableContainer
+  sx={{
+    width: "100%",
+    boxShadow: 2,
+    borderRadius: 2,
 
-                    <TableContainer sx={{ width: "100%", boxShadow: 2, borderRadius: 2 }}>
+    borderLeft: darkMode ? `1px solid ${color.border}` : "none",
+    borderRight: darkMode ? `1px solid ${color.border}` : "none",
+  
+  }}
+>
                         <Table size="small">
 
                             <TableHead sx={{ bgcolor: color.headings, height: 50 }}>
@@ -137,7 +157,7 @@ export default function EmployeeTable({
                                                     <Typography
                                                         sx={{
                                                             color: color.text,
-                                                            fontSize: Theme.font14Bold,
+                                                            fontSize: Theme.font16Bold,
                                                             maxWidth: "80px",
                                                             whiteSpace: "nowrap",
                                                             overflow: "hidden",
@@ -150,10 +170,10 @@ export default function EmployeeTable({
                                             </Box>
                                         </TableCell>
 
-                                        <TableCell sx={{ color: color.text }}>{item.role}</TableCell>
-                                        <TableCell sx={{ color: color.text }}>{item.salary}</TableCell>
-                                        <TableCell sx={{ color: color.text }}>{item.address}</TableCell>
-                                        <TableCell sx={{ color: color.text }}>{item.email}</TableCell>
+                                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular}}>{item.role}</TableCell>
+                                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>{item.salary}</TableCell>
+                                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>{item.address}</TableCell>
+                                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>{item.email}</TableCell>
 
                                         <TableCell>
                                             <Box sx={{ display: "flex", gap: 1 }}>

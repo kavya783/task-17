@@ -12,12 +12,15 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import axios from "axios";
+
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 import CommonButton from "./CommonButton";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
+
+import { updateLeaveDataActionInitiate } from "../redux/actions/updateLeaveAction";
 
 export default function LeaveTable({
   data = [],
@@ -25,30 +28,30 @@ export default function LeaveTable({
   page,
   rowsPerPage,
   darkMode,
-  refreshLeaves,
 }) {
+  const dispatch = useDispatch();
+
   const isMobile = useMediaQuery("(max-width:600px)");
   const color = Colors(darkMode);
 
-const updateLeave = async (item, status) => {
-  try {
-    await axios.put(
-      `https://task-17-b.onrender.com/api/leaves/${item.id}`,
-      {
-        leave: {
-          status: status
-        }
-      }
-    );
+  const updateLeave = async (item, status) => {
+    try {
+      const updatedLeave = {
+        ...item,
+        status,
+      };
 
-    toast.success(`Leave ${status} successfully`);
+      await dispatch(
+        updateLeaveDataActionInitiate(updatedLeave, item.id)
+      );
 
-    if (refreshLeaves) refreshLeaves();
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to update leave");
-  }
-};
+      // toast.success(`Leave ${status} successfully`);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to update leave");
+    }
+  };
+
   return (
     <>
       <Typography
@@ -66,18 +69,21 @@ const updateLeave = async (item, status) => {
         <Box>
           {data.map((item) => (
             <Card
-              key={item._id}
+              key={item.id}
               sx={{
                 mb: 2,
-                boxShadow: 3,
                 mt: 3,
+                boxShadow: 3,
                 color: color.card,
               }}
             >
               <CardContent>
                 <Box sx={{ textAlign: "center", mb: 1 }}>
                   <img
-                    src={item.profileImage || "https://via.placeholder.com/60"}
+                    src={
+                      item.profile_image_url ||
+                      "https://via.placeholder.com/60"
+                    }
                     alt="profile"
                     style={{
                       width: 60,
@@ -119,20 +125,26 @@ const updateLeave = async (item, status) => {
                   </span>
                 </Typography>
 
-                <Box sx={{ display: "flex", gap: 1, mt: 2, flexWrap: "wrap" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    mt: 2,
+                    flexWrap: "wrap",
+                  }}
+                >
                   <CommonButton
                     onClick={() => handleView(item)}
                     sx={{
                       backgroundColor: color.headings,
                       color: color.text,
-                      fontSize: Theme.font14Bold,
                     }}
                   >
                     View
                   </CommonButton>
 
                   <CommonButton
-                     onClick={() => updateLeave(item, "approved")}
+                    onClick={() => updateLeave(item, "approved")}
                     sx={{
                       backgroundColor:
                         item.status === "approved"
@@ -141,7 +153,9 @@ const updateLeave = async (item, status) => {
                       color: color.text,
                     }}
                   >
-                    {item.status === "approved" ? "Approved" : "Approve"}
+                    {item.status === "approved"
+                      ? "Approved"
+                      : "Approve"}
                   </CommonButton>
 
                   <CommonButton
@@ -154,7 +168,9 @@ const updateLeave = async (item, status) => {
                       color: color.text,
                     }}
                   >
-                    {item.status === "rejected" ? "Rejected" : "Reject"}
+                    {item.status === "rejected"
+                      ? "Rejected"
+                      : "Reject"}
                   </CommonButton>
                 </Box>
               </CardContent>
@@ -183,106 +199,154 @@ const updateLeave = async (item, status) => {
                 }}
               >
                 <TableRow>
-                  <TableCell sx={{ color: color.text }}>S.No</TableCell>
-                  <TableCell sx={{ color: color.text }}>Employee</TableCell>
-                  <TableCell sx={{ color: color.text }}>Leave Type</TableCell>
-                  <TableCell sx={{ color: color.text }}>From</TableCell>
-                  <TableCell sx={{ color: color.text }}>To</TableCell>
-                  <TableCell sx={{ color: color.text }}>Status</TableCell>
-                  <TableCell align="center" sx={{ color: color.text }}>
+                  <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>S.No</TableCell>
+                  <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                    Employee
+                  </TableCell>
+                  <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                    Leave Type
+                  </TableCell>
+                  <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                    From
+                  </TableCell>
+                  <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                    To
+                  </TableCell>
+                  <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                    Status
+                  </TableCell>
+                  <TableCell align="center" sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
                     Action
                   </TableCell>
                 </TableRow>
               </TableHead>
 
-              <TableBody>
-                {data.map((item, index) => (
-                  <TableRow key={item._id}>
-                    <TableCell sx={{ color: color.text }}>
-                      {page * rowsPerPage + index + 1}
-                    </TableCell>
+             <TableBody>
+  {data.length === 0 ? (
+    <TableRow>
+      <TableCell
+        colSpan={7}
+        align="center"
+        sx={{
+          color: color.text,
+          fontSize: Theme.font16Bold,
+          py: 3,
+        }}
+      >
+        No Leaves Found
+      </TableCell>
+    </TableRow>
+  ) : (
+    data.map((item, index) => (
+      <TableRow key={item.id}>
+        <TableCell sx={{ color: color.text }}>
+          {page * rowsPerPage + index + 1}
+        </TableCell>
 
-                    <TableCell sx={{ color: color.text }}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                        }}
-                      >
-                        <img
-                          src={
-                            item.profileImage ||
-                            "https://via.placeholder.com/40"
-                          }
-                          alt=""
-                          width="40"
-                          height="40"
-                          style={{ borderRadius: "50%" }}
-                        />
+        <TableCell sx={{ color: color.text }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <img
+              src={
+                item.profile_image_url ||
+                "https://via.placeholder.com/40"
+              }
+              alt="profile"
+              width="40"
+              height="40"
+              style={{ borderRadius: "50%" }}
+            />
 
-                        {item.employeename}
-                      </Box>
-                    </TableCell>
+            {item.employeename}
+          </Box>
+        </TableCell>
 
-                    <TableCell sx={{ color: color.text }}>
-                      {item.leaveType}
-                    </TableCell>
+        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular  }}>
+          {item.leaveType}
+        </TableCell>
 
-                    <TableCell sx={{ color: color.text }}>
-                       {item.from_date}
-                    </TableCell>
+        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular  }}>
+          {item.from_date}
+        </TableCell>
 
-                    <TableCell sx={{ color: color.text }}>
-                      {item.to_date}
-                    </TableCell>
+        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular  }}>
+          {item.to_date}
+        </TableCell>
 
-                    <TableCell sx={{ color: color.text }}>
-                      {item.status}
-                    </TableCell>
+        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular  }}>
+          <Typography
+            sx={{
+              color:
+                item.status === "approved"
+                  ? "green"
+                  : item.status === "rejected"
+                  ? "red"
+                  : "orange",
+              fontWeight: "bold",
+            }}
+          >
+            {item.status}
+          </Typography>
+        </TableCell>
 
-                    <TableCell>
-                      <Box sx={{ display: "flex", gap: 1 }}>
-                        <CommonButton
-                          onClick={() => handleView(item)}
-                          sx={{
-                            backgroundColor: color.headings,
-                            color: color.text,
-                          }}
-                        >
-                          View
-                        </CommonButton>
+        <TableCell>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <CommonButton
+              onClick={() => handleView(item)}
+              sx={{
+                backgroundColor: color.headings,
+                color: color.text,
+              }}
+            >
+              View
+            </CommonButton>
 
-                        <CommonButton
-                         onClick={() => updateLeave(item, "approved")}
-                          sx={{
-                            backgroundColor:
-                              item.status === "approved"
-                                ? color.navbar
-                                : color.background,
-                            color: color.text,
-                          }}
-                        >
-                          Approve
-                        </CommonButton>
-                    
-                        <CommonButton
-                          onClick={() => updateLeave(item, "rejected")}
-                          sx={{
-                            backgroundColor:
-                              item.status === "rejected"
-                                ? color.navbar
-                                : color.background,
-                            color: color.text,
-                          }}
-                        >
-                          Reject
-                        </CommonButton>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+            <CommonButton
+              onClick={() =>
+                updateLeave(item, "approved")
+              }
+              sx={{
+                backgroundColor:
+                  item.status === "approved"
+                    ? color.navbar
+                    : color.background,
+                color: color.text,
+              }}
+            >
+              {item.status === "approved"
+                ? "Approved"
+                : "Approve"}
+            </CommonButton>
+
+            <CommonButton
+              onClick={() =>
+                updateLeave(item, "rejected")
+              }
+              sx={{
+                backgroundColor:
+                  item.status === "rejected"
+                    ? color.navbar
+                    : color.background,
+                color: color.text,
+              }}
+            >
+              {item.status === "rejected"
+                ? "Rejected"
+                : "Reject"}
+            </CommonButton>
+
+          </Box>
+        </TableCell>
+
+      </TableRow>
+    ))
+  )}
+</TableBody>
             </Table>
           </TableContainer>
         </Box>

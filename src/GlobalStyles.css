@@ -1,18 +1,23 @@
 @font-face {
-  font-family: 'Poppins-Bold';
-  src: url('./Fonts/Poppins-Bold.ttf') format('truetype');
+  font-family: "Bold";
+  src: url("./assets/Fonts/GoogleSans_17pt-Bold.ttf") format("truetype");
+  font-weight: 700;
 }
- 
+
 @font-face {
-  font-family: 'Poppins-Semibold';
-  src: url('./Fonts/Poppins-SemiBold.ttf') format('truetype');
+  font-family: "Medium";
+  src: url("./assets/Fonts/GoogleSans_17pt-Medium.ttf") format("truetype");
+  font-weight: 500;
 }
- 
+
 @font-face {
-  font-family: 'Poppins-Regular';
-  src: url('./Fonts/Poppins-Regular.ttf') format('truetype');
+  font-family: "Regular";
+  src: url("./assets/Fonts/GoogleSans_17pt-Regular.ttf") format("truetype");
+  font-weight: 400;
 }
+
 @font-face {
-  font-family: 'Poppins-BlackItalic';
-  src: url('./Fonts/Poppins-BlackItalic.ttf') format('truetype');
+  font-family: "SemiBold";
+  src: url("./assets/Fonts/GoogleSans_17pt-SemiBold.ttf") format("truetype");
+  font-weight: 600;
 }

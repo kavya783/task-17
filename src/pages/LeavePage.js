@@ -8,7 +8,7 @@ import {
   DialogActions,
   TablePagination,
 } from "@mui/material";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 
 import LeaveTable from "../components/LeaveTable";
 import CommonButton from "../components/CommonButton";
@@ -17,11 +17,17 @@ import Loader from "../components/Loader";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 
-function LeavePage({ darkMode, setDarkMode }) {
-  const color = Colors(darkMode);
+import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
 
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+function LeavePage({ darkMode, setDarkMode }) {
+   console.log("LeavePage rendered");
+  const color = Colors(darkMode);
+ console.log("Navbar Color:", color.navbar);
+  const dispatch = useDispatch();
+
+  const { data, loading } = useSelector(
+    (state) => state.getleavereducer
+  );
 
   const initialEmployee = {
     employeename: "",
@@ -40,24 +46,8 @@ function LeavePage({ darkMode, setDarkMode }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    getAllLeaves();
-  }, []);
-
- const getAllLeaves = async () => {
-  try {
-    setLoading(true);
-
-    const res = await axios.get("https://task-17-b.onrender.com/api/leaves");
-
-    console.log(res.data);
-
-    setData(res.data);
-  } catch (error) {
-    console.log(error);
-  } finally {
-    setLoading(false);
-  }
-};
+    dispatch(getLeaveDataActionInitiate());
+  }, [dispatch]);
 
   const handleClose = () => {
     setShow(false);
@@ -78,13 +68,14 @@ function LeavePage({ darkMode, setDarkMode }) {
     setPage(0);
   };
 
-  
-  const paginatedLeaves = data.slice(
+  const paginatedLeaves = (data || []).slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
-  if (loading) return <Loader />;
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -96,16 +87,24 @@ function LeavePage({ darkMode, setDarkMode }) {
 
       <Box
         sx={{
-          background: color.background,
-          minHeight: "100vh",
+              background:color.background,
+               height:{xs:"100%",sm:"610px",md:"830px",lg:"1260px",xl:"697px"},
           p: 2,
         }}
       >
-        <Dialog open={show} onClose={handleClose}>
+        <Dialog
+          open={show}
+          onClose={handleClose}
+          maxWidth="xs"
+          fullWidth
+        >
           <DialogTitle
             sx={{
-              bgcolor: color.background,
-              color: color.text,
+              // bgcolor: color.background,
+              color:color.card,
+                ...Theme.font20Bold,
+              borderBottom: 1,
+              mb: 1
             }}
           >
             Leave Details
@@ -113,44 +112,130 @@ function LeavePage({ darkMode, setDarkMode }) {
 
           <DialogContent
             sx={{
-              bgcolor: color.background,
+              // bgcolor: color.background,
               color: color.text,
-              minWidth: 350,
+              minWidth: 30,
               display: "flex",
               flexDirection: "column",
               gap: 2,
             }}
           >
-            <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>Name:</b> {employee.employeename}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-center",
 
-            <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>Email:</b> {employee.email}
-            </Typography>
+              }}
+            >
+              <Typography sx={{  ...Theme.font16Bold, color: color.navbar }}>
+                Employee Name:
+              </Typography>
+                <Typography sx={{color:color.card}}>
+                {employee.employeename}
+              </Typography>
+            </Box>
 
-            <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>Leave Type:</b> {employee.leaveType}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-center"
+              }}
+            >
+              <Typography sx={{ ...Theme.font16Bold, color: color.navbar }}>
+                Email:
+              </Typography>
 
-            <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>From Date:</b> {employee.from_date}
-            </Typography>
+              <Typography sx={{color:color.card}}>
+                {employee.email}
+              </Typography>
+            </Box>
 
-            <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>To Date:</b> {employee.to_date}
-            </Typography>
 
-            <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>Reason:</b> {employee.reason}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-center",
 
-            <Typography sx={{ fontSize: Theme.font16SemiBold }}>
-              <b>Status:</b> {employee.status}
+              }}
+            >
+              <Typography sx={{ ...Theme.font16Bold, color: color.navbar }}>
+              Leave Type:
             </Typography>
+             <Typography sx={{color:color.card}}>
+                       {employee.leaveType}
+                      </Typography>
+                      </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-center",
+
+              }}
+            >
+              <Typography sx={{ ...Theme.font16Bold,color: color.navbar }}>
+              From Date: 
+            </Typography>
+             <Typography sx={{color:color.card}}>
+              {employee.from_date}
+            </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-center",
+
+              }}
+            >
+              <Typography sx={{ ...Theme.font16Bold, color: color.navbar }}>
+             To Date: 
+            </Typography>
+            <Typography sx={{color:color.card}}>
+              {employee.to_date}
+            </Typography>
+            </Box>
+            
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-center",
+
+              }}
+            >
+              <Typography sx={{ ...Theme.font16Bold, color: color.navbar }}>
+              Reason:
+            </Typography>
+            
+              <Typography sx={{color:color.card}}>
+              {employee.reason}
+
+            </Typography>
+            </Box>
+
+           <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-center",
+
+              }}
+            >
+              <Typography sx={{ ...Theme.font16Bold, color: color.navbar }}>
+              
+              Status:
+            </Typography>
+           <Typography sx={{color:color.card}}>
+               {employee.status}
+            </Typography>
+            </Box>
           </DialogContent>
 
-          <DialogActions sx={{ bgcolor: color.background }}>
+          <DialogActions
+            sx={{
+             
+            }}
+          >
             <CommonButton
               onClick={handleClose}
               sx={{
@@ -169,12 +254,14 @@ function LeavePage({ darkMode, setDarkMode }) {
           page={page}
           rowsPerPage={rowsPerPage}
           darkMode={darkMode}
-          refreshLeaves={getAllLeaves}
+          refreshLeaves={() =>
+            dispatch(getLeaveDataActionInitiate())
+          }
         />
 
         <TablePagination
           component="div"
-          count={data.length}
+          count={data?.length || 0}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}

@@ -43,7 +43,8 @@ class API {
       this.api(METHOD.POST, url, data)
         .then((response) => {
            if(response.data){
-            toast.success(" post request successfully");
+            console.log("response add",response)
+            toast.success(response?.data?.message);
             resolve(response);
           }
           else{
@@ -61,7 +62,7 @@ class API {
       console.log('this is putAPI');
       this.api(METHOD.PUT, url, data)
         .then((response) => {
-          toast.success(" update request successfully");
+           toast.success(response?.data?.message);
           resolve(response);
         })
         .catch((error) => {
@@ -75,10 +76,11 @@ class API {
       console.log('this is deleteAPI');
       this.api(METHOD.DELETE, url, data)
         .then((response) => {
-          toast.success(" delete request successfully");
+          console.log("response delete",response)
+          toast.success(response?.data?.message);
           resolve(response);
         })
-        .catch((error) => {
+        .catch((error) => { 
           toast.error("Something went wrong"); 
           console.log(error);
         });
@@ -127,26 +129,18 @@ class API {
     });
   }
   // Set the header for request
-  setHeaders(data) {
-    let headers = {};
-    console.log('this is headers');
-    headers["accept-language"] = "en";
+ setHeaders(data) {
+  let headers = {};
+
+  headers["accept-language"] = "en";
+  headers["Accept"] = "application/json";
+  headers["Authorization"] = localStorage.getItem("token");
+
+  if (!(data instanceof FormData)) {
     headers["Content-Type"] = "application/json";
-    headers["Accept"] = "application/json";
-    headers["Authorization"] = localStorage.getItem("token");
-    if (data) {
-      if (data.isMultipart) {
-        headers["Content-Type"] = "multipart/form-data";
-      }
-      if (data.headers) {
-        for (var key in data.headers) {
-          if (data.headers.hasOwnProperty(key)) {
-            headers[key] = data.headers[key];
-          }
-        }
-      }
-    }
-    return headers;
   }
+
+  return headers;
+}
 }
 export default API;

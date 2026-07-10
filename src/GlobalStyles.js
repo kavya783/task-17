@@ -1,6 +1,7 @@
 
- 
 export const Theme = {
+
+
 container: {
     minHeight: '100vh',
     width: '100vw',
@@ -12,51 +13,51 @@ container: {
     justifyContent: 'center',
   },
   headings: {
-    fontFamily: 'Poppins-Bold, sans-serif',
+    fontFamily: 'Bold',
     fontSize: 40,
     
   },
  
-  font12Regular: {
-    fontFamily: 'Poppins-Regular, sans-serif',
-    fontSize: 12,
+  font14Regular: {
+    fontFamily: 'Regular',
+    fontSize: 16,
   
   },
   font24Bold: {
-    fontFamily: 'Poppins-bold, sans-serif',
-    fontSize: 24,
+    fontFamily: 'Bold',
+    fontSize:24
    
   },
   font14SemiBold: {
-    fontFamily: 'Poppins-SemiBold, sans-serif',
+    fontFamily: 'SemiBold',
     fontSize: 14,
    
   },
   font12Bold: {
-    fontFamily: 'Poppins-SemiBold, sans-serif',
+    fontFamily: 'SemiBold',
     fontSize: 12,
    
 
   },
   font16SemiBold: {
-    fontFamily: 'Poppins-SemiBold, sans-serif',
+    fontFamily: 'SemiBold',
     fontSize: 16,
     
   },
   font16Bold: {
-    fontFamily: 'Poppins-Bold, sans-serif',
+    fontFamily: 'Bold',
     fontSize: 16,
     fontWeight:'bold',   
     
   },
   font20Bold: {
-    fontFamily: 'Poppins-bold, sans-serif',
+    fontFamily: 'Bold',
     fontSize: 20,
      fontWeight:'bold',   
    
   },
   font14Bold: {
-    fontFamily: 'Poppins-Bold, sans-serif',
+    fontFamily: 'Bold',
     fontSize: 14,
      fontWeight:'bold',  
    

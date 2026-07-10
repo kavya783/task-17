@@ -1,138 +1,202 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Drawer from "@mui/material/Drawer";
-import Divider from "@mui/material/Divider";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+
+  Drawer,
+  Divider,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+
+import {
+  People,
+  EventNote,
+  Home,
+  AssignmentTurnedIn,
+  
+} from "@mui/icons-material";
 
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
+
 function NavBar({ darkMode, open, setOpen }) {
- 
   const [roled, setRoled] = useState("");
+
   const location = useLocation();
 
   const color = Colors(darkMode);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("role");
-    if (storedRole) setRoled(storedRole);
+    setRoled(localStorage.getItem("role"));
   }, []);
 
-  const linkStyles = {
-    p: 2,
-    display: "block",
-    textDecoration: "none",
-    color: color.text,
-  };
+  const menuStyle = (path) => ({
+    borderRadius: "12px",
+    mx: 1,
+    my: 0.5,
+    color: location.pathname === path ? color.background : color.text,
+    backgroundColor:
+      location.pathname === path
+        ? color.headings
+        : "transparent",
+        borderRight:
+    location.pathname === path
+      ? `1px solid ${color.border}`
+      : "1px solid transparent",
+
+    "&:hover": {
+      backgroundColor: color.headings,
+      color:color.text,
+      transform: "translateX(5px)",
+      transition: "0.3s",
+      
+    },
+  });
 
   const drawerContent = (
-    <Box sx={{ width: 240, backgroundColor: color.background, height: "100%" }}>
+    <Box
+      sx={{
+        width: 240,
+        height: "100%",
+        bgcolor: color.background,
+      }}
+    >
+      
 
-      {roled === "hr" && (
-        <>
-          <Link to="/hr" style={{ textDecoration: "none" }}>
-            <Typography sx={{
-              ...linkStyles,
-              ...(location.pathname === "/hr" && {
-                backgroundColor: color.headings,
-                color: color.text,
-                fontSize: Theme.font16SemiBold,
-                mt: 1,
-              }),
-            }}>
-              Employees
-            </Typography>
-          </Link>
+      <Divider />
 
-          <Divider />
+      <List>
+        {roled === "hr" && (
+          <>
+            <ListItemButton
+              component={Link}
+              to="/hr"
+              sx={menuStyle("/hr")}
+            >
+              <ListItemIcon>
+                <People
+                  sx={{
+                    color:
+                      location.pathname === "/hr"
+                        ? "#fff"
+                        : color.text,
+                        fontSize:Theme.font24Bold,
+                       
+                  }}
+                />
+              </ListItemIcon>
 
-          <Link to="/leave" style={{ textDecoration: "none" }}>
-            <Typography sx={{
-              ...linkStyles,
-              ...(location.pathname === "/leave" && {
-                backgroundColor: color.headings,
-                color: color.text,
-              }),
-            }}>
-              Leaves
-            </Typography>
-          </Link>
-        </>
-      )}
+              <ListItemText primary="Employees" />
+            </ListItemButton>
 
-      {roled === "employee" && (
-        <>
-          <Link to="/employee" style={{ textDecoration: "none" }}>
-            <Typography sx={{
-              ...linkStyles,
-              ...(location.pathname === "/employee" && {
-                backgroundColor: color.headings,
-                color: color.text,
-              }),
-            }}>
-              Home
-            </Typography>
-          </Link>
+            <ListItemButton
+              component={Link}
+              to="/leave"
+              sx={menuStyle("/leave")}
+            >
+              <ListItemIcon>
+                <EventNote
+                  sx={{
+                    color:
+                      location.pathname === "/leave"
+                        ? "#fff"
+                        : color.text,
+                  }}
+                />
+              </ListItemIcon>
 
-          <Divider />
+              <ListItemText primary="Leaves" />
+            </ListItemButton>
+          </>
+        )}
 
-          <Link to="/leave/status" style={{ textDecoration: "none" }}>
-            <Typography sx={{
-              ...linkStyles,
-              ...(location.pathname === "/leave/status" && {
-                backgroundColor: color.headings,
-                color: color.text,
-              }),
-            }}>
-              Leave Status
-            </Typography>
-          </Link>
-        </>
-      )}
+        {roled === "employee" && (
+          <>
+            <ListItemButton
+              component={Link}
+              to="/employee"
+              sx={menuStyle("/employee")}
+            >
+              <ListItemIcon>
+                <Home
+                  sx={{
+                    color:
+                      location.pathname === "/employee"
+                        ? "#fff"
+                        : color.text,
+                  }}
+                />
+              </ListItemIcon>
+
+              <ListItemText primary="Home" />
+            </ListItemButton>
+
+            <ListItemButton
+              component={Link}
+              to="/leave/status"
+              sx={menuStyle("/leave/status")}
+            >
+              <ListItemIcon>
+                <AssignmentTurnedIn
+                  sx={{
+                    color:
+                      location.pathname === "/leave/status"
+                        ? "#fff"
+                        : color.text,
+                  }}
+                />
+              </ListItemIcon>
+
+              <ListItemText primary="Leave Status" />
+            </ListItemButton>
+          </>
+        )}
+      </List>
     </Box>
   );
 
   return (
     <>
-      
-      <Box
-        sx={{
-          display: { xs: "block", md: "none" },
-          position: "absolute",
-          top: 90,
-          right: 20,
-          zIndex: 1300,
-        }}
-      >
-       
-      </Box>
-
+      {/* Mobile */}
 
       <Drawer
         open={open}
         onClose={() => setOpen(false)}
         sx={{
-          display: { xs: "block", md: "none" },
+          display: {
+            xs: "block",
+            md: "none",
+          },
+
           "& .MuiDrawer-paper": {
             width: 240,
-            backgroundColor: color.background,
+            bgcolor: color.background,
           },
         }}
       >
         {drawerContent}
       </Drawer>
 
-      {/* Desktop Drawer */}
+      {/* Desktop */}
+
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: "none", md: "block" },
+          display: {
+            xs: "none",
+            md: "block",
+          },
+
           "& .MuiDrawer-paper": {
             width: 240,
-            top: "65px",
+            top: "64px",
             height: "calc(100vh - 64px)",
-            backgroundColor: color.background,
+            bgcolor: color.background,
+            borderRight: "1px solid #ddd",
           },
         }}
       >

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import AppBarr from "./appBar";
 import NavBar from "./NavBar";
+
 import {
   Box,
   Typography,
@@ -17,48 +18,57 @@ import {
   Paper
 } from "@mui/material";
 
+import { useDispatch, useSelector } from "react-redux";
+
 import { Theme } from "../GlobalStyles";
 import Colors from "../colors";
 import Loader from "./Loader";
 import CommonButton from "./CommonButton";
 
+import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
+
+
 export default function EmployeeLeave({ darkMode, setDarkMode }) {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+
+  const dispatch = useDispatch();
+
+  const [loading, setLoading] = React.useState(true);
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const color = Colors(darkMode);
 
+
   const userEmail = localStorage.getItem("email");
 
-  // ✅ FETCH DATA (NO REDUX)
+
+  // REDUX DATA
+  const { data = [] } = useSelector(
+    (state) => state.getleavereducer || {}
+  );
+
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
 
-        const res = await fetch(
-          "https://task-17-b.onrender.com/api/leaves"
-        );
-        const result = await res.json();
+    const fetchLeaves = async () => {
 
-        const list = Object.keys(result || {}).map((key) => ({
-          id: key,
-          ...result[key]
-        }));
+      setLoading(true);
 
-        setData(list);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
+      await dispatch(
+        getLeaveDataActionInitiate()
+      );
+
+      setLoading(false);
     };
 
-    fetchData();
-  }, []);
 
-  // ✅ FILTER USER DATA
+    fetchLeaves();
+
+  }, [dispatch]);
+
+
+
+  // FILTER LOGIN USER LEAVES
+
   const filteredData = data.filter((item) => item.email === userEmail);
 
   const getStatusColor = (status) => {
@@ -67,7 +77,10 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
     return "warning";
   };
 
-  if (loading) return <Loader />;
+
+
+  if(loading)
+    return <Loader />;
 
   return (
     <>
@@ -82,7 +95,8 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
       <Box
         sx={{
           bgcolor: color.background,
-          height: 670
+                    height:{xs:"600px",sm:"590px",md:"810px",lg:"950px",xl:"673px"},
+
         }}
       >
         <Box
@@ -96,8 +110,8 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
             variant="h5"
             sx={{
               mb: 3,
-              fontWeight: "bold",
-              bgcolor: color.text,
+              ...Theme.font24Bold,
+              bgcolor: color.headings,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent"
             }}
@@ -108,14 +122,40 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
           {/* ================= MOBILE VIEW ================= */}
           {isMobile ? (
             filteredData.length === 0 ? (
-              <Typography align="center" color="text.secondary">
-                No Leaves Found
-              </Typography>
+              <Card
+  sx={{
+    mt: 2,
+    p: 2,
+    textAlign: "center",
+    boxShadow: 2,
+    borderRadius: 2,
+    bgcolor: darkMode ? "#1E1E1E" : "#fff",
+    border: darkMode ? `1px solid ${color.border}` : "1px solid #e0e0e0",
+  }}
+>
+  <CardContent>
+    <Typography
+      sx={{
+        color: color.text,
+        ...Theme.font16Bold,
+      }}
+    >
+      No Leaves Found
+    </Typography>
+  </CardContent>
+</Card>
             ) : (
               filteredData.map((item) => (
-                <Card key={item.id} sx={{ mb: 2, borderRadius: 3 }}>
-                  <CardContent>
-                    <Typography sx={{ color: color.card }}>
+                    <Card
+                            key={item.id}
+                            sx={{
+                                mb: 2,
+                                boxShadow: `0px 4px 10px ${color.text}`,
+                                color: color.text
+                            }}
+                        >                  
+                        <CardContent>
+                    <Typography sx={{ color: color.text }}>
                       <b>Name:</b> {item.employeename}
                     </Typography>
 
@@ -124,7 +164,7 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
                     </Typography>
 
                     <Typography sx={{ color: color.card }}>
-                      <b>Date:</b> {item.fromDate} → {item.toDate}
+                      <b>Date:</b>{item.from_date} → {item.to_date}
                     </Typography>
 
                     <Chip
@@ -145,24 +185,24 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
                 borderRadius: 4,
                 width: "70%",
                 mx: "auto",
-                backgroundColor: color.background
+              
               }}
             >
               <Table>
                 <TableHead sx={{ bgcolor: color.headings, height: 50 }}>
                   <TableRow>
-                    <TableCell sx={{ color: color.text }}>S.No</TableCell>
-                    <TableCell sx={{ color: color.text }}>Name</TableCell>
-                    <TableCell sx={{ color: color.text }}>
+                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>S.No</TableCell>
+                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>Name</TableCell>
+                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>
                       Leave Type
                     </TableCell>
-                    <TableCell sx={{ color: color.text }}>
+                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>
                       From Date
                     </TableCell>
-                    <TableCell sx={{ color: color.text }}>
+                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>
                       To Date
                     </TableCell>
-                    <TableCell sx={{ color: color.text }}>Status</TableCell>
+                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>Status</TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -170,28 +210,30 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
                   {filteredData.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} align="center">
+                         <Typography align="center" sx={{color:color.card}}>
                         No Leaves Found
+                        </Typography>
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredData.map((item, index) => (
                       <TableRow key={item.id} hover>
-                        <TableCell sx={{ color: color.text }}>
+                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
                           {index + 1}
                         </TableCell>
-                        <TableCell sx={{ color: color.text }}>
+                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
                           {item.employeename}
                         </TableCell>
-                        <TableCell sx={{ color: color.text }}>
+                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
                           {item.leaveType}
                         </TableCell>
-                        <TableCell sx={{ color: color.text }}>
+                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
                           {item.from_date}
                         </TableCell>
-                        <TableCell sx={{ color: color.text }}>
+                        <TableCell sx={{ color: color.tex,fontSize:Theme.font14Regular }}>
                           {item.to_date}
                         </TableCell>
-                        <TableCell sx={{ color: color.text }}>
+                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
                           <CommonButton
                             variant="contained"
                             size="small"
