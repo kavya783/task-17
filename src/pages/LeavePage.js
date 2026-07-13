@@ -259,7 +259,7 @@
               </DialogActions>
             </Dialog>
 
-            {/* <LeaveTable
+            <LeaveTable
       data={paginatedLeaves}
       handleView={handleView}
       page={page}
@@ -269,9 +269,7 @@
       refreshLeaves={() =>
         dispatch(getLeaveDataActionInitiate())
       }
-    /> */}
-
-    <Typography>Leave Page Working</Typography>
+    />
             <TablePagination
               component="div"
               count={data?.length || 0}
