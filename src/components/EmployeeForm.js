@@ -49,8 +49,7 @@ export default function EmployeeForm({
       [name]: "",
     }));
   };
-const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
+
   const validate = () => {
     let newErrors = {};
 
