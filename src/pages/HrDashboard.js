@@ -37,11 +37,15 @@ function HrDashboard({
 
   const dispatch = useDispatch();
 
-  const { data, loading } = useSelector(
-    (state) => state.getemployeedata
-  );
+ const employeeState = useSelector(
+  (state) => state
+);
 
-  const initialEmployee = {
+console.log("FULL REDUX STATE", employeeState);
+
+const { data = [], loading = false } =
+  employeeState.getemployeedata || {};
+    const initialEmployee = {
     id: "",
     profileImage: "",
     profileImageFile: null,
@@ -155,7 +159,8 @@ const employees = (data || []).map(normalizeEmployee);
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-
+ 
+console.log("Employee Redux State:", {data, loading});
   if (loading) return <Loader />;
   console.log("HrDashboard rendered");
   
