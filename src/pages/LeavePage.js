@@ -76,7 +76,7 @@ function LeavePage({ darkMode, setDarkMode }) {
   if (loading) {
     return <Loader />;
   }
-
+console.log(data);
   return (
     <>
       <AppBarr
