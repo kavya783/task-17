@@ -11,15 +11,21 @@ import { useState } from "react";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [themeColor, setThemeColor] = useState(
-    localStorage.getItem("themeColor") || "#7DB9B6"
-  );
+const [themeColor, setThemeColor] = useState(() => {
+
+ const savedColor = localStorage.getItem("themeColor");
+
+ return /^#[0-9A-Fa-f]{6}$/.test(savedColor)
+   ? savedColor
+   : "#7DB9B6";
+
+});
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Authentication />} />
+          
 
           <Route
             path="/hr"
