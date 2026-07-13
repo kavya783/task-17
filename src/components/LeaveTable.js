@@ -83,13 +83,15 @@ export default function LeaveTable({
                 <Box sx={{ textAlign: "center", mb: 1 }}>
                   <img
                     src={
-                      item.profileImage ||
-                      "https://via.placeholder.com/40"
+                      item.profile_image_url ||
+                      "https://via.placeholder.com/60"
                     }
                     alt="profile"
-                    width="40"
-                    height="40"
-                    style={{ borderRadius: "50%" }}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: "50%",
+                    }}
                   />
                 </Box>
 
@@ -128,9 +130,10 @@ export default function LeaveTable({
                 <Box
                   sx={{
                     display: "flex",
-                    gap: 1,
+                    gap: 0.5,
                     mt: 2,
-                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    flexWrap: "nowrap",
                   }}
                 >
                   <CommonButton
@@ -138,6 +141,7 @@ export default function LeaveTable({
                     sx={{
                       backgroundColor: color.headings,
                       color: color.text,
+                      minWidth: 70,
                     }}
                   >
                     View
@@ -151,6 +155,7 @@ export default function LeaveTable({
                           ? color.navbar
                           : color.background,
                       color: color.text,
+                      minWidth: 90,
                     }}
                   >
                     {item.status === "approved"
@@ -166,6 +171,7 @@ export default function LeaveTable({
                           ? color.navbar
                           : color.background,
                       color: color.text,
+                      minWidth: 90,
                     }}
                   >
                     {item.status === "rejected"

@@ -153,6 +153,7 @@ function EmployeeHome({ darkMode }) {
               "&:hover": {
                 bgcolor: color.border,
               },
+              color: color.card,
             }}
           >
             Apply Leave

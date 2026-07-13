@@ -166,7 +166,7 @@ export default function EmployeeLeave({
                             }}
                         >                  
                         <CardContent>
-                    <Typography sx={{ color: color.text }}>
+                    <Typography sx={{ color: color.card }}>
                       <b>Name:</b> {item.employeename}
                     </Typography>
 
@@ -229,22 +229,22 @@ export default function EmployeeLeave({
                   ) : (
                     filteredData.map((item, index) => (
                       <TableRow key={item.id} hover>
-                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
                           {index + 1}
                         </TableCell>
-                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
                           {item.employeename}
                         </TableCell>
-                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
                           {item.leaveType}
                         </TableCell>
-                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
                           {item.from_date}
                         </TableCell>
-                        <TableCell sx={{ color: color.tex,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
                           {item.to_date}
                         </TableCell>
-                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
                           <CommonButton
                             variant="contained"
                             size="small"
