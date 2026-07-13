@@ -51,7 +51,7 @@ export default function LeaveTable({
       toast.error("Failed to update leave");
     }
   };
-console.log(item);
+
   return (
     <>
       <Typography
