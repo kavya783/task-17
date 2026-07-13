@@ -21,6 +21,8 @@ import { Theme } from "../GlobalStyles";
 import CommonButton from "./CommonButton";
 
 function EmployeeHome({ darkMode }) {
+  const themeColor =
+  localStorage.getItem("themeColor") || "#7DB9B6";
   const dispatch = useDispatch();
   const navigate = useNavigate();
  const color = Colors(darkMode, themeColor);
@@ -28,8 +30,7 @@ function EmployeeHome({ darkMode }) {
   const { data, loading, error } = useSelector(
     (state) => state.getemployeedata
   );
-  const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
+  
 
   const email = localStorage.getItem("email");
 

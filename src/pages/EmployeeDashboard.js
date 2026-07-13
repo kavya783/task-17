@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -19,7 +19,7 @@ function EmployeeDashboard({
   setThemeColor,
 }) {
 const color = Colors(darkMode, themeColor);
-
+const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
 
 

@@ -18,8 +18,12 @@ import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 
 import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
-
-function LeavePage({ darkMode, setDarkMode, themeColor }) {
+function LeavePage({
+  darkMode,
+  setDarkMode,
+  themeColor,
+  setThemeColor,
+}) {
   const color = Colors(darkMode, themeColor);
 
    console.log("LeavePage rendered");
@@ -43,7 +47,7 @@ function LeavePage({ darkMode, setDarkMode, themeColor }) {
 
   const [show, setShow] = useState(false);
   const [employee, setEmployee] = useState(initialEmployee);
-
+ 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
