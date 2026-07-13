@@ -47,7 +47,7 @@ class API {
         console.log("Response:", response);
         console.log("Response Data:", response.data);
 
-        toast.success("Test Toast");
+        toast.success("Login Success");
 
         resolve(response);
       })
@@ -67,7 +67,7 @@ class API {
         console.log("Toast called");
         console.log("Response:", response);
 
-        toast.success("Test Toast");
+        toast.success("Update Successfully");
 
         resolve(response);
       })
@@ -88,7 +88,7 @@ class API {
         console.log("Response:", response);
         console.log("Response Data:", response.data);
 
-        toast.success("Test Toast");
+        toast.success("Delete Successfully");
 
         resolve(response);
       })
