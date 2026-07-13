@@ -29,8 +29,7 @@ export default function AuthenticationForm({ darkMode,
   setDarkMode,
   themeColor,
   setThemeColor, }) {
-   const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
 const color = Colors(darkMode, themeColor);

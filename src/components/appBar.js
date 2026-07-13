@@ -40,7 +40,7 @@ export default function AuthenticationForm({
 
   const [colorAnchor, setColorAnchor] = useState(null);
 
-  const role = roled?.toLowerCase();
+ const role = localStorage.getItem("role")?.toLowerCase();
 
   let title = "";
   if (role === "hr") title = "HR PORTAL";
