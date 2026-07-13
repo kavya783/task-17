@@ -29,12 +29,13 @@ export default function LeaveTable({
   rowsPerPage,
   darkMode,
 }) {
+   const themeColor =
+  localStorage.getItem("themeColor") || "#7DB9B6";
   const dispatch = useDispatch();
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const color = Colors(darkMode, themeColor);
- const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
+
   const updateLeave = async (item, status) => {
     try {
       const updatedLeave = {

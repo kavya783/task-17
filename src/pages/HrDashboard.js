@@ -33,7 +33,7 @@ function HrDashboard({
   themeColor,
   setThemeColor,
 }) {
-const color = Colors(darkMode, themeColor);
+  const color = Colors(darkMode, themeColor);
 
   const dispatch = useDispatch();
 
@@ -160,18 +160,18 @@ const color = Colors(darkMode, themeColor);
   return (
     <>
       <AppBarr
-  roled="hr"
-  darkMode={darkMode}
-  setDarkMode={setDarkMode}
-  themeColor={themeColor}
-  setThemeColor={setThemeColor}
-/>
+        roled="hr"
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        themeColor={themeColor}
+        setThemeColor={setThemeColor}
+      />
 
       <Box
         sx={{
           p: 2,
           background: color.background,
-          height:{xs:"100%",sm:"610px",md:"830px",lg:"1260px",xl:"698px"},
+          height: { xs: "100%", sm: "610px", md: "830px", lg: "1260px", xl: "698px" },
         }}
       >
         {type === "view" && (
@@ -349,7 +349,7 @@ const color = Colors(darkMode, themeColor);
             handleChange={handleChange}
             submitHandle={submitHandle}
             darkMode={darkMode}
-  themeColor={themeColor}
+            themeColor={themeColor}
           />
         )}
 

@@ -26,11 +26,12 @@ import { Theme } from "../GlobalStyles";
 import { loginActionInitiate } from "../redux/actions/loginAction";
 
 export default function AuthenticationForm({ darkMode }) {
+   const themeColor =
+  localStorage.getItem("themeColor") || "#7DB9B6";
   const navigate = useNavigate();
   const dispatch = useDispatch();
 const color = Colors(darkMode, themeColor);
- const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
+
   const { loading } = useSelector((state) => state.login);
 
   const [employee, setEmployee] = useState({

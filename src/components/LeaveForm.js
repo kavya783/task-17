@@ -24,12 +24,13 @@ import { getEmployeeDataActionInitiate } from "../redux/actions/getEmployeeActio
 import { addLeaveDataActionInitiate } from "../redux/actions/addLeaveAction";
 
 function LeaveForm({ darkMode }) {
+  const themeColor =
+  localStorage.getItem("themeColor") || "#7DB9B6";
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
  const color = Colors(darkMode, themeColor);
-const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
+
   const { data: employees = [] } = useSelector(
     (state) => state.getemployeedata
   );

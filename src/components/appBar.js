@@ -30,14 +30,14 @@ function AppBarr({
   setDarkMode,
   themeColor,
   setThemeColor,
-}){
+}) {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const navigate = useNavigate();
- const color = Colors(darkMode, themeColor);
+  const color = Colors(darkMode, themeColor);
   const [colorAnchor, setColorAnchor] = useState(null);
- 
+
   const role = roled?.toLowerCase();
 
   let title = "";
@@ -111,11 +111,11 @@ function AppBarr({
               flexGrow: 1,
               textAlign: "center",
               color: color.text,
-               mr:2,
+              mr: 2,
               letterSpacing: 1,
-              ml:2,
-              fontSize:Theme.font24Bold,
-               display: { xs: "none", md: "block" },
+              ml: 2,
+              fontSize: Theme.font24Bold,
+              display: { xs: "none", md: "block" },
             }}
           >
             {title}
@@ -125,23 +125,23 @@ function AppBarr({
               flexGrow: 1,
               textAlign: "center",
               color: color.text,
-               mr:1,
+              mr: 1,
               letterSpacing: 1,
-              ml:2,
-              fontSize:Theme.font14Bold,
-               display: { xs: "block", md: "none" },
+              ml: 2,
+              fontSize: Theme.font14Bold,
+              display: { xs: "block", md: "none" },
             }}
           >
             {title}
           </Typography>
-          
+
 
           {/* Right */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap:0
+              gap: 0
             }}
           >
             <IconButton
@@ -156,15 +156,15 @@ function AppBarr({
               onClose={() => setColorAnchor(null)}
             >
               <Box sx={{ p: 2 }}>
-               <SketchPicker
-  color={themeColor}
-  onChangeComplete={(updatedColor) => {
-    const selectedColor = updatedColor.hex;
+                <SketchPicker
+                  color={themeColor}
+                  onChangeComplete={(updatedColor) => {
+                    const selectedColor = updatedColor.hex;
 
-    setThemeColor(selectedColor);
-    localStorage.setItem("themeColor", selectedColor);
-  }}
-/>
+                    setThemeColor(selectedColor);
+                    localStorage.setItem("themeColor", selectedColor);
+                  }}
+                />
               </Box>
             </Menu>
             <IconButton
@@ -221,13 +221,13 @@ function AppBarr({
         </Toolbar>
       </AppBar>
 
-    
-     <NavBar
-  darkMode={darkMode}
-  themeColor={themeColor}
-  open={open}
-  setOpen={setOpen}
-/>
+
+      <NavBar
+        darkMode={darkMode}
+        themeColor={themeColor}
+        open={open}
+        setOpen={setOpen}
+      />
 
     </>
   );
