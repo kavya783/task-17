@@ -28,6 +28,8 @@ function EmployeeHome({ darkMode }) {
   const { data, loading, error } = useSelector(
     (state) => state.getemployeedata
   );
+  const themeColor =
+  localStorage.getItem("themeColor") || "#7DB9B6";
 
   const email = localStorage.getItem("email");
 

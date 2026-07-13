@@ -24,7 +24,8 @@ export default function EmployeeTable({
     darkMode
 
 }) {
-
+   const themeColor =
+  localStorage.getItem("themeColor") || "#7DB9B6";
     const isMobile = useMediaQuery("(max-width:500px)");
     const filteredData = data.filter(item => item.role !== "hr");
 

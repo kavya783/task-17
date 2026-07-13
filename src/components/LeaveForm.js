@@ -28,7 +28,8 @@ function LeaveForm({ darkMode }) {
   const dispatch = useDispatch();
 
  const color = Colors(darkMode, themeColor);
-
+const themeColor =
+  localStorage.getItem("themeColor") || "#7DB9B6";
   const { data: employees = [] } = useSelector(
     (state) => state.getemployeedata
   );
