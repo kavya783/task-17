@@ -83,15 +83,13 @@ export default function LeaveTable({
                 <Box sx={{ textAlign: "center", mb: 1 }}>
                   <img
                     src={
-                      item.profile_image_url ||
-                      "https://via.placeholder.com/60"
+                      item.profileImage ||
+                      "https://via.placeholder.com/40"
                     }
                     alt="profile"
-                    style={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: "50%",
-                    }}
+                    width="40"
+                    height="40"
+                    style={{ borderRadius: "50%" }}
                   />
                 </Box>
 

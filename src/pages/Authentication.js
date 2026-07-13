@@ -15,7 +15,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-import AppBarr from "../components/appBar";
+
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -106,12 +106,7 @@ const color = Colors(darkMode, themeColor);
 
   return (
     <>
-      <AppBarr
-  darkMode={darkMode}
-  setDarkMode={setDarkMode}
-  themeColor={themeColor}
-  setThemeColor={setThemeColor}
-/>
+     
 
       <Box
         sx={{
