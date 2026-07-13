@@ -56,8 +56,7 @@ function AppBarr({ roled, darkMode, setDarkMode }) {
     localStorage.clear();
     navigate("/", { replace: true });
   };
-localStorage.removeItem("themeColor");
-location.reload();
+
 
   return (
     <>
@@ -153,7 +152,7 @@ location.reload();
               onClose={() => setColorAnchor(null)}
             >
               <Box sx={{ p: 2 }}>
-                <SketchPicker
+               <SketchPicker
   color={themeColor}
   onChangeComplete={(updatedColor) => {
     const selectedColor = updatedColor.hex;
