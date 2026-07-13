@@ -37,7 +37,7 @@ export default function EmployeeForm({
   const employeeSalary = employee.salary || "";
   const employeeAddress = employee.address || "";
   const employeePassword = employee.password || "";
- const color = Colors(darkMode);
+ const color = Colors(darkMode, themeColor);
   const handleInputChange = (e) => {
     const { name } = e.target;
 

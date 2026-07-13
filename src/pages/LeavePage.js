@@ -19,9 +19,11 @@ import { Theme } from "../GlobalStyles";
 
 import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
 
-function LeavePage({ darkMode, setDarkMode }) {
+function LeavePage({ darkMode, setDarkMode, themeColor }) {
+  const color = Colors(darkMode, themeColor);
+
    console.log("LeavePage rendered");
-  const color = Colors(darkMode);
+
  console.log("Navbar Color:", color.navbar);
   const dispatch = useDispatch();
 
@@ -80,10 +82,15 @@ console.log(data);
   return (
     <>
       <AppBarr
-        roled="hr"
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-      />
+  roled="employee"
+  darkMode={darkMode}
+  setDarkMode={setDarkMode}
+  themeColor={themeColor}
+  setThemeColor={setThemeColor}
+/>
+
+
+
 
       <Box
         sx={{
@@ -249,16 +256,16 @@ console.log(data);
         </Dialog>
 
         <LeaveTable
-          data={paginatedLeaves}
-          handleView={handleView}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          darkMode={darkMode}
-          refreshLeaves={() =>
-            dispatch(getLeaveDataActionInitiate())
-          }
-        />
-
+  data={paginatedLeaves}
+  handleView={handleView}
+  page={page}
+  rowsPerPage={rowsPerPage}
+  darkMode={darkMode}
+  themeColor={themeColor}
+  refreshLeaves={() =>
+    dispatch(getLeaveDataActionInitiate())
+  }
+/>
         <TablePagination
           component="div"
           count={data?.length || 0}

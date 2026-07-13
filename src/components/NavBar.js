@@ -23,12 +23,17 @@ import { Link, useLocation } from "react-router-dom";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 
-function NavBar({ darkMode, open, setOpen }) {
+function NavBar({
+  darkMode,
+  themeColor,
+  open,
+  setOpen,
+}) {
   const [roled, setRoled] = useState("");
 
   const location = useLocation();
 
-  const color = Colors(darkMode);
+const color = Colors(darkMode, themeColor);
 
   useEffect(() => {
     setRoled(localStorage.getItem("role"));

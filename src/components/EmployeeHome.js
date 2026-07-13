@@ -20,10 +20,10 @@ import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 import CommonButton from "./CommonButton";
 
-function EmployeeHome(darkMode) {
+function EmployeeHome({ darkMode }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const color = Colors(darkMode);
+ const color = Colors(darkMode, themeColor);
   console.log(color.navbar);
   const { data, loading, error } = useSelector(
     (state) => state.getemployeedata
@@ -122,7 +122,7 @@ function EmployeeHome(darkMode) {
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <WorkIcon sx={{ color: color.cardr }} />
+              <WorkIcon sx={{ color: color.card }} />
               <Typography sx={{ color: color.card, fontSize: Theme.font16SemiBold }}>
                 {employee.role}
               </Typography>

@@ -28,14 +28,19 @@ import CommonButton from "./CommonButton";
 import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
 
 
-export default function EmployeeLeave({ darkMode, setDarkMode }) {
+export default function EmployeeLeave({
+  darkMode,
+  setDarkMode,
+  themeColor,
+  setThemeColor,
+}) {
 
   const dispatch = useDispatch();
 
   const [loading, setLoading] = React.useState(true);
 
   const isMobile = useMediaQuery("(max-width:600px)");
-  const color = Colors(darkMode);
+ const color = Colors(darkMode, themeColor);
 
 
   const userEmail = localStorage.getItem("email");
@@ -85,12 +90,18 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
   return (
     <>
       <AppBarr
-        roled="employee"
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-      />
+  roled="employee"
+  darkMode={darkMode}
+  setDarkMode={setDarkMode}
+  themeColor={themeColor}
+  setThemeColor={setThemeColor}
+/>
 
-      <NavBar darkMode={darkMode} setDarkMode={setDarkMode} />
+     <NavBar
+  darkMode={darkMode}
+  setDarkMode={setDarkMode}
+  themeColor={themeColor}
+/>
 
       <Box
         sx={{

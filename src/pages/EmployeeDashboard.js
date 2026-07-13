@@ -12,9 +12,13 @@ import Colors from "../colors";
 import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
 
 
-function EmployeeDashboard({ darkMode, setDarkMode }) {
-
-  const color = Colors(darkMode);
+function EmployeeDashboard({
+  darkMode,
+  setDarkMode,
+  themeColor,
+  setThemeColor,
+}) {
+const color = Colors(darkMode, themeColor);
 
   const dispatch = useDispatch();
 
@@ -47,17 +51,20 @@ function EmployeeDashboard({ darkMode, setDarkMode }) {
     <>
 
       <AppBarr
-        roled="employee"
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-      />
+  roled="employee"
+  darkMode={darkMode}
+  setDarkMode={setDarkMode}
+  themeColor={themeColor}
+  setThemeColor={setThemeColor}
+/>
 
 
-      <NavBar
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-      />
-
+     <NavBar
+  darkMode={darkMode}
+  themeColor={themeColor}
+  open={open}
+  setOpen={setOpen}
+/>
 
       <Box
         sx={{

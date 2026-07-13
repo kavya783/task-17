@@ -28,8 +28,7 @@ import { loginActionInitiate } from "../redux/actions/loginAction";
 export default function AuthenticationForm({ darkMode }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const color = Colors(darkMode);
+const color = Colors(darkMode, themeColor);
 
   const { loading } = useSelector((state) => state.login);
 

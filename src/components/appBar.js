@@ -24,16 +24,20 @@ import Colors from "../colors";
 import NavBar from "./NavBar";
 import { SketchPicker } from "react-color";
 import { Theme } from "../GlobalStyles";
-function AppBarr({ roled, darkMode, setDarkMode }) {
+function AppBarr({
+  roled,
+  darkMode,
+  setDarkMode,
+  themeColor,
+  setThemeColor,
+}){
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const navigate = useNavigate();
-  const color = Colors(darkMode);
+ const color = Colors(darkMode, themeColor);
   const [colorAnchor, setColorAnchor] = useState(null);
- const [themeColor, setThemeColor] = useState(
-  localStorage.getItem("themeColor") || "#7DB9B6"
-);
+ 
   const role = roled?.toLowerCase();
 
   let title = "";
@@ -218,11 +222,13 @@ function AppBarr({ roled, darkMode, setDarkMode }) {
       </AppBar>
 
     
-      <NavBar
-        darkMode={darkMode}
-        open={open}
-        setOpen={setOpen}
-      />
+     <NavBar
+  darkMode={darkMode}
+  themeColor={themeColor}
+  open={open}
+  setOpen={setOpen}
+/>
+
     </>
   );
 }

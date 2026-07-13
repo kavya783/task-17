@@ -27,7 +27,7 @@ function LeaveForm({ darkMode }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const color = Colors(darkMode);
+ const color = Colors(darkMode, themeColor);
 
   const { data: employees = [] } = useSelector(
     (state) => state.getemployeedata

@@ -28,7 +28,7 @@ export default function EmployeeTable({
     const isMobile = useMediaQuery("(max-width:500px)");
     const filteredData = data.filter(item => item.role !== "hr");
 
-    const color = Colors(darkMode);
+   const color = Colors(darkMode, themeColor);
     const getProfileImage = (item) => item.profile_image_url || item.profileImage || "https://via.placeholder.com/60";
 
     return (

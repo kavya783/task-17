@@ -11,6 +11,9 @@ import { useState } from "react";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
+  const [themeColor, setThemeColor] = useState(
+    localStorage.getItem("themeColor") || "#7DB9B6"
+  );
 
   return (
     <>
@@ -25,6 +28,8 @@ function App() {
                 <HrDashboard
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
+                  themeColor={themeColor}
+                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
             }
@@ -37,6 +42,8 @@ function App() {
                 <LeavePage
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
+                  themeColor={themeColor}
+                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
             }
@@ -49,6 +56,8 @@ function App() {
                 <EmployeeDashboard
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
+                  themeColor={themeColor}
+                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
             }
@@ -61,6 +70,8 @@ function App() {
                 <LeaveForm
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
+                  themeColor={themeColor}
+                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
             }
@@ -73,6 +84,8 @@ function App() {
                 <EmployeeLeave
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
+                  themeColor={themeColor}
+                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
             }
