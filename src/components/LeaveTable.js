@@ -51,7 +51,7 @@ export default function LeaveTable({
       toast.error("Failed to update leave");
     }
   };
-
+console.log(item);
   return (
     <>
       <Typography
@@ -80,17 +80,15 @@ export default function LeaveTable({
               <CardContent>
                 <Box sx={{ textAlign: "center", mb: 1 }}>
                   <img
-                    src={
-                      item.profile_image_url ||
-                      "https://via.placeholder.com/60"
-                    }
-                    alt="profile"
-                    style={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: "50%",
-                    }}
-                  />
+  src={
+    item.profileImage ||
+    "https://via.placeholder.com/40"
+  }
+  alt="profile"
+  width="40"
+  height="40"
+  style={{ borderRadius: "50%" }}
+/>
                 </Box>
 
                 <Typography sx={{ color: color.card }}>
@@ -251,16 +249,16 @@ export default function LeaveTable({
               gap: 1,
             }}
           >
-            <img
-              src={
-                item.profile_image_url ||
-                "https://via.placeholder.com/40"
-              }
-              alt="profile"
-              width="40"
-              height="40"
-              style={{ borderRadius: "50%" }}
-            />
+           <img
+  src={
+    item.profileImage ||
+    "https://via.placeholder.com/40"
+  }
+  alt="profile"
+  width="40"
+  height="40"
+  style={{ borderRadius: "50%" }}
+/>
 
             {item.employeename}
           </Box>
