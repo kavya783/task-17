@@ -25,7 +25,10 @@ import { Theme } from "../GlobalStyles";
 
 import { loginActionInitiate } from "../redux/actions/loginAction";
 
-export default function AuthenticationForm({ darkMode }) {
+export default function AuthenticationForm({ darkMode,
+  setDarkMode,
+  themeColor,
+  setThemeColor, }) {
    const themeColor =
   localStorage.getItem("themeColor") || "#7DB9B6";
   const navigate = useNavigate();
