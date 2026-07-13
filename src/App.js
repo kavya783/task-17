@@ -88,8 +88,20 @@ function App() {
                   setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
+              
             }
           />
+          <Route
+  path="/"
+  element={
+    <Authentication
+      darkMode={darkMode}
+      setDarkMode={setDarkMode}
+      themeColor={themeColor}
+      setThemeColor={setThemeColor}
+    />
+  }
+/>
         </Routes>
       </BrowserRouter>
 

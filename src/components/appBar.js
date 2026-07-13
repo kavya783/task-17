@@ -24,18 +24,20 @@ import Colors from "../colors";
 import NavBar from "./NavBar";
 import { SketchPicker } from "react-color";
 import { Theme } from "../GlobalStyles";
-function AppBarr({
-  roled,
+export default function AuthenticationForm({
   darkMode,
-  setDarkMode,
   themeColor,
   setThemeColor,
+  setDarkMode,
 }) {
+  const color = Colors(darkMode, themeColor);
+
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const navigate = useNavigate();
-  const color = Colors(darkMode, themeColor);
+  console.log("themeColor =", themeColor);
+
   const [colorAnchor, setColorAnchor] = useState(null);
 
   const role = roled?.toLowerCase();

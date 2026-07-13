@@ -104,7 +104,12 @@ const color = Colors(darkMode, themeColor);
 
   return (
     <>
-      <AppBarr />
+      <AppBarr
+  darkMode={darkMode}
+  setDarkMode={setDarkMode}
+  themeColor={themeColor}
+  setThemeColor={setThemeColor}
+/>
 
       <Box
         sx={{
