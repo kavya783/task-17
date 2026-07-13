@@ -97,12 +97,12 @@
 
 
           <Box
-            sx={{
-                  background:color.background,
-                  height:{xs:"100%",sm:"610px",md:"830px",lg:"1260px",xl:"697px"},
-              p: 2,
-            }}
-          >
+        sx={{
+              background:color.background,
+               height:{xs:"100%",sm:"830px",md:"1260px",lg:"1400px",xl:"697px"},
+          p: 2,
+        }}
+      >
             <Dialog
               open={show}
               onClose={handleClose}

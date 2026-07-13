@@ -178,7 +178,7 @@ console.log("Employee Redux State:", {data, loading});
         sx={{
           p: 2,
           background: color.background,
-          height: { xs: "100%", sm: "610px", md: "830px", lg: "1260px", xl: "698px" },
+          height:{xs:"100%",sm:"830px",md:"1300px",lg:"1400px",xl:"697px"},
         }}
       >
         {type === "view" && (
