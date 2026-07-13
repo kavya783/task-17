@@ -30,14 +30,14 @@ const [themeColor, setThemeColor] = useState(() => {
           <Route
             path="/hr"
             element={
-              <ProtectedRoute roleAllowed={["hr"]}>
+              // <ProtectedRoute roleAllowed={["hr"]}>
                 <HrDashboard
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
                   themeColor={themeColor}
                   setThemeColor={setThemeColor}
                 />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
 

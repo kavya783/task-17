@@ -157,6 +157,8 @@ const employees = (data || []).map(normalizeEmployee);
   );
 
   if (loading) return <Loader />;
+  console.log("HrDashboard rendered");
+  
   return (
     <>
       <AppBarr
