@@ -40,13 +40,14 @@ export default function AuthenticationForm({
 
   const [colorAnchor, setColorAnchor] = useState(null);
 
- const role = localStorage.getItem("role")?.toLowerCase();
+const role = localStorage.getItem("role")?.toLowerCase();
 
-  let title = "";
-  if (role === "hr") title = "HR PORTAL";
-  else if (role === "employee") title = "EMPLOYEE PORTAL";
-  else return null;
-
+const title =
+  role === "hr"
+    ? "HR PORTAL"
+    : role === "employee"
+    ? "EMPLOYEE PORTAL"
+    : "";
   const userEmail = localStorage.getItem("email") || "";
   const firstLetter = userEmail.charAt(0).toUpperCase();
 
