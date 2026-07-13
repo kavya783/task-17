@@ -37,55 +37,68 @@ class API {
 
   }
  
-  post(url, data) {
-    return new Promise((resolve, reject) => {
-      console.log('this is postAPI');
-      this.api(METHOD.POST, url, data)
-        .then((response) => {
-           if(response.data){
-            console.log("response add",response)
-            toast.success(response?.data?.message);
-            resolve(response);
-          }
-          else{
-            toast.error("post Request Failed",);
-          } 
-        })
-        .catch((error) => {
-          toast.error("Something went wrong"); 
-          console.log(error);
-        });
-    });
-  }
-  put(url, data) {
-    return new Promise((resolve, reject) => {
-      console.log('this is putAPI');
-      this.api(METHOD.PUT, url, data)
-        .then((response) => {
-           toast.success(response?.data?.message);
-          resolve(response);
-        })
-        .catch((error) => {
-          toast.error("Something went wrong"); 
-          console.log(error);
-        });
-    });
-  }
+ post(url, data) {
+  return new Promise((resolve, reject) => {
+    console.log("this is postAPI");
+
+    this.api(METHOD.POST, url, data)
+      .then((response) => {
+        console.log("Toast called");
+        console.log("Response:", response);
+        console.log("Response Data:", response.data);
+
+        toast.success("Test Toast");
+
+        resolve(response);
+      })
+      .catch((error) => {
+        toast.error("Something went wrong");
+        console.log(error);
+        reject(error);
+      });
+  });
+}
+ put(url, data) {
+  return new Promise((resolve, reject) => {
+    console.log("this is putAPI");
+
+    this.api(METHOD.PUT, url, data)
+      .then((response) => {
+        console.log("Toast called");
+        console.log("Response:", response);
+
+        toast.success("Test Toast");
+
+        resolve(response);
+      })
+      .catch((error) => {
+        toast.error("Something went wrong");
+        console.log(error);
+        reject(error);
+      });
+  });
+}
   delete(url, data) {
-    return new Promise((resolve, reject) => {
-      console.log('this is deleteAPI');
-      this.api(METHOD.DELETE, url, data)
-        .then((response) => {
-          console.log("response delete",response)
-          toast.success(response?.data?.message);
-          resolve(response);
-        })
-        .catch((error) => { 
-          toast.error("Something went wrong"); 
-          console.log(error);
-        });
-    });
-  }
+  return new Promise((resolve, reject) => {
+    console.log("this is deleteAPI");
+
+    this.api(METHOD.DELETE, url, data)
+      .then((response) => {
+        console.log("Toast called");
+        console.log("Response:", response);
+        console.log("Response Data:", response.data);
+
+        toast.success("Test Toast");
+
+        resolve(response);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Something went wrong");
+        reject(error);
+      });
+  });
+}
   // Main function with hold the axios request param
   api(method, url, data) {
     return new Promise(( resolve,reject) => {

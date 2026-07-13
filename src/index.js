@@ -1,11 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import "./GlobalStyles.css";
+import "react-toastify/dist/ReactToastify.css"; // <-- Add this
+
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "./GlobalStyles.css";
 import { Provider } from "react-redux";
-import store from "./redux/store"; // <-- store path correct ga undali
+import store from "./redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
