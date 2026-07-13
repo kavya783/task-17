@@ -31,9 +31,9 @@ function AppBarr({ roled, darkMode, setDarkMode }) {
   const navigate = useNavigate();
   const color = Colors(darkMode);
   const [colorAnchor, setColorAnchor] = useState(null);
-  const [themeColor, setThemeColor] = useState(
-    localStorage.getItem("themeColor") || "#7DB9B6"
-  );
+ const [themeColor, setThemeColor] = useState(
+  localStorage.getItem("themeColor") || "#7DB9B6"
+);
   const role = roled?.toLowerCase();
 
   let title = "";
@@ -56,7 +56,8 @@ function AppBarr({ roled, darkMode, setDarkMode }) {
     localStorage.clear();
     navigate("/", { replace: true });
   };
-
+localStorage.removeItem("themeColor");
+location.reload();
 
   return (
     <>
@@ -153,17 +154,14 @@ function AppBarr({ roled, darkMode, setDarkMode }) {
             >
               <Box sx={{ p: 2 }}>
                 <SketchPicker
-                  color={themeColor}
-                  onChangeComplete={(updatedColor) => {
-                    const selectedColor = updatedColor.hex;
+  color={themeColor}
+  onChangeComplete={(updatedColor) => {
+    const selectedColor = updatedColor.hex;
 
-                    setThemeColor(selectedColor);
-                    localStorage.setItem("themeColor", selectedColor);
-
-                    // page refresh chestunnaru kabatti
-                    window.location.reload();
-                  }}
-                />
+    setThemeColor(selectedColor);
+    localStorage.setItem("themeColor", selectedColor);
+  }}
+/>
               </Box>
             </Menu>
             <IconButton
