@@ -70,7 +70,7 @@ function HrDashboard({
     profileImage: item.profile_image_url || item.profileImage || "",
   });
 
-  const employees = data.map(normalizeEmployee);
+const employees = (data || []).map(normalizeEmployee);
 
   const handleClose = () => {
     setShow(false);

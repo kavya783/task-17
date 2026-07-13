@@ -8,6 +8,14 @@ export default function Colors(darkMode, themeColor) {
     ? themeColor
     : "#7DB9B6";
 
+  let borderColor = "#5A8F8C";
+
+  try {
+    borderColor = darken(safeThemeColor, 0.2);
+  } catch (error) {
+    borderColor = "#5A8F8C";
+  }
+
   return {
     navbar: darkMode ? "#90CAF9" : safeThemeColor,
 
@@ -19,8 +27,6 @@ export default function Colors(darkMode, themeColor) {
 
     card: darkMode ? "#1e1e1e" : "#0b0b0b",
 
-    border: darkMode
-      ? "#0d0e0f"
-      : darken(safeThemeColor, 0.2),
+    border: darkMode ? "#0d0e0f" : borderColor,
   };
 }
