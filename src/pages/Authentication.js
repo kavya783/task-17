@@ -110,7 +110,7 @@ const color = Colors(darkMode, themeColor);
 
       <Box
         sx={{
-            height:{xs:"610px",sm:"610px",md:"830px",lg:"1260px",xl:"697px"},
+           height:{xs:"610px",sm:"830px",md:"1260px",lg:"1400px",xl:"697px"},
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
