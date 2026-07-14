@@ -31,9 +31,9 @@
     console.log("Navbar Color:", color.navbar);
       const dispatch = useDispatch();
 
-      const { data, loading } = useSelector(
-        (state) => state.getleavereducer
-      );
+     const { data = [], loading = false } = useSelector(
+  (state) => state.getleavereducer || {}
+);
 
       const initialEmployee = {
         employeename: "",
@@ -86,7 +86,7 @@
       return (
         <>
           <AppBarr
-      roled="employee"
+      roled="hr"
       darkMode={darkMode}
       setDarkMode={setDarkMode}
       themeColor={themeColor}
