@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import HrDashboard from "./pages/HrDashboard";
 import LeavePage from "./pages/LeavePage";
 import LeaveForm from "./components/LeaveForm";
