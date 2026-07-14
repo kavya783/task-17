@@ -23,7 +23,7 @@ const [themeColor, setThemeColor] = useState(() => {
 
   return (
     <>
-      <BrowserRouter>
+      
         <Routes>
           
 
@@ -109,7 +109,7 @@ const [themeColor, setThemeColor] = useState(() => {
             }
           />
         </Routes>
-      </BrowserRouter>
+    
 
       <ToastContainer />
     </>

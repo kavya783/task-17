@@ -4,6 +4,7 @@ import "./index.css";
 import "./GlobalStyles.css";
 import "react-toastify/dist/ReactToastify.css"; // <-- Add this
 
+import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
@@ -11,12 +12,14 @@ import store from "./redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>
 );
-
 reportWebVitals();
