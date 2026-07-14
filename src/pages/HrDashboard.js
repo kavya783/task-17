@@ -164,9 +164,230 @@ console.log("Employee Redux State:", {data, loading});
   if (loading) return <Loader />;
   console.log("HrDashboard rendered");
   
- return (
-  <div>Hello HR</div>
-);
+  return (
+    <>
+      <AppBarr
+        roled="hr"
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        themeColor={themeColor}
+        setThemeColor={setThemeColor}
+      />
+
+      <Box
+        sx={{
+          p: 2,
+          background: color.background,
+          height:{xs:"100%",sm:"830px",md:"1300px",lg:"1400px",xl:"697px"},
+        }}
+      >
+        {type === "view" && (
+          <Dialog
+            open={show}
+            onClose={handleClose}
+            maxWidth="xs"
+            fullWidth
+          >
+            <DialogTitle
+              sx={{
+                textAlign: "center",
+                fontSize: Theme.font20Bold,
+                bgcolor: color.navbar,
+                color: color.text,
+              }}
+            >
+              Employee Details
+            </DialogTitle>
+
+            <DialogContent sx={{ p: 4 }}>
+
+              {/* Profile Image */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  mb: 4,
+                  mt: 2
+                }}
+              >
+                <Avatar
+                  src={employee.profile_image_url || employee.profileImage}
+                  sx={{
+                    width: 100,
+                    height: 100,
+
+                    bgcolor: color.headings,
+                    border: "4px solid",
+                    borderColor: color.navbar,
+                    boxShadow: 4,
+                  }}
+                >
+                  {employee.employeename?.charAt(0).toUpperCase()}
+                </Avatar>
+              </Box>
+
+              {/* Details */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    borderBottom: "1px solid #ddd",
+                    pb: 1,
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Employee Name:
+                  </Typography>
+
+                  <Typography sx={{ fontSize: Theme.font14Regular }}>
+                    {employee.employeename}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    borderBottom: "1px solid #ddd",
+                    pb: 1,
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Email:
+                  </Typography>
+
+                  <Typography sx={{ fontSize: Theme.font14Regular }}>
+                    {employee.email}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    borderBottom: "1px solid #ddd",
+                    pb: 1,
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Role:
+                  </Typography>
+
+                  <Typography sx={{ fontSize: Theme.font14Regular }}>
+                    {employee.role}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    borderBottom: "1px solid #ddd",
+                    pb: 1,
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Salary:
+                  </Typography>
+
+                  <Typography sx={{ fontSize: Theme.font14Regular }}>
+                    ₹ {employee.salary}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-center",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
+                    Address:
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      textAlign: "right",
+                      maxWidth: "60%",
+                      fontSize: Theme.font14Regular,
+                    }}
+                  >
+                    {employee.address}
+                  </Typography>
+                </Box>
+
+              </Box>
+            </DialogContent>
+
+            <DialogActions
+              sx={{
+                justifyContent: "center",
+                pb: 3,
+              }}
+            >
+              <CommonButton
+                onClick={handleClose}
+                sx={{
+                  px: 5,
+                  bgcolor: color.navbar,
+                  color: color.text,
+                }}
+              >
+                Close
+              </CommonButton>
+            </DialogActions>
+          </Dialog>
+        )}
+        {type !== "view" && (
+          <EmployeeForm
+            show={show}
+            handleClose={handleClose}
+            type={type}
+            employee={employee}
+            handleChange={handleChange}
+            submitHandle={submitHandle}
+            darkMode={darkMode}
+            themeColor={themeColor}
+          />
+        )}
+
+        <EmployeeTable
+          data={paginatedEmployees}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          handleAdd={handleAdd}
+          handleView={handleView}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          darkMode={darkMode}
+          themeColor={themeColor}
+        />
+
+        <TablePagination
+          component="div"
+          count={employees.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{
+            mt: 2,
+            color: color.text,
+          }}
+        />
+      </Box>
+    </>
+  );
 }
 
 export default HrDashboard;
