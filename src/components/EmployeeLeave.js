@@ -106,7 +106,7 @@ export default function EmployeeLeave({
       <Box
         sx={{
           bgcolor: color.background,
-                    height:{xs:"600px",sm:"590px",md:"810px",lg:"950px",xl:"673px"},
+                    height:{xs:"600px",sm:"810px",md:"1250px",lg:"1400px",xl:"673px"},
 
         }}
       >
