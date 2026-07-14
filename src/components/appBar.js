@@ -166,6 +166,7 @@ const title =
 
                     setThemeColor(selectedColor);
                     localStorage.setItem("themeColor", selectedColor);
+                     window.location.reload();
                   }}
                 />
               </Box>
