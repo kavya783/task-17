@@ -108,6 +108,10 @@ const [themeColor, setThemeColor] = useState(() => {
               />
             }
           />
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
         </Routes>
     
 
