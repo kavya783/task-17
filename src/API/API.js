@@ -1,118 +1,118 @@
 import axios from "axios";
 import { BASE_URL, STATUS_CODE } from "./constants";
 import { toast } from "react-toastify";
- 
+
 const METHOD = {
   GET: "get",
   POST: "post",
   PUT: "put",
   DELETE: "delete",
 };
- 
+
 class API {
   constructor() {
     this.baseURL = BASE_URL;
   }
- 
+
   async get(url, data) {
     return new Promise((resolve, reject) => {
       console.log('this is getAPI');
-      this.api(METHOD.GET, url, data)     
+      this.api(METHOD.GET, url, data)
         .then((response) => {
           resolve(response);
           // if(response.data){
           //   toast.success(" get request successfully",response);
-            
+
           // }
           // else{
           //   toast.error("Get Request Failed",response);
           // }
-          console.log("this is response2",response)
+          console.log("this is response2", response)
         })
         .catch((error) => {
-          toast.error("Something went wrong"); 
+          toast.error("Something went wrong");
           console.log(error);
         });
     });
 
   }
- 
- post(url, data) {
-  return new Promise((resolve, reject) => {
-    console.log("this is postAPI");
 
-    this.api(METHOD.POST, url, data)
-      .then((response) => {
-        console.log("Toast called");
-        console.log("Response:", response);
-        console.log("Response Data:", response.data);
+  post(url, data) {
+    return new Promise((resolve, reject) => {
+      console.log("this is postAPI");
 
-        toast.success("Login Success");
+      this.api(METHOD.POST, url, data)
+        .then((response) => {
+          console.log("Toast called");
+          console.log("Response:", response);
+          console.log("Response Data:", response.data);
 
-        resolve(response);
-      })
-      .catch((error) => {
-        toast.error("Something went wrong");
-        console.log(error);
-        reject(error);
-      });
-  });
-}
- put(url, data) {
-  return new Promise((resolve, reject) => {
-    console.log("this is putAPI");
+          toast.success("Login Success");
 
-    this.api(METHOD.PUT, url, data)
-      .then((response) => {
-        console.log("Toast called");
-        console.log("Response:", response);
+          resolve(response);
+        })
+        .catch((error) => {
+          toast.error("Something went wrong");
+          console.log(error);
+          reject(error);
+        });
+    });
+  }
+  put(url, data) {
+    return new Promise((resolve, reject) => {
+      console.log("this is putAPI");
 
-        toast.success("Update Successfully");
+      this.api(METHOD.PUT, url, data)
+        .then((response) => {
+          console.log("Toast called");
+          console.log("Response:", response);
 
-        resolve(response);
-      })
-      .catch((error) => {
-        toast.error("Something went wrong");
-        console.log(error);
-        reject(error);
-      });
-  });
-}
+          toast.success("Update Successfully");
+
+          resolve(response);
+        })
+        .catch((error) => {
+          toast.error("Something went wrong");
+          console.log(error);
+          reject(error);
+        });
+    });
+  }
   delete(url, data) {
-  return new Promise((resolve, reject) => {
-    console.log("this is deleteAPI");
+    return new Promise((resolve, reject) => {
+      console.log("this is deleteAPI");
 
-    this.api(METHOD.DELETE, url, data)
-      .then((response) => {
-        console.log("Toast called");
-        console.log("Response:", response);
-        console.log("Response Data:", response.data);
+      this.api(METHOD.DELETE, url, data)
+        .then((response) => {
+          console.log("Toast called");
+          console.log("Response:", response);
+          console.log("Response Data:", response.data);
 
-        toast.success("Delete Successfully");
+          toast.success("Delete Successfully");
 
-        resolve(response);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("Something went wrong");
-        reject(error);
-      });
-  });
-}
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("Something went wrong");
+          reject(error);
+        });
+    });
+  }
   // Main function with hold the axios request param
   api(method, url, data) {
-    return new Promise(( resolve,reject) => {
+    return new Promise((resolve, reject) => {
       console.log('this is mainAPI function');
       let axiosConfig = {};
       axiosConfig.method = method;
       axiosConfig.url = this.baseURL + url;
       axiosConfig.headers = this.setHeaders(data);
-      
+
       //  console.log("axiosConfig.headers", axiosConfig.headers);
       if (data) {
         if (data) axiosConfig.data = data;
       }
- 
+
       axios(axiosConfig)
         .then((response) => {
           if (
@@ -120,7 +120,7 @@ class API {
             response.status === STATUS_CODE.INTERNAL_SERVER_ERROR
           ) {
             toast.error("Something went wrong!!");
-          } else {  
+          } else {
             resolve(response);
             console.log("this is response1")
             if (response) {
@@ -128,32 +128,33 @@ class API {
             }
             else if (response.status === 200) {
               toast.success(' response success')
-                
+
             }
             else {
-              toast.error("Something went wrong"); 
+              toast.error("Something went wrong");
             }
           }
           // console.log("response", response);
         })
         .catch((error) => {
           console.log("ERROR", error);
+          reject(error);
         });
     });
   }
   // Set the header for request
- setHeaders(data) {
-  let headers = {};
+  setHeaders(data) {
+    let headers = {};
 
-  headers["accept-language"] = "en";
-  headers["Accept"] = "application/json";
-  headers["Authorization"] = localStorage.getItem("token");
+    headers["accept-language"] = "en";
+    headers["Accept"] = "application/json";
+    headers["Authorization"] = localStorage.getItem("token");
 
-  if (!(data instanceof FormData)) {
-    headers["Content-Type"] = "application/json";
+    if (!(data instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    return headers;
   }
-
-  return headers;
-}
 }
 export default API;
