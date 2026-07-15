@@ -27,25 +27,16 @@ import { updateEmployeeDataActionInitiate } from "../redux/actions/updateEmploye
 import { deleteEmployeeDataActionInitiate } from "../redux/actions/deleteEmployeeAction";
 import { Theme } from "../GlobalStyles";
 
-function HrDashboard({
-  darkMode,
-  setDarkMode,
-  themeColor,
-  setThemeColor,
-}) {
-  const color = Colors(darkMode, themeColor);
+function HrDashboard({ darkMode, setDarkMode }) {
+  const color = Colors(darkMode);
 
   const dispatch = useDispatch();
 
- const employeeState = useSelector(
-  (state) => state
-);
+  const { data, loading } = useSelector(
+    (state) => state.getemployeedata
+  );
 
-console.log("FULL REDUX STATE", employeeState);
-
-const { data = [], loading = false } =
-  employeeState.getemployeedata || {};
-    const initialEmployee = {
+  const initialEmployee = {
     id: "",
     profileImage: "",
     profileImageFile: null,
@@ -74,7 +65,7 @@ const { data = [], loading = false } =
     profileImage: item.profile_image_url || item.profileImage || "",
   });
 
-const employees = (data || []).map(normalizeEmployee);
+  const employees = data.map(normalizeEmployee);
 
   const handleClose = () => {
     setShow(false);
@@ -159,19 +150,14 @@ const employees = (data || []).map(normalizeEmployee);
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
- 
-console.log("Employee Redux State:", {data, loading});
+
   if (loading) return <Loader />;
-  console.log("HrDashboard rendered");
-  
   return (
     <>
       <AppBarr
         roled="hr"
         darkMode={darkMode}
         setDarkMode={setDarkMode}
-        themeColor={themeColor}
-        setThemeColor={setThemeColor}
       />
 
       <Box
@@ -356,7 +342,6 @@ console.log("Employee Redux State:", {data, loading});
             handleChange={handleChange}
             submitHandle={submitHandle}
             darkMode={darkMode}
-            themeColor={themeColor}
           />
         )}
 
@@ -369,7 +354,6 @@ console.log("Employee Redux State:", {data, loading});
           page={page}
           rowsPerPage={rowsPerPage}
           darkMode={darkMode}
-          themeColor={themeColor}
         />
 
         <TablePagination
