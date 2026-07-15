@@ -51,22 +51,67 @@ export default function EmployeeForm({
   };
 
   const validate = () => {
-    let newErrors = {};
+  let newErrors = {};
 
-    if (!employeeName) newErrors.employeename = "Name is required";
-    if (!employeeRole) newErrors.role = "Role is required";
-    if (!employeeSalary) newErrors.salary = "Salary is required";
-    if (!employeeAddress) newErrors.address = "Address is required";
-    if (!employeeEmail) newErrors.email = "Email is required";
-    if (type === "add" && !employee.password) newErrors.password = "Password is required";
-    if (type === "add" && !employee.profileImageFile)
-      newErrors.profileImage = "Image is required";
+  // Employee Name
+  if (!employeeName.trim()) {
+    newErrors.employeename = "Name is required";
+  }
 
-    setErrors(newErrors);
+  // Email
+  if (!employeeEmail.trim()) {
+    newErrors.email = "Email is required";
+  } else if (
+    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(employeeEmail)
+  ) {
+    newErrors.email = "Enter a valid email";
+  }
 
-    return Object.keys(newErrors).length === 0;
-  };
+  // Role
+  if (!employeeRole) {
+    newErrors.role = "Role is required";
+  }
 
+  // Salary
+  if (!employeeSalary) {
+    newErrors.salary = "Salary is required";
+  } else if (!/^\d+$/.test(employeeSalary)) {
+    newErrors.salary = "Salary must contain only numbers";
+  }
+
+  // Address
+  if (!employeeAddress.trim()) {
+    newErrors.address = "Address is required";
+  }
+
+  // Password
+  if (type === "add") {
+    if (!employeePassword) {
+      newErrors.password = "Password is required";
+    } else if (employeePassword.length < 6) {
+      newErrors.password =
+        "Password must be at least 6 characters";
+    }
+  }
+
+  if (
+    type === "edit" &&
+    employeePassword &&
+    employeePassword.length < 6
+  ) {
+    newErrors.password =
+      "Password must be at least 6 characters";
+  }
+
+  // Profile Image
+  if (type === "add" && !employee.profileImageFile) {
+    newErrors.profileImage = "Image is required";
+  }
+
+  setErrors(newErrors);
+
+  return Object.keys(newErrors).length === 0;
+};
 const handleSubmit = async (e) => {
   e.preventDefault();
 
