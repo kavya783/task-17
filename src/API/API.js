@@ -28,7 +28,7 @@ class API {
     try {
       const response = await this.api(METHOD.POST, url, data);
 
-      toast.success(response?.data?.message || "Success");
+      toast.success(response?.data?.message || " Add Successfully");
 
       return response;
     } catch (error) {
