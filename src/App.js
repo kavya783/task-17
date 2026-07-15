@@ -108,6 +108,7 @@ const [themeColor, setThemeColor] = useState(() => {
               />
             }
           />
+          <Route path="/test" element={<h1>TEST PAGE</h1>} />
         </Routes>
     
 
