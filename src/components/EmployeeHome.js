@@ -83,7 +83,7 @@ function EmployeeHome({ darkMode }) {
           },
           borderRadius: 10,
           boxShadow: "0px 10px 15px rgba(0,0,0,0.1)",
-          p: { xs: 3, sm: 3 },
+          p: { xs: 0, sm: 3 },
           transition: "0.3s",
           "&:hover": {
             transform: "translateY(-5px)",
