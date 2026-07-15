@@ -43,31 +43,24 @@ class API {
 
       this.api(METHOD.POST, url, data)
         .then((response) => {
-          console.log("Toast called");
-          console.log("Response:", response);
-          console.log("Response Data:", response.data);
-
-          toast.success("Login Success");
+          toast.success(response?.data?.message);
 
           resolve(response);
         })
         .catch((error) => {
           toast.error("Something went wrong");
-          console.log(error);
+
           reject(error);
         });
     });
   }
   put(url, data) {
     return new Promise((resolve, reject) => {
-      console.log("this is putAPI");
+
 
       this.api(METHOD.PUT, url, data)
         .then((response) => {
-          console.log("Toast called");
-          console.log("Response:", response);
-
-          toast.success("Update Successfully");
+          toast.success(response?.data?.message);
 
           resolve(response);
         })
@@ -84,12 +77,7 @@ class API {
 
       this.api(METHOD.DELETE, url, data)
         .then((response) => {
-          console.log("Toast called");
-          console.log("Response:", response);
-          console.log("Response Data:", response.data);
-
-          toast.success("Delete Successfully");
-
+          toast.success(response?.data?.message);
           resolve(response);
         })
         .catch((error) => {
