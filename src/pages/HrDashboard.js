@@ -41,7 +41,7 @@ function HrDashboard({
   (state) => state
 );
 
-console.log("FULL REDUX STATE", employeeState);
+// console.log("FULL REDUX STATE", employeeState);
 
 const { data = [], loading = false } =
   employeeState.getemployeedata || {};
@@ -160,9 +160,9 @@ const employees = (data || []).map(normalizeEmployee);
     page * rowsPerPage + rowsPerPage
   );
  
-console.log("Employee Redux State:", {data, loading});
+// console.log("Employee Redux State:", {data, loading});
   if (loading) return <Loader />;
-  console.log("HrDashboard rendered");
+  // console.log("HrDashboard rendered");
   
   return (
     <>

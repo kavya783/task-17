@@ -15,7 +15,7 @@ import {
   EventNote,
   Home,
   AssignmentTurnedIn,
-  
+
 } from "@mui/icons-material";
 
 import { Link, useLocation } from "react-router-dom";
@@ -43,17 +43,17 @@ function NavBar({ darkMode, open, setOpen }) {
       location.pathname === path
         ? color.headings
         : "transparent",
-        borderRight:
-    location.pathname === path
-      ? `1px solid ${color.border}`
-      : "1px solid transparent",
+    borderRight:
+      location.pathname === path
+        ? `1px solid ${color.border}`
+        : "1px solid transparent",
 
     "&:hover": {
       backgroundColor: color.headings,
-      color:color.text,
+      color: color.text,
       transform: "translateX(5px)",
       transition: "0.3s",
-      
+
     },
   });
 
@@ -65,7 +65,7 @@ function NavBar({ darkMode, open, setOpen }) {
         bgcolor: color.background,
       }}
     >
-      
+
 
       <Divider />
 
@@ -84,8 +84,8 @@ function NavBar({ darkMode, open, setOpen }) {
                       location.pathname === "/hr"
                         ? color.text
                         : color.text,
-                        fontSize:Theme.font24Bold,
-                       
+                    fontSize: Theme.font24Bold,
+
                   }}
                 />
               </ListItemIcon>
@@ -126,7 +126,7 @@ function NavBar({ darkMode, open, setOpen }) {
                   sx={{
                     color:
                       location.pathname === "/employee"
-                        ? "#fff"
+                        ? color.text
                         : color.text,
                   }}
                 />
@@ -145,7 +145,7 @@ function NavBar({ darkMode, open, setOpen }) {
                   sx={{
                     color:
                       location.pathname === "/leave/status"
-                        ? "#fff"
+                        ? color.text
                         : color.text,
                   }}
                 />

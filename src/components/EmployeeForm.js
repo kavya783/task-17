@@ -134,7 +134,7 @@ const handleSubmit = async (e) => {
   }
 
   for (let pair of formData.entries()) {
-    console.log(pair[0], pair[1]);
+    // console.log(pair[0], pair[1]);
   }
 
   submitHandle({

@@ -8,7 +8,7 @@ export const deleteEmployeeData = async (id) => {
 
     return response.data;
   } catch (error) {
-    console.log("Error in deleteEmployeeData:", error);
+    // console.log("Error in deleteEmployeeData:", error);
     throw error;
   }
 };

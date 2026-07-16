@@ -45,12 +45,9 @@ export default function LeaveTable({
       updateLeaveDataActionInitiate(updatedLeave, item.id)
     );
 
-    // toast.success(
-    //   `Leave ${status === "approved" ? "Approved" : "Rejected"} successfully`
-    // );
-
+   
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     toast.error("Failed to update leave");
   }
 };

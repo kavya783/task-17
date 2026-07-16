@@ -10,7 +10,7 @@ export const updateLeaveData = async (leaveData, id) => {
 
     return response.data;
   } catch (error) {
-    console.log("Error in updateLeaveData:", error);
+    // console.log("Error in updateLeaveData:", error);
     throw error;
   }
 };

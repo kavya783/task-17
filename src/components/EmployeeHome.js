@@ -26,7 +26,7 @@ function EmployeeHome({ darkMode }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
  const color = Colors(darkMode, themeColor);
-  console.log(color.navbar);
+ 
   const { data, loading, error } = useSelector(
     (state) => state.getemployeedata
   );

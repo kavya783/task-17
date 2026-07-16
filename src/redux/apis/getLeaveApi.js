@@ -8,7 +8,7 @@ export const fetchLeaveData = async () => {
 
     return response.data;
   } catch (error) {
-    console.log("Error in fetchLeaveData:", error);
+    // console.log("Error in fetchLeaveData:", error);
     throw error;
   }
 };

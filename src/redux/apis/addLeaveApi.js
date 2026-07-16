@@ -13,10 +13,10 @@ export const saveLeaveData = async (newLeave) => {
 
   } catch (error) {
 
-    console.log(
-      "Error in saveLeaveData:",
-      error.response?.data
-    );
+    // console.log(
+    //   "Error in saveLeaveData:",
+    //   error.response?.data
+    // );
 
     throw error;
   }

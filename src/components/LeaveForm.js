@@ -56,7 +56,7 @@ const [loading, setLoading] = useState(false);
   }, [dispatch]);
 
   useEffect(() => {
-     console.log("Employees:", employees);
+    //  console.log("Employees:", employees);
     if (employees.length > 0) {
       const user = employees.find(
         (emp) => emp.email === userEmail
@@ -157,7 +157,7 @@ const handleSubmit = async (e) => {
 }
 catch(error){
 
- console.log(error);
+//  console.log(error);
  toast.error("Failed to submit leave");
 
 }

@@ -26,9 +26,9 @@
     }) {
       const color = Colors(darkMode, themeColor);
 
-      console.log("LeavePage rendered");
+      // console.log("LeavePage rendered");
 
-    console.log("Navbar Color:", color.navbar);
+   
       const dispatch = useDispatch();
 
      const { data = [], loading = false } = useSelector(
@@ -82,7 +82,7 @@
       if (loading) {
         return <Loader />;
       }
-    console.log(data);
+    // console.log(data);
       return (
         <>
           <AppBarr

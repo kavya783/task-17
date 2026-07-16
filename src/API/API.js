@@ -16,7 +16,7 @@ class API {
  
   async get(url, data) {
     return new Promise((resolve, reject) => {
-      console.log('this is getAPI');
+      // console.log('this is getAPI');
       this.api(METHOD.GET, url, data)     
         .then((response) => {
           resolve(response);
@@ -27,11 +27,11 @@ class API {
           // else{
           //   toast.error("Get Request Failed",response);
           // }
-          console.log("this is response2",response)
+          // console.log("this is response2",response)
         })
         .catch((error) => {
           toast.error("Something went wrong"); 
-          console.log(error);
+          // console.log(error);
         });
     });
 
@@ -39,11 +39,11 @@ class API {
  
   post(url, data) {
     return new Promise((resolve, reject) => {
-      console.log('this is postAPI');
+      // console.log('this is postAPI');
       this.api(METHOD.POST, url, data)
         .then((response) => {
            if(response.data){
-            console.log("response add",response)
+            // console.log("response add",response)
             toast.success(response?.data?.message);
             resolve(response);
           }
@@ -53,13 +53,13 @@ class API {
         })
         .catch((error) => {
           toast.error("Something went wrong"); 
-          console.log(error);
+          // console.log(error);
         });
     });
   }
   put(url, data) {
     return new Promise((resolve, reject) => {
-      console.log('this is putAPI');
+      // console.log('this is putAPI');
       this.api(METHOD.PUT, url, data)
         .then((response) => {
            toast.success(response?.data?.message);
@@ -67,29 +67,29 @@ class API {
         })
         .catch((error) => {
           toast.error("Something went wrong"); 
-          console.log(error);
+          // console.log(error);
         });
     });
   }
   delete(url, data) {
     return new Promise((resolve, reject) => {
-      console.log('this is deleteAPI');
+      // console.log('this is deleteAPI');
       this.api(METHOD.DELETE, url, data)
         .then((response) => {
-          console.log("response delete",response)
+          // console.log("response delete",response)
           toast.success(response?.data?.message);
           resolve(response);
         })
         .catch((error) => { 
           toast.error("Something went wrong"); 
-          console.log(error);
+          // console.log(error);
         });
     });
   }
   // Main function with hold the axios request param
   api(method, url, data) {
     return new Promise(( resolve,reject) => {
-      console.log('this is mainAPI function');
+      // console.log('this is mainAPI function');
       let axiosConfig = {};
       axiosConfig.method = method;
       axiosConfig.url = this.baseURL + url;
@@ -109,7 +109,7 @@ class API {
             toast.error("Something went wrong!!");
           } else {  
             resolve(response);
-            console.log("this is response1")
+            // console.log("this is response1")
             if (response) {
               // toast.success("success response");
             }
@@ -124,7 +124,7 @@ class API {
           // console.log("response", response);
         })
         .catch((error) => {
-          console.log("ERROR", error);
+          // console.log("ERROR", error);
         });
     });
   }

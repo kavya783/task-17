@@ -8,7 +8,7 @@ export const updateEmployeeData = async (employeeData, id) => {
 
     return response.data;
   } catch (error) {
-    console.log("Error in updateEmployeeData:", error);
+    // console.log("Error in updateEmployeeData:", error);
     throw error;
   }
 };
