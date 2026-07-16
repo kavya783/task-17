@@ -15,7 +15,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-
+// import AppBarr from "../components/appBar";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,15 +24,13 @@ import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 
 import { loginActionInitiate } from "../redux/actions/loginAction";
+import { requestNotificationPermission } from "../notification";
 
-export default function AuthenticationForm({ darkMode,
-  setDarkMode,
-  themeColor,
-  setThemeColor, }) {
-  
+export default function AuthenticationForm({ darkMode }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-const color = Colors(darkMode, themeColor);
+
+  const color = Colors(darkMode);
 
   const { loading } = useSelector((state) => state.login);
 
@@ -81,43 +79,48 @@ const color = Colors(darkMode, themeColor);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validate()) return;
+  if (!validate()) return;
 
-    try {
-      const res = await dispatch(loginActionInitiate(employee));
+  try {
+   const res = await dispatch(loginActionInitiate(employee));
 
-      const email = res.user.email;
-      const role = res.user.role;
+const email = res.user.email;
+const role = res.user.role;
+const userId = res.user_id;
 
-      localStorage.setItem("email", email);
-      localStorage.setItem("role", role);
+localStorage.setItem("email", email);
+localStorage.setItem("role", role);
+localStorage.setItem("user_id", userId);
 
-      if (role === "hr") {
-        navigate("/hr", { replace: true });
-      } else {
-        navigate("/employee", { replace: true });
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Login Failed");
-    }
-  };
+await requestNotificationPermission(dispatch);
+
+if (role === "hr") {
+  navigate("/hr", { replace: true });
+} else {
+  navigate("/employee", { replace: true });
+}
+
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Login Failed");
+  }
+};
 
   return (
     <>
-     
+      {/* <AppBarr /> */}
 
       <Box
-        sx={{
-           height:{xs:"610px",sm:"830px",md:"1260px",lg:"1400px",xl:"697px"},
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background:color.headings,
-          p: 2,
-        }}
-      >
+ sx={{
+   minHeight:"100vh",
+   display:"flex",
+   justifyContent:"center",
+   alignItems:"center",
+   background:color.headings,
+   p:2
+ }}
+>
         <Card
           sx={{
             width: {
@@ -200,23 +203,17 @@ const color = Colors(darkMode, themeColor);
                     borderRadius: 3,
                   },
                 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() =>
-                          setShowPassword(!showPassword)
-                        }
-                      >
-                        {showPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+               slotProps={{
+  input: {
+    endAdornment: (
+      <InputAdornment position="end">
+        <IconButton onClick={() => setShowPassword(!showPassword)}>
+          {showPassword ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </InputAdornment>
+    ),
+  },
+}}
               />
 
               <Button

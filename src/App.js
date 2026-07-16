@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HrDashboard from "./pages/HrDashboard";
 import LeavePage from "./pages/LeavePage";
 import LeaveForm from "./components/LeaveForm";
@@ -7,37 +7,33 @@ import Authentication from "./pages/Authentication";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import EmployeeLeave from "./components/EmployeeLeave";
 import { ToastContainer } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { listenForMessages } from "./notification";
+
 
 function App() {
+   
+
+useEffect(() => {
+  listenForMessages();
+}, []);
   const [darkMode, setDarkMode] = useState(false);
-const [themeColor, setThemeColor] = useState(() => {
-
- const savedColor = localStorage.getItem("themeColor");
-
- return /^#[0-9A-Fa-f]{6}$/.test(savedColor)
-   ? savedColor
-   : "#7DB9B6";
-
-});
 
   return (
     <>
-      
+      <BrowserRouter>
         <Routes>
-          
+          <Route path="/" element={<Authentication />} />
 
           <Route
             path="/hr"
             element={
-              // <ProtectedRoute roleAllowed={["hr"]}>
+              <ProtectedRoute roleAllowed={["hr"]}>
                 <HrDashboard
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
-                  themeColor={themeColor}
-                  setThemeColor={setThemeColor}
                 />
-              // </ProtectedRoute>
+              </ProtectedRoute>
             }
           />
 
@@ -48,8 +44,6 @@ const [themeColor, setThemeColor] = useState(() => {
                 <LeavePage
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
-                  themeColor={themeColor}
-                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
             }
@@ -62,8 +56,6 @@ const [themeColor, setThemeColor] = useState(() => {
                 <EmployeeDashboard
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
-                  themeColor={themeColor}
-                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
             }
@@ -76,8 +68,6 @@ const [themeColor, setThemeColor] = useState(() => {
                 <LeaveForm
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
-                  themeColor={themeColor}
-                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
             }
@@ -90,27 +80,12 @@ const [themeColor, setThemeColor] = useState(() => {
                 <EmployeeLeave
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
-                  themeColor={themeColor}
-                  setThemeColor={setThemeColor}
                 />
               </ProtectedRoute>
-
             }
           />
-          <Route
-            path="/"
-            element={
-              <Authentication
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-                themeColor={themeColor}
-                setThemeColor={setThemeColor}
-              />
-            }
-          />
-          <Route path="/test" element={<h1>TEST PAGE</h1>} />
         </Routes>
-    
+      </BrowserRouter>
 
       <ToastContainer />
     </>

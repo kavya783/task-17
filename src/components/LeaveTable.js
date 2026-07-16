@@ -29,30 +29,31 @@ export default function LeaveTable({
   rowsPerPage,
   darkMode,
 }) {
-   const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
   const dispatch = useDispatch();
 
   const isMobile = useMediaQuery("(max-width:600px)");
-  const color = Colors(darkMode, themeColor);
+  const color = Colors(darkMode);
 
   const updateLeave = async (item, status) => {
-    try {
-      const updatedLeave = {
-        ...item,
-        status,
-      };
+  try {
+    const updatedLeave = {
+      ...item,
+      status,
+    };
 
-      await dispatch(
-        updateLeaveDataActionInitiate(updatedLeave, item.id)
-      );
+    await dispatch(
+      updateLeaveDataActionInitiate(updatedLeave, item.id)
+    );
 
-      // toast.success(`Leave ${status} successfully`);
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to update leave");
-    }
-  };
+    // toast.success(
+    //   `Leave ${status === "approved" ? "Approved" : "Rejected"} successfully`
+    // );
+
+  } catch (error) {
+    console.log(error);
+    toast.error("Failed to update leave");
+  }
+};
 
   return (
     <>
@@ -83,13 +84,15 @@ export default function LeaveTable({
                 <Box sx={{ textAlign: "center", mb: 1 }}>
                   <img
                     src={
-                      item.profileImage ||
-                      "https://via.placeholder.com/40"
+                      item.profile_image_url ||
+                      "https://via.placeholder.com/60"
                     }
                     alt="profile"
-                    width="40"
-                    height="40"
-                    style={{ borderRadius: "50%" }}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: "50%",
+                    }}
                   />
                 </Box>
 
@@ -257,7 +260,7 @@ export default function LeaveTable({
                         >
                           <img
                             src={
-                              item.profileImage ||
+                              item.profile_image_url ||
                               "https://via.placeholder.com/40"
                             }
                             alt="profile"

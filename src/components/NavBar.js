@@ -23,17 +23,12 @@ import { Link, useLocation } from "react-router-dom";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 
-function NavBar({
-  darkMode,
-  themeColor,
-  open,
-  setOpen,
-}) {
+function NavBar({ darkMode, open, setOpen }) {
   const [roled, setRoled] = useState("");
 
   const location = useLocation();
 
-const color = Colors(darkMode, themeColor);
+  const color = Colors(darkMode);
 
   useEffect(() => {
     setRoled(localStorage.getItem("role"));
@@ -43,7 +38,7 @@ const color = Colors(darkMode, themeColor);
     borderRadius: "12px",
     mx: 1,
     my: 0.5,
-    color: location.pathname === path ? color.background : color.text,
+    color: location.pathname === path ? color.text : color.text,
     backgroundColor:
       location.pathname === path
         ? color.headings
@@ -87,7 +82,7 @@ const color = Colors(darkMode, themeColor);
                   sx={{
                     color:
                       location.pathname === "/hr"
-                        ? "#fff"
+                        ? color.text
                         : color.text,
                         fontSize:Theme.font24Bold,
                        
@@ -108,7 +103,7 @@ const color = Colors(darkMode, themeColor);
                   sx={{
                     color:
                       location.pathname === "/leave"
-                        ? "#fff"
+                        ? color.text
                         : color.text,
                   }}
                 />

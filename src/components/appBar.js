@@ -24,30 +24,31 @@ import Colors from "../colors";
 import NavBar from "./NavBar";
 import { SketchPicker } from "react-color";
 import { Theme } from "../GlobalStyles";
-export default function AuthenticationForm({
-  darkMode,
-  themeColor,
-  setThemeColor,
-  setDarkMode,
-}) {
-  const color = Colors(darkMode, themeColor);
-
+function AppBarr({ roled, darkMode, setDarkMode }) {
+  const [themeColor, setThemeColor] = useState(
+    localStorage.getItem("themeColor") || "#7DB9B6"
+  );
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const navigate = useNavigate();
-  console.log("themeColor =", themeColor);
-
+  const color = Colors(darkMode, themeColor);
   const [colorAnchor, setColorAnchor] = useState(null);
 
-const role = localStorage.getItem("role")?.toLowerCase();
+  const role =
+    roled?.toLowerCase() ||
+    localStorage.getItem("role")?.toLowerCase();
 
-const title =
-  role === "hr"
-    ? "HR PORTAL"
-    : role === "employee"
-    ? "EMPLOYEE PORTAL"
-    : "";
+  let title = "";
+
+  if (role === "hr") {
+    title = "HR PORTAL";
+  } else if (role === "employee") {
+    title = "EMPLOYEE PORTAL";
+  } else {
+    title = "PORTAL";
+  }
+
   const userEmail = localStorage.getItem("email") || "";
   const firstLetter = userEmail.charAt(0).toUpperCase();
 
@@ -166,7 +167,9 @@ const title =
 
                     setThemeColor(selectedColor);
                     localStorage.setItem("themeColor", selectedColor);
-                     
+
+
+                    window.location.reload();
                   }}
                 />
               </Box>
@@ -196,11 +199,13 @@ const title =
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              PaperProps={{
-                sx: {
-                  mt: 1,
-                  width: 200,
-                  borderRadius: 2,
+              slotProps={{
+                paper: {
+                  sx: {
+                    mt: 1,
+                    width: 200,
+                    borderRadius: 2,
+                  },
                 },
               }}
             >
@@ -228,12 +233,11 @@ const title =
 
       <NavBar
         darkMode={darkMode}
-        themeColor={themeColor}
         open={open}
         setOpen={setOpen}
       />
-
     </>
   );
 }
 
+export default AppBarr;

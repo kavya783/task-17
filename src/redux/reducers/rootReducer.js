@@ -11,17 +11,26 @@ import { deleteLeaveReducer } from "./deleteLeaveReducer";
 import { putLeaveReducer } from "./updateLeaveReducer";
 
 import { loginReducer } from "./loginReducer";
+import { deviceTokenReducer } from "./deviceTokenReducer";
+
+
 export const rootReducer = combineReducers({
 
   getemployeedata: getEmployeeReducer,
   postemployeedata: postReducer,
   deleteemployeedata: deleteReducer,
   updateemployeedata: putReducer,
+
   postleavereducer: postLeaveReducer,
   getleavereducer: getLeaveReducer,
   deleteleavereducer: deleteLeaveReducer,
   updateleavedata: putLeaveReducer,
-  login: loginReducer
+
+  login: loginReducer,
+
+  deviceToken: deviceTokenReducer
 
 });
+
+
 export default rootReducer;

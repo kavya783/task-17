@@ -27,7 +27,6 @@ export default function EmployeeForm({
   submitHandle,
   show,
   handleClose,
-   themeColor,
   type,
 }) {
   const [errors, setErrors] = useState({});
@@ -38,7 +37,7 @@ export default function EmployeeForm({
   const employeeSalary = employee.salary || "";
   const employeeAddress = employee.address || "";
   const employeePassword = employee.password || "";
- const color = Colors(darkMode, themeColor);
+ const color = Colors(darkMode);
   const handleInputChange = (e) => {
     const { name } = e.target;
 
@@ -112,6 +111,7 @@ export default function EmployeeForm({
 
   return Object.keys(newErrors).length === 0;
 };
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -415,7 +415,7 @@ useEffect(() => {
     </CommonButton>
 
     {type !== "view" && (
-      <CommonButton type="submit" sx={{bgcolor:color.navbar}}>
+      <CommonButton type="submit" sx={{bgcolor:color.navbar,color:color.text}}>
         {type === "add"
           ? "Add Employee"
           : "Update Employee"}
