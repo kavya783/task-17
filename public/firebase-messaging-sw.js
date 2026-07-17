@@ -16,7 +16,7 @@ const messaging = firebase.messaging();
 // messaging.onBackgroundMessage((payload) => {
 //   self.registration.showNotification(
 //     payload.notification.title,
-//     {
+//     {DeviceToken.where(user_id: USER_ID)
 //       body: payload.notification.body,
 //       icon: "/hr.png",
 //     }

@@ -62,16 +62,20 @@ export const requestNotificationPermission = async (dispatch) => {
 
 // Listen for foreground notifications
 export const listenForMessages = () => {
-  try {
-    onMessage(messaging, (payload) => {
-      // console.log("Foreground Message:", payload);
 
-      new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: "/hr.png",
-      });
-    });
-  } catch (error) {
-    // console.error("Foreground Notification Error:", error);
-  }
+  const unsubscribe = onMessage(messaging, (payload) => {
+
+    if (payload?.notification) {
+      new Notification(
+        payload.notification.title,
+        {
+          body: payload.notification.body,
+          icon: "/hr.png",
+        }
+      );
+    }
+
+  });
+
+  return unsubscribe;
 };
