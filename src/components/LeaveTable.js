@@ -141,7 +141,7 @@ export default function LeaveTable({
                     onClick={() => handleView(item)}
                     sx={{
                       backgroundColor: color.headings,
-                      color: color.card,
+                      color: color.text,
                       minWidth: 70,
                     }}
                   >
@@ -170,8 +170,8 @@ export default function LeaveTable({
                       backgroundColor:
                         item.status === "rejected"
                           ? color.navbar
-                          : color.headings,
-                      color: color.card,
+                          : color.background,
+                      color: color.text,
                       minWidth: 90,
                     }}
                   >
@@ -338,7 +338,7 @@ export default function LeaveTable({
                               backgroundColor:
                                 item.status === "rejected"
                                   ? color.navbar
-                                  : color.headings,
+                                  : color.background,
                               color: color.text,
                             }}
                           >
