@@ -156,7 +156,7 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
                   }}
                 >
                   <CardContent>
-                    <Typography sx={{ color: color.text }}>
+                     <Typography sx={{ color: color.card  }}>
                       <b>Name:</b> {item.employeename}
                     </Typography>
 
