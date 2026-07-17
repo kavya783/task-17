@@ -72,7 +72,8 @@ const [open, setOpen] = React.useState(false);
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height:{xs:"650px",sm:"870px",md:"1300px",lg:"1450px",xl:"729px"},
+          // height:{xs:"650px",sm:"870px",md:"1300px",lg:"1450px",xl:"729px"},
+          minHeight:"100vh"
         }}
       >
 
