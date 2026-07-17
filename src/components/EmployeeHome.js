@@ -65,31 +65,36 @@ function EmployeeHome({ darkMode }) {
   }
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        px: 2,
-        mt: 5,
-      }}
-    >
-      <Card
-        sx={{
-          width: {
-            xs: "100%",
-            sm: 300,
-            md: 300,
-          },
-          borderRadius: 10,
-          boxShadow: "0px 10px 15px rgba(0,0,0,0.1)",
-          p: { xs: 2, sm: 3 },
-          transition: "0.3s",
-          "&:hover": {
-            transform: "translateY(-5px)",
-          },
-        }}
-      >
+      <Box
+  sx={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    px: 1, 
+    mt: 5,
+  }}
+>
+  <Card
+    sx={{
+      width: {
+        xs: "100%",   // Mobile
+        sm: 350,     // Tablet
+        md: 400,     // Desktop
+      },
+      maxWidth: 400,
+      borderRadius: 7,
+      boxShadow: "0px 10px 15px rgba(0,0,0,0.1)",
+      p: {
+        xs: 2,
+        sm: 3,
+      },
+      transition: "0.3s",
+      "&:hover": {
+        transform: "translateY(-5px)",
+      },
+    }}
+  >
         <CardContent>
           <Avatar
             src={employee.profile_image_url}
