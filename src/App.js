@@ -12,11 +12,11 @@ import { listenForMessages } from "./notification";
 
 
 function App() {
-   
 
-useEffect(() => {
-  listenForMessages();
-}, []);
+
+  useEffect(() => {
+    listenForMessages();
+  }, []);
   const [darkMode, setDarkMode] = useState(false);
 
   return (

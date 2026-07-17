@@ -45,9 +45,12 @@ export default function LeaveTable({
       updateLeaveDataActionInitiate(updatedLeave, item.id)
     );
 
-   
+    // toast.success(
+    //   `Leave ${status === "approved" ? "Approved" : "Rejected"} successfully`
+    // );
+
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     toast.error("Failed to update leave");
   }
 };
@@ -118,7 +121,7 @@ export default function LeaveTable({
                           ? color.navbar
                           : item.status === "rejected"
                             ? color.headings
-                            : color.text,
+                            : color.card,
                     }}
                   >
                     {item.status}
@@ -138,7 +141,7 @@ export default function LeaveTable({
                     onClick={() => handleView(item)}
                     sx={{
                       backgroundColor: color.headings,
-                      color: color.text,
+                      color: color.card,
                       minWidth: 70,
                     }}
                   >
@@ -167,8 +170,8 @@ export default function LeaveTable({
                       backgroundColor:
                         item.status === "rejected"
                           ? color.navbar
-                          : color.background,
-                      color: color.text,
+                          : color.headings,
+                      color: color.card,
                       minWidth: 90,
                     }}
                   >
@@ -335,7 +338,7 @@ export default function LeaveTable({
                               backgroundColor:
                                 item.status === "rejected"
                                   ? color.navbar
-                                  : color.background,
+                                  : color.headings,
                               color: color.text,
                             }}
                           >

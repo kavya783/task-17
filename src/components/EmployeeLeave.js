@@ -28,19 +28,14 @@ import CommonButton from "./CommonButton";
 import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
 
 
-export default function EmployeeLeave({
-  darkMode,
-  setDarkMode,
-  themeColor,
-  setThemeColor,
-}) {
+export default function EmployeeLeave({ darkMode, setDarkMode }) {
 
   const dispatch = useDispatch();
 
   const [loading, setLoading] = React.useState(true);
 
   const isMobile = useMediaQuery("(max-width:600px)");
-  const color = Colors(darkMode, themeColor);
+  const color = Colors(darkMode);
 
 
   const userEmail = localStorage.getItem("email");
@@ -93,21 +88,15 @@ export default function EmployeeLeave({
         roled="employee"
         darkMode={darkMode}
         setDarkMode={setDarkMode}
-        themeColor={themeColor}
-        setThemeColor={setThemeColor}
       />
 
-      <NavBar
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        themeColor={themeColor}
-      />
+      <NavBar darkMode={darkMode} setDarkMode={setDarkMode} />
 
       <Box
         sx={{
           bgcolor: color.background,
-          // height:{xs:"600px",sm:"810px",md:"1250px",lg:"1400px",xl:"673px"},
-          minHeight: "100vh"
+          // height: { xs: "600px", sm: "810px", md: "1250px", lg: "1400px", xl: "673px" },
+          minHeight:"100vh"
 
         }}
       >
@@ -167,7 +156,7 @@ export default function EmployeeLeave({
                   }}
                 >
                   <CardContent>
-                    <Typography sx={{ color: color.card }}>
+                    <Typography sx={{ color: color.text }}>
                       <b>Name:</b> {item.employeename}
                     </Typography>
 
@@ -258,8 +247,8 @@ export default function EmployeeLeave({
                                   ? color.navbar
                                   : item.status === "rejected"
                                     ? color.headings
-                                    : color.background,
-                              color: color.text
+                                    : color.card,
+                              
                             }}
                           >
                             {item.status || "pending"}

@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,8 +18,8 @@ function EmployeeDashboard({
   themeColor,
   setThemeColor,
 }) {
-const color = Colors(darkMode, themeColor);
-const [open, setOpen] = React.useState(false);
+  const color = Colors(darkMode, themeColor);
+  const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
 
 
@@ -51,20 +51,20 @@ const [open, setOpen] = React.useState(false);
     <>
 
       <AppBarr
-  roled="employee"
-  darkMode={darkMode}
-  setDarkMode={setDarkMode}
-  themeColor={themeColor}
-  setThemeColor={setThemeColor}
-/>
+        roled="employee"
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        themeColor={themeColor}
+        setThemeColor={setThemeColor}
+      />
 
 
-     <NavBar
-  darkMode={darkMode}
-  themeColor={themeColor}
-  open={open}
-  setOpen={setOpen}
-/>
+      <NavBar
+        darkMode={darkMode}
+        themeColor={themeColor}
+        open={open}
+        setOpen={setOpen}
+      />
 
       <Box
         sx={{
@@ -73,7 +73,7 @@ const [open, setOpen] = React.useState(false);
           justifyContent: "center",
           alignItems: "center",
           // height:{xs:"650px",sm:"870px",md:"1300px",lg:"1450px",xl:"729px"},
-          minHeight:"100vh"
+          minHeight: "100vh"
         }}
       >
 
@@ -106,7 +106,7 @@ const [open, setOpen] = React.useState(false);
             }}
           >
 
-            <EmployeeHome />
+           <EmployeeHome darkMode={darkMode} />
 
           </Box>
 

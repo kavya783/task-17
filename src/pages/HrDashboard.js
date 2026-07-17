@@ -37,15 +37,15 @@ function HrDashboard({
 
   const dispatch = useDispatch();
 
- const employeeState = useSelector(
-  (state) => state
-);
+  const employeeState = useSelector(
+    (state) => state
+  );
 
-// console.log("FULL REDUX STATE", employeeState);
+  // console.log("FULL REDUX STATE", employeeState);
 
-const { data = [], loading = false } =
-  employeeState.getemployeedata || {};
-    const initialEmployee = {
+  const { data = [], loading = false } =
+    employeeState.getemployeedata || {};
+  const initialEmployee = {
     id: "",
     profileImage: "",
     profileImageFile: null,
@@ -74,7 +74,7 @@ const { data = [], loading = false } =
     profileImage: item.profile_image_url || item.profileImage || "",
   });
 
-const employees = (data || []).map(normalizeEmployee);
+  const employees = (data || []).map(normalizeEmployee);
 
   const handleClose = () => {
     setShow(false);
@@ -159,11 +159,11 @@ const employees = (data || []).map(normalizeEmployee);
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
- 
-// console.log("Employee Redux State:", {data, loading});
+
+  // console.log("Employee Redux State:", {data, loading});
   if (loading) return <Loader />;
   // console.log("HrDashboard rendered");
-  
+
   return (
     <>
       <AppBarr
@@ -178,7 +178,7 @@ const employees = (data || []).map(normalizeEmployee);
         sx={{
           p: 2,
           background: color.background,
-          height:{xs:"100%",sm:"830px",md:"1300px",lg:"1400px",xl:"697px"},
+          height: { xs: "100%", sm: "830px", md: "1300px", lg: "1400px", xl: "697px" },
         }}
       >
         {type === "view" && (
