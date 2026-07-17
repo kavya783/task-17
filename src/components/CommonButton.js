@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 export default function CommonButton({
   children,
   variant = "contained",
-  color = "primary",
   onClick,
   type = "button",
   startIcon,
@@ -13,7 +12,6 @@ export default function CommonButton({
   return (
     <Button
       variant={variant}
-      color={color}
       onClick={onClick}
       type={type}
       startIcon={startIcon}

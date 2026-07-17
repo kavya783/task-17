@@ -21,16 +21,13 @@ import { Theme } from "../GlobalStyles";
 import CommonButton from "./CommonButton";
 
 function EmployeeHome({ darkMode }) {
-  const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
   const dispatch = useDispatch();
   const navigate = useNavigate();
- const color = Colors(darkMode, themeColor);
- 
+  const color = Colors(darkMode);
+  console.log(color.navbar);
   const { data, loading, error } = useSelector(
     (state) => state.getemployeedata
   );
-  
 
   const email = localStorage.getItem("email");
 
@@ -65,36 +62,35 @@ function EmployeeHome({ darkMode }) {
   }
 
   return (
-      <Box
-  sx={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    px: 1, 
-    mt: 5,
-  }}
->
-  <Card
-    sx={{
-      width: {
-        xs: "100%",   // Mobile
-        sm: 350,     // Tablet
-        md: 400,     // Desktop
-      },
-      maxWidth: 400,
-      borderRadius: 7,
-      boxShadow: "0px 10px 15px rgba(0,0,0,0.1)",
-      p: {
-        xs: 2,
-        sm: 3,
-      },
-      transition: "0.3s",
-      "&:hover": {
-        transform: "translateY(-5px)",
-      },
-    }}
-  >
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        p: 0,
+        mt: 5,
+
+      }}
+    >
+      <Card
+        sx={{
+          width: "100%",
+          minWidth: {
+            xs: 300,
+            sm: 350,
+            md: 350,
+          },
+
+
+          borderRadius: 7,
+          boxShadow: "0px 10px 15px rgba(0,0,0,0.1)",
+          justifyContent: "center",
+          transition: "0.3s",
+          "&:hover": {
+            transform: "translateY(-5px)",
+          },
+
+        }}
+      >
         <CardContent>
           <Avatar
             src={employee.profile_image_url}
@@ -104,6 +100,7 @@ function EmployeeHome({ darkMode }) {
               height: { xs: 60, sm: 90 },
               margin: "0 auto",
               mb: 1,
+
             }}
           />
 
@@ -113,7 +110,9 @@ function EmployeeHome({ darkMode }) {
               textAlign: "center",
               ...Theme.font24Bold,
               mb: 1,
-              color: color.card
+              color: color.card,
+              borderColor: '#000000',
+              borderWidth: '2px'
             }}
           >
             {employee.name}
@@ -130,7 +129,7 @@ function EmployeeHome({ darkMode }) {
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <WorkIcon sx={{ color: color.card }} />
+              <WorkIcon sx={{ color: color.cardr }} />
               <Typography sx={{ color: color.card, fontSize: Theme.font16SemiBold }}>
                 {employee.role}
               </Typography>
@@ -153,12 +152,11 @@ function EmployeeHome({ darkMode }) {
               borderRadius: "30px",
               ...Theme.font16Bold,
               bgcolor: color.navbar,
-
-
+              color:color.text,
+ 
               "&:hover": {
                 bgcolor: color.border,
               },
-              color: color.card,
             }}
           >
             Apply Leave

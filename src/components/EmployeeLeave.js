@@ -40,7 +40,7 @@ export default function EmployeeLeave({
   const [loading, setLoading] = React.useState(true);
 
   const isMobile = useMediaQuery("(max-width:600px)");
- const color = Colors(darkMode, themeColor);
+  const color = Colors(darkMode, themeColor);
 
 
   const userEmail = localStorage.getItem("email");
@@ -84,29 +84,30 @@ export default function EmployeeLeave({
 
 
 
-  if(loading)
+  if (loading)
     return <Loader />;
 
   return (
     <>
       <AppBarr
-  roled="employee"
-  darkMode={darkMode}
-  setDarkMode={setDarkMode}
-  themeColor={themeColor}
-  setThemeColor={setThemeColor}
-/>
+        roled="employee"
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        themeColor={themeColor}
+        setThemeColor={setThemeColor}
+      />
 
-     <NavBar
-  darkMode={darkMode}
-  setDarkMode={setDarkMode}
-  themeColor={themeColor}
-/>
+      <NavBar
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        themeColor={themeColor}
+      />
 
       <Box
         sx={{
           bgcolor: color.background,
-                    height:{xs:"600px",sm:"810px",md:"1250px",lg:"1400px",xl:"673px"},
+          // height:{xs:"600px",sm:"810px",md:"1250px",lg:"1400px",xl:"673px"},
+          minHeight: "100vh"
 
         }}
       >
@@ -134,38 +135,38 @@ export default function EmployeeLeave({
           {isMobile ? (
             filteredData.length === 0 ? (
               <Card
-  sx={{
-    mt: 2,
-    p: 2,
-    textAlign: "center",
-    boxShadow: 2,
-    borderRadius: 2,
-    bgcolor: darkMode ? "#1E1E1E" : "#fff",
-    border: darkMode ? `1px solid ${color.border}` : "1px solid #e0e0e0",
-  }}
->
-  <CardContent>
-    <Typography
-      sx={{
-        color: color.text,
-        ...Theme.font16Bold,
-      }}
-    >
-      No Leaves Found
-    </Typography>
-  </CardContent>
-</Card>
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  textAlign: "center",
+                  boxShadow: 2,
+                  borderRadius: 2,
+                  bgcolor: darkMode ? "#1E1E1E" : "#fff",
+                  border: darkMode ? `1px solid ${color.border}` : "1px solid #e0e0e0",
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    sx={{
+                      color: color.text,
+                      ...Theme.font16Bold,
+                    }}
+                  >
+                    No Leaves Found
+                  </Typography>
+                </CardContent>
+              </Card>
             ) : (
               filteredData.map((item) => (
-                    <Card
-                            key={item.id}
-                            sx={{
-                                mb: 2,
-                                boxShadow: `0px 4px 10px ${color.text}`,
-                                color: color.text
-                            }}
-                        >                  
-                        <CardContent>
+                <Card
+                  key={item.id}
+                  sx={{
+                    mb: 2,
+                    boxShadow: `0px 4px 10px ${color.text}`,
+                    color: color.text
+                  }}
+                >
+                  <CardContent>
                     <Typography sx={{ color: color.card }}>
                       <b>Name:</b> {item.employeename}
                     </Typography>
@@ -196,24 +197,24 @@ export default function EmployeeLeave({
                 borderRadius: 4,
                 width: "70%",
                 mx: "auto",
-              
+
               }}
             >
               <Table>
                 <TableHead sx={{ bgcolor: color.headings, height: 50 }}>
                   <TableRow>
-                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>S.No</TableCell>
-                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>Name</TableCell>
-                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>
+                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>S.No</TableCell>
+                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>Name</TableCell>
+                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                       Leave Type
                     </TableCell>
-                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>
+                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                       From Date
                     </TableCell>
-                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>
+                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                       To Date
                     </TableCell>
-                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>Status</TableCell>
+                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>Status</TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -221,30 +222,30 @@ export default function EmployeeLeave({
                   {filteredData.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} align="center">
-                         <Typography align="center" sx={{color:color.card}}>
-                        No Leaves Found
+                        <Typography align="center" sx={{ color: color.card }}>
+                          No Leaves Found
                         </Typography>
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredData.map((item, index) => (
                       <TableRow key={item.id} hover>
-                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
                           {index + 1}
                         </TableCell>
-                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
                           {item.employeename}
                         </TableCell>
-                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
                           {item.leaveType}
                         </TableCell>
-                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
                           {item.from_date}
                         </TableCell>
-                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
                           {item.to_date}
                         </TableCell>
-                        <TableCell sx={{ color: color.card,fontSize:Theme.font14Regular }}>
+                        <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
                           <CommonButton
                             variant="contained"
                             size="small"
@@ -256,8 +257,8 @@ export default function EmployeeLeave({
                                 item.status === "approved"
                                   ? color.navbar
                                   : item.status === "rejected"
-                                  ? color.headings
-                                  : color.background,
+                                    ? color.headings
+                                    : color.background,
                               color: color.text
                             }}
                           >

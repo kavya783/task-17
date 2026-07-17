@@ -24,12 +24,11 @@ export default function EmployeeTable({
     darkMode
 
 }) {
-   const themeColor =
-  localStorage.getItem("themeColor") || "#7DB9B6";
+
     const isMobile = useMediaQuery("(max-width:500px)");
     const filteredData = data.filter(item => item.role !== "hr");
 
-   const color = Colors(darkMode, themeColor);
+    const color = Colors(darkMode);
     const getProfileImage = (item) => item.profile_image_url || item.profileImage || "https://via.placeholder.com/60";
 
     return (
@@ -89,14 +88,14 @@ export default function EmployeeTable({
                                     Name: {item.employeename}
                                 </Typography>
 
-                                <Typography sx={{  color: color.card, fontSize: Theme.font16Bold }}>Role: {item.role}</Typography>
-                                <Typography sx={{  color: color.card, fontSize: Theme.font16Bold }}>Salary: {item.salary}</Typography>
+                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Role: {item.role}</Typography>
+                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Salary: {item.salary}</Typography>
                                 <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Address: {item.address}</Typography>
-                                <Typography sx={{  color: color.card, fontSize: Theme.font16Bold }}>Email: {item.email}</Typography>
+                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Email: {item.email}</Typography>
 
-                                <Box sx={{ display: "flex", gap: 10, mt: 2 }}>
+                                <Box sx={{ display: "flex", gap: "clamp(90px, 3vw, 24px)", mt: 2,ml:1 }}>
                                     <span onClick={() => handleView(item)}>
-                                        <VisibilityIcon sx={{ fontSize:Theme.font16Bold, color: color.card, ml: 2 }} />
+                                        <VisibilityIcon sx={{ fontSize: Theme.font16Bold, color: color.card, ml: 1 }} />
                                     </span>
                                     <span onClick={() => handleEdit(item)}>
                                         <EditIcon sx={{ fontSize: 24, color: color.card }} />
@@ -113,17 +112,17 @@ export default function EmployeeTable({
             ) : (
 
                 <Box sx={{ mt: 2, width: { lg: "66%" }, ml: { md: "25%", lg: "20%" } }}>
-<TableContainer
-  sx={{
-    width: "100%",
-    boxShadow: 2,
-    borderRadius: 2,
+                    <TableContainer
+                        sx={{
+                            width: "100%",
+                            boxShadow: 2,
+                            borderRadius: 2,
 
-    borderLeft: darkMode ? `1px solid ${color.border}` : "none",
-    borderRight: darkMode ? `1px solid ${color.border}` : "none",
-  
-  }}
->
+                            borderLeft: darkMode ? `1px solid ${color.border}` : "none",
+                            borderRight: darkMode ? `1px solid ${color.border}` : "none",
+
+                        }}
+                    >
                         <Table size="small">
 
                             <TableHead sx={{ bgcolor: color.headings, height: 50 }}>
@@ -171,10 +170,10 @@ export default function EmployeeTable({
                                             </Box>
                                         </TableCell>
 
-                                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular}}>{item.role}</TableCell>
-                                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>{item.salary}</TableCell>
-                                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>{item.address}</TableCell>
-                                        <TableCell sx={{ color: color.text,fontSize:Theme.font14Regular }}>{item.email}</TableCell>
+                                        <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>{item.role}</TableCell>
+                                        <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>{item.salary}</TableCell>
+                                        <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>{item.address}</TableCell>
+                                        <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>{item.email}</TableCell>
 
                                         <TableCell>
                                             <Box sx={{ display: "flex", gap: 1 }}>
@@ -189,6 +188,7 @@ export default function EmployeeTable({
                                                 </span>
                                             </Box>
                                         </TableCell>
+
 
                                     </TableRow>
                                 ))}
