@@ -14,9 +14,13 @@ import { listenForMessages } from "./notification";
 function App() {
 
 
-  useEffect(() => {
-    listenForMessages();
-  }, []);
+ useEffect(() => {
+  const unsubscribe = listenForMessages();
+
+  return () => {
+    if (unsubscribe) unsubscribe();
+  };
+}, []);
   const [darkMode, setDarkMode] = useState(false);
 
   return (
