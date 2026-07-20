@@ -1,71 +1,25 @@
-import {
-  getToken,
-  onMessage,
-  isSupported,
-} from "firebase/messaging";
+// Listen for foreground notifications
+export const listenForMessages = () => {
 
-import { messaging } from "./firebase";
-import { saveDeviceTokenActionInitiate } from "./redux/actions/deviceTokenAction";
+  const unsubscribe = onMessage(messaging, (payload) => {
+
+    console.log("Foreground notification:", payload);
 
 
-export const requestNotificationPermission = async (dispatch) => {
-  try {
+    if (Notification.permission === "granted" && payload?.notification) {
 
-    const supported = await isSupported();
+      new Notification(
+        payload.notification.title,
+        {
+          body: payload.notification.body,
+          icon: "/hr.png",
+        }
+      );
 
-    if (!supported) {
-      console.log("Firebase messaging not supported");
-      return null;
     }
 
-
-    const permission = await Notification.requestPermission();
-
-    console.log("Permission:", permission);
+  });
 
 
-    if (permission !== "granted") {
-      return null;
-    }
-
-
-    const token = await getToken(messaging, {
-      vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY,
-    });
-
-
-    console.log("FCM TOKEN:", token);
-
-
-    const userId = localStorage.getItem("user_id");
-
-    console.log("USER ID:", userId);
-
-
-    if (!userId) {
-      console.log("USER ID NOT FOUND");
-      return null;
-    }
-
-
-    const response = await dispatch(
-      saveDeviceTokenActionInitiate({
-        user_id: userId,
-        token: token,
-      })
-    );
-
-
-    console.log("DEVICE TOKEN SAVED:", response);
-
-
-    return token;
-
-
-  } catch(error) {
-
-    console.log("FCM ERROR:", error);
-
-    return null;
-  }
+  return unsubscribe;
 };
