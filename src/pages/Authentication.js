@@ -90,16 +90,22 @@ const loginData = {
   ...employee,
   token: token
 };
+const res = await dispatch(loginActionInitiate(employee));
 
-const res = await dispatch(loginActionInitiate(loginData));
 
 const email = res.user.email;
 const role = res.user.role;
 const userId = res.user_id;
 
+
 localStorage.setItem("email", email);
 localStorage.setItem("role", role);
 localStorage.setItem("user_id", userId);
+
+
+
+await requestNotificationPermission(dispatch);
+
 if (role === "hr") {
   navigate("/hr", { replace: true });
 } else {

@@ -43,11 +43,12 @@ export const requestNotificationPermission = async (dispatch) => {
 
 
     if (!userId) {
+      console.log("USER ID NOT FOUND");
       return null;
     }
 
 
-    await dispatch(
+    const response = await dispatch(
       saveDeviceTokenActionInitiate({
         user_id: userId,
         token: token,
@@ -55,41 +56,16 @@ export const requestNotificationPermission = async (dispatch) => {
     );
 
 
+    console.log("DEVICE TOKEN SAVED:", response);
+
+
     return token;
 
 
-  } catch(error){
+  } catch(error) {
 
-    console.log("Notification error:", error);
+    console.log("FCM ERROR:", error);
+
     return null;
-
   }
-};
-
-
-
-export const listenForMessages = () => {
-
-  const unsubscribe = onMessage(messaging,(payload)=>{
-
-    console.log("Foreground notification:",payload);
-
-
-    if(Notification.permission==="granted" && payload.notification){
-
-      new Notification(
-        payload.notification.title,
-        {
-          body:payload.notification.body,
-          icon:"/hr.png"
-        }
-      );
-
-    }
-
-  });
-
-
-  return unsubscribe;
-
 };
