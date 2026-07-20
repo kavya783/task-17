@@ -73,10 +73,10 @@ export const listenForMessages = () => {
     messaging,
     (payload)=>{
 
-      console.log(
-        "Foreground notification:",
-        payload
-      );
+      // console.log(
+      //   "Foreground notification:",
+      //   payload
+      // );
 
 
       if(
