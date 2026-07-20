@@ -33,9 +33,18 @@ export const requestNotificationPermission = async (dispatch) => {
 
     console.log("USER ID:", userId);
 
-    if (!userId) {
-      return;
-    }
+   if (!userId) {
+  return;
+}
+
+await dispatch(
+  saveDeviceTokenActionInitiate({
+    user_id: userId,
+    token,
+  })
+);
+
+return token;
 
     await dispatch(
       saveDeviceTokenActionInitiate({
