@@ -78,45 +78,37 @@ export default function AuthenticationForm({ darkMode }) {
     return valid;
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!validate()) return;
 
   try {
-const token = await requestNotificationPermission(dispatch);
 
-const loginData = {
-  ...employee,
-  token: token
-};
-const res = await dispatch(loginActionInitiate(employee));
+    const res = await dispatch(loginActionInitiate(employee));
 
+    const email = res.user.email;
+    const role = res.user.role;
+    const userId = res.user_id;
 
-const email = res.user.email;
-const role = res.user.role;
-const userId = res.user_id;
+    localStorage.setItem("email", email);
+    localStorage.setItem("role", role);
+    localStorage.setItem("user_id", userId);
 
 
-localStorage.setItem("email", email);
-localStorage.setItem("role", role);
-localStorage.setItem("user_id", userId);
+    await requestNotificationPermission(dispatch);
 
 
-
-await requestNotificationPermission(dispatch);
-
-if (role === "hr") {
-  navigate("/hr", { replace: true });
-} else {
-  navigate("/employee", { replace: true });
-}
+    if (role === "hr") {
+      navigate("/hr", { replace: true });
+    } else {
+      navigate("/employee", { replace: true });
+    }
 
   } catch (error) {
     toast.error(error.response?.data?.error || "Login Failed");
   }
 };
-
   return (
     <>
       {/* <AppBarr /> */}
