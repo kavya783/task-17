@@ -33,7 +33,7 @@ export const requestNotificationPermission = async (dispatch) => {
     });
 
 
-    console.log("FCM TOKEN:", token);
+
 
 
     const userId = localStorage.getItem("user_id");
