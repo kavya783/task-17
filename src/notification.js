@@ -3,8 +3,10 @@ import {
   onMessage,
   isSupported,
 } from "firebase/messaging";
+
 import { messaging } from "./firebase";
 import { saveDeviceTokenActionInitiate } from "./redux/actions/deviceTokenAction";
+
 
 export const requestNotificationPermission = async (dispatch) => {
   try {
@@ -12,66 +14,82 @@ export const requestNotificationPermission = async (dispatch) => {
     const supported = await isSupported();
 
     if (!supported) {
-      return;
+      console.log("Firebase messaging not supported");
+      return null;
     }
+
 
     const permission = await Notification.requestPermission();
 
     console.log("Permission:", permission);
 
+
     if (permission !== "granted") {
-      return;
+      return null;
     }
+
 
     const token = await getToken(messaging, {
       vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY,
     });
 
+
     console.log("FCM TOKEN:", token);
+
 
     const userId = localStorage.getItem("user_id");
 
     console.log("USER ID:", userId);
 
-   if (!userId) {
-  return;
-}
 
-await dispatch(
-  saveDeviceTokenActionInitiate({
-    user_id: userId,
-    token,
-  })
-);
+    if (!userId) {
+      return null;
+    }
 
-return token;
 
     await dispatch(
       saveDeviceTokenActionInitiate({
         user_id: userId,
-        token,
+        token: token,
       })
     );
 
-  } catch (error) {
-    console.log(error);
+
+    return token;
+
+
+  } catch(error){
+
+    console.log("Notification error:", error);
+    return null;
+
   }
 };
 
-// Listen for foreground notifications
+
+
 export const listenForMessages = () => {
-  const unsubscribe = onMessage(messaging, (payload) => {
 
-    console.log("Foreground notification:", payload);
+  const unsubscribe = onMessage(messaging,(payload)=>{
 
-    if (Notification.permission === "granted" && payload?.notification) {
-      new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: "/hr.png",
-      });
+    console.log("Foreground notification:",payload);
+
+
+    if(Notification.permission==="granted" && payload.notification){
+
+      new Notification(
+        payload.notification.title,
+        {
+          body:payload.notification.body,
+          icon:"/hr.png"
+        }
+      );
+
     }
 
   });
 
+
   return unsubscribe;
+
 };
