@@ -197,6 +197,8 @@ export default function LeaveTable({
               borderRadius: 3,
               boxShadow: 2,
               backgroundColor: color.background,
+               borderRight: "1px solid white",
+               borderLeft: "1px solid white"
             }}
           >
             <Table size="small">

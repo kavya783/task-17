@@ -118,8 +118,8 @@ export default function EmployeeTable({
                             boxShadow: 2,
                             borderRadius: 2,
 
-                            borderLeft: darkMode ? `1px solid ${color.border}` : "none",
-                            borderRight: darkMode ? `1px solid ${color.border}` : "none",
+                             borderRight: "1px solid white",
+                             borderLeft: "1px solid white"
 
                         }}
                     >

@@ -78,25 +78,54 @@ export default function AuthenticationForm({ darkMode }) {
     return valid;
   };
 
-const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!validate()) return;
 
   try {
-
     const res = await dispatch(loginActionInitiate(employee));
 
+    console.log("LOGIN RESPONSE:", res);
+
+    localStorage.setItem("token", res.token);
+
+    // Company Login
+   if (res.type === "company") {
+
+  localStorage.setItem("type", "company");
+  localStorage.setItem("role", "company");
+  localStorage.setItem("email", res.company.email);
+  localStorage.setItem("company_id", res.company.id);
+
+  navigate("/company-dashboard", {
+    replace: true,
+  });
+
+  return;
+}
+
+
+    // User Login (HR / Employee)
+
     const email = res.user.email;
-    const role = res.user.role;
-    const userId = res.user_id;
+    const role = res.role;
+    const userId = res.user.id;
 
-    localStorage.setItem("email", email);
-    localStorage.setItem("role", role);
-    localStorage.setItem("user_id", userId);
+   localStorage.setItem("type", "user");
+localStorage.setItem("email", email);
+localStorage.setItem("role", role);
+localStorage.setItem("user_id", String(userId));
 
 
-    await requestNotificationPermission(dispatch);
+// verify
+console.log(
+  "USER ID FROM STORAGE:",
+  localStorage.getItem("user_id")
+);
+
+
+await requestNotificationPermission(dispatch, userId);
 
 
     if (role === "hr") {
@@ -105,24 +134,32 @@ const handleSubmit = async (e) => {
       navigate("/employee", { replace: true });
     }
 
+
   } catch (error) {
-    toast.error(error.response?.data?.error || "Login Failed");
+
+    console.log(error);
+
+    toast.error(
+      error.response?.data?.error || "Login Failed"
+    );
+
   }
 };
+
   return (
     <>
       {/* <AppBarr /> */}
 
       <Box
- sx={{
-   minHeight:"100vh",
-   display:"flex",
-   justifyContent:"center",
-   alignItems:"center",
-   background:color.headings,
-   p:2
- }}
->
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: color.headings,
+          p: 2
+        }}
+      >
         <Card
           sx={{
             width: {
@@ -205,17 +242,17 @@ const handleSubmit = async (e) => {
                     borderRadius: 3,
                   },
                 }}
-               slotProps={{
-  input: {
-    endAdornment: (
-      <InputAdornment position="end">
-        <IconButton onClick={() => setShowPassword(!showPassword)}>
-          {showPassword ? <VisibilityOff /> : <Visibility />}
-        </IconButton>
-      </InputAdornment>
-    ),
-  },
-}}
+                // slotProps={{
+                //   input: {
+                //     endAdornment: (
+                //       <InputAdornment position="end">
+                //         <IconButton onClick={() => setShowPassword(!showPassword)}>
+                //           {showPassword ? <VisibilityOff /> : <Visibility />}
+                //         </IconButton>
+                //       </InputAdornment>
+                //     ),
+                //   },
+                // }}
               />
 
               <Button

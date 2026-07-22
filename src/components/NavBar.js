@@ -15,7 +15,7 @@ import {
   EventNote,
   Home,
   AssignmentTurnedIn,
-
+  Badge
 } from "@mui/icons-material";
 
 import { Link, useLocation } from "react-router-dom";
@@ -23,8 +23,8 @@ import { Link, useLocation } from "react-router-dom";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 
-function NavBar({ darkMode, open, setOpen }) {
-  const [roled, setRoled] = useState("");
+function NavBar({ darkMode, open, setOpen}) {
+    const [roled, setRoled] = useState("");
 
   const location = useLocation();
 
@@ -155,6 +155,28 @@ function NavBar({ darkMode, open, setOpen }) {
             </ListItemButton>
           </>
         )}
+     {roled === "company" && (
+  <>
+    <ListItemButton
+      component={Link}
+      to="/company"
+      sx={menuStyle("/company-dashboard")}
+    >
+      <ListItemIcon>
+        <People
+          sx={{
+            color: location.pathname === "/company-dashbaord"
+              ? color.text
+              : color.text,
+            fontSize: Theme.font24Bold,
+          }}
+        />
+      </ListItemIcon>
+
+      <ListItemText primary="HRs" />
+    </ListItemButton>
+  </>
+)}
       </List>
     </Box>
   );

@@ -24,7 +24,12 @@ import Colors from "../colors";
 import NavBar from "./NavBar";
 import { SketchPicker } from "react-color";
 import { Theme } from "../GlobalStyles";
-function AppBarr({ roled, darkMode, setDarkMode }) {
+function AppBarr({
+  roled,
+  darkMode,
+  setDarkMode,
+  setShowHRs
+}) {
   const [themeColor, setThemeColor] = useState(
     localStorage.getItem("themeColor") || "#7DB9B6"
   );
@@ -35,13 +40,13 @@ function AppBarr({ roled, darkMode, setDarkMode }) {
   const color = Colors(darkMode, themeColor);
   const [colorAnchor, setColorAnchor] = useState(null);
 
-  const role =
-    roled?.toLowerCase() ||
-    localStorage.getItem("role")?.toLowerCase();
+  const role = localStorage.getItem("role")?.toLowerCase();
 
   let title = "";
 
-  if (role === "hr") {
+  if (role === "company") {
+    title = "COMPANY DASHBOARD";
+  } else if (role === "hr") {
     title = "HR PORTAL";
   } else if (role === "employee") {
     title = "EMPLOYEE PORTAL";
@@ -235,6 +240,7 @@ function AppBarr({ roled, darkMode, setDarkMode }) {
         darkMode={darkMode}
         open={open}
         setOpen={setOpen}
+        setShowHRs={setShowHRs}
       />
     </>
   );
