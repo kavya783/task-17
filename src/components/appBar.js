@@ -208,15 +208,35 @@ function AppBarr({
                 paper: {
                   sx: {
                     mt: 1,
-                    width: 200,
+                    width: 300,
                     borderRadius: 2,
                   },
                 },
               }}
             >
-              <MenuItem disabled>
-                <AccountCircleIcon sx={{ mr: 1 }} />
-                {userEmail}
+              <MenuItem
+                disabled
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 1,
+                  whiteSpace: "normal",
+                }}
+              >
+                <AccountCircleIcon sx={{ mt: 0.5 }} />
+
+                <Typography
+                  sx={{
+                    fontSize: 15,
+                    wordBreak: "break-word",
+                    overflowWrap: "anywhere",
+                    maxWidth: 250,
+                    mt: 0.5
+                  }}
+                >
+                  {userEmail}
+                </Typography>
+
               </MenuItem>
 
               <Divider />
