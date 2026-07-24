@@ -242,17 +242,17 @@ await requestNotificationPermission(dispatch, userId);
                     borderRadius: 3,
                   },
                 }}
-                // slotProps={{
-                //   input: {
-                //     endAdornment: (
-                //       <InputAdornment position="end">
-                //         <IconButton onClick={() => setShowPassword(!showPassword)}>
-                //           {showPassword ? <VisibilityOff /> : <Visibility />}
-                //         </IconButton>
-                //       </InputAdornment>
-                //     ),
-                //   },
-                // }}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)}>
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
 
               <Button

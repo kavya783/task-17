@@ -9,18 +9,19 @@ import EmployeeLeave from "./components/EmployeeLeave";
 import { ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
 import { listenForMessages } from "./notification";
+import CompanyDashboard from "./pages/CompanyDashboard";
 
 
 function App() {
 
 
- useEffect(() => {
-  const unsubscribe = listenForMessages();
+  useEffect(() => {
+    const unsubscribe = listenForMessages();
 
-  return () => {
-    if (unsubscribe) unsubscribe();
-  };
-}, []);
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
   const [darkMode, setDarkMode] = useState(false);
 
   return (
@@ -28,6 +29,16 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Authentication />} />
+          <Route
+            path="/company-dashboard"
+            element={
+              <CompanyDashboard
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+               
+              />
+            }
+          />
 
           <Route
             path="/hr"
