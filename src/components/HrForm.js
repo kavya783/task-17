@@ -75,28 +75,15 @@ export default function HrForm({
         e.preventDefault();
         if (!validate()) return;
         const formData = new FormData();
-        formData.append(
-            "name",
-            hrName
-        );
-        formData.append(
-            "email",
-            hrEmail
-        );
-        formData.append(
-            "address",
-            hrAddress
-        );
-        formData.append(
-            "role",
-            "hr"
-        );
-        if (hr.profileImageFile) {
-            formData.append(
-                "profile_image",
-                hr.profileImageFile
-            );
-        }
+       formData.append("name", hrName);
+formData.append("email", hrEmail);
+formData.append("address", hrAddress);
+formData.append("password", hrPassword);   
+formData.append("role", "hr");
+
+if (hr.profileImageFile) {
+    formData.append("profile_image", hr.profileImageFile);
+}
         submitHandle({
             formData,
             id: hr.id
