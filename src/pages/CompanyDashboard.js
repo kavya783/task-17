@@ -88,9 +88,9 @@ function CompanyDashboard({
                 dispatch(
           getHRDataActionInitiate()
         );
-                toast.success(
-          "HR deleted successfully"
-        );
+        //         toast.success(
+        //   "HR deleted successfully"
+        // );
       }
       catch (error) {
         toast.error(
@@ -106,36 +106,43 @@ function CompanyDashboard({
       [e.target.name]: e.target.value
     });
   };
-  const submitHandle = async ({ formData, id }) => {
-    console.log([...formData.entries()]);
-    try {
-      if (type === "add") {
-        await dispatch(
-          addHRDataActionInitiate(formData)
-        );
-        toast.success("HR added successfully");
-      } else {
-        await dispatch(
-          updateHRDataActionInitiate(
-            id,
-            formData
-          )
-        );
-      }
-      dispatch(
-        getHRDataActionInitiate()
+ const submitHandle = async ({ formData, id }) => {
+
+  try {
+
+    if (type === "add") {
+
+      await dispatch(
+        addHRDataActionInitiate(formData)
       );
 
-      setShowForm(false);
-      setHr(initialHR);
-    } catch (error) {
-      toast.error(
-        "Something went wrong"
+
+
+    } else {
+
+      await dispatch(
+        updateHRDataActionInitiate(id, formData)
       );
 
+    
     }
 
-  };
+
+    setShowForm(false);  
+    setHr(initialHR);
+
+    dispatch(
+      getHRDataActionInitiate()
+    );
+
+
+  } catch (error) {
+
+    toast.error("Something went wrong");
+
+  }
+
+};
   return (
     <>
        <AppBarr
