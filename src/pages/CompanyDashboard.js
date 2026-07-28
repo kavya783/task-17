@@ -28,6 +28,8 @@ function CompanyDashboard({
 }) {
   const color = Colors(darkMode);
   const [viewHR, setViewHR] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+const [selectedHRId, setSelectedHRId] = useState(null);
   const dispatch = useDispatch();
 
 
@@ -75,31 +77,30 @@ function CompanyDashboard({
 
   };
   // DELETE HR
-  const handleDelete = async (id) => {
-    const confirmDelete =
-      window.confirm(
-        "Are you sure you want to delete HR?"
-      );
-    if (confirmDelete) {
-      try {
-        await dispatch(
-          deleteHRDataActionInitiate(id)
-        );
-                dispatch(
-          getHRDataActionInitiate()
-        );
-        //         toast.success(
-        //   "HR deleted successfully"
-        // );
-      }
-      catch (error) {
-        toast.error(
-          "Delete failed"
-        );
-      }
+ const handleDelete = (id) => {
+  setSelectedHRId(id);
+  setOpenDeleteModal(true);
+};
+const confirmDeleteHR = async () => {
+  try {
 
-    }
-    };
+    await dispatch(
+      deleteHRDataActionInitiate(selectedHRId)
+    );
+
+    dispatch(
+      getHRDataActionInitiate()
+    );
+
+    setSelectedHRId(null);
+    setOpenDeleteModal(false);
+
+  } catch (error) {
+
+    toast.error("Delete failed");
+
+  }
+};
   const handleChange = (e) => {
     setHr({
       ...hr,
@@ -306,6 +307,44 @@ function CompanyDashboard({
 
         )}
 
+<Dialog
+  open={openDeleteModal}
+  onClose={() => setOpenDeleteModal(false)}
+>
+  <DialogTitle>
+    Delete HR
+  </DialogTitle>
+
+  <DialogContent>
+    Are you sure you want to delete this HR?
+  </DialogContent>
+
+  <DialogActions>
+
+    <CommonButton
+      onClick={() => setOpenDeleteModal(false)}
+      sx={{
+        bgcolor: color.navbar,
+        color: color.text
+      }}
+    >
+      Cancel
+    </CommonButton>
+
+
+    <CommonButton
+      onClick={confirmDeleteHR}
+      sx={{
+        bgcolor: "red",
+        color: "white"
+      }}
+    >
+      Delete
+    </CommonButton>
+
+  </DialogActions>
+
+</Dialog>
 
 
         {type !== "view" && (
