@@ -125,24 +125,21 @@ const handleSubmit = async (e) => {
   formData.append("salary", employeeSalary);
   formData.append("address", employeeAddress);
 
- if (employeePassword) {
-  formData.append("password", employeePassword);
-}
+  if (employeePassword) {
+    formData.append("password", employeePassword);
+  }
 
   if (employee.profileImageFile) {
     formData.append("profile_image", employee.profileImageFile);
   }
 
-  for (let pair of formData.entries()) {
-    // console.log(pair[0], pair[1]);
-  }
-
-  submitHandle({
+  await submitHandle({
     formData,
     id: employee.id,
   });
 
-};  
+  handleClose();  
+}; 
 
 const handleImageChange = (e) => {
   const file = e.target.files[0];
