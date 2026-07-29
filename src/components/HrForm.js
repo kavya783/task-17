@@ -84,7 +84,7 @@ formData.append("role", "hr");
 if (hr.profileImageFile) {
     formData.append("profile_image", hr.profileImageFile);
 }
-       await submitHandle({
+      submitHandle({
             formData,
             id: hr.id,
     });

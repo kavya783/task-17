@@ -8,6 +8,7 @@ import {
   DialogActions,
   TablePagination,
   Avatar,
+  Button,
 } from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -362,7 +363,7 @@ const handleDeleteCancel = () => {
 
   <DialogActions>
 
-    <Button 
+    <Button
     sx={{color:color.text,bgcolor:color.headings}}
       onClick={handleDeleteCancel}
     >
