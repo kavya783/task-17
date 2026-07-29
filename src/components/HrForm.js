@@ -84,11 +84,11 @@ formData.append("role", "hr");
 if (hr.profileImageFile) {
     formData.append("profile_image", hr.profileImageFile);
 }
-        submitHandle({
+       await submitHandle({
             formData,
-            id: hr.id
-
-        });
+            id: hr.id,
+    });
+          handleClose();  
     };
 
     const handleImageChange = (e) => {
@@ -124,9 +124,7 @@ if (hr.profileImageFile) {
         if (show) {
 
             setErrors({});
-
-
-        }
+       }
     }, [show]);
 
     return (
@@ -347,83 +345,24 @@ if (hr.profileImageFile) {
                         }}
 
                     />
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            gap: 2,
-
-                            flexDirection: {
-                                xs: "column",
-                                sm: "row"
-                            }
-                        }}
+                   <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: 2,
+                      }}
                     >
-                        <CommonButton
-
-                            onClick={handleClose}
-                            sx={{
-                                bgcolor: color.navbar,
-                                color: color.text,
-
-                                width: {
-                                    xs: "100%",
-                                    sm: "auto"
-                                }
-                            }}
-                        >
-
-                            Cancel
-
+                      <CommonButton onClick={handleClose} sx={{color:color.text,bgcolor:color.headings}}>
+                        Cancel
+                      </CommonButton>
+                  
+                      {type !== "view" && (
+                        <CommonButton type="submit" sx={{bgcolor:color.navbar,color:color.text}}>
+                          {type === "add"
+                            ? "Add HR"
+                            : "Update HR"}
                         </CommonButton>
-
-
-
-
-
-                        {
-                            type !== "view" &&
-
-
-                            <CommonButton
-                                type="submit"
-
-                                sx={{
-
-                                    bgcolor: color.navbar,
-
-                                    color: color.text
-
-                                }}
-
-                            >
-
-
-                                {
-
-                                    type === "add"
-
-                                        ?
-
-                                        "Add HR"
-
-                                        :
-
-                                        "Update HR"
-
-                                }
-
-
-
-                            </CommonButton>
-
-
-                        }
-
-
-
-
-
+                      )}
                     </Box>
 
 

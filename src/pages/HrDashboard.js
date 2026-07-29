@@ -60,7 +60,9 @@ function HrDashboard({
   const [type, setType] = useState("add");
   const [show, setShow] = useState(false);
   const [employee, setEmployee] = useState(initialEmployee);
-
+ 
+const [openDeleteModal, setOpenDeleteModal] = useState(false);
+const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -95,29 +97,28 @@ function HrDashboard({
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
+  setSelectedEmployeeId(id);
+  setOpenDeleteModal(true);
+};
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this employee?"
-    );
+
+const handleDeleteConfirm = async () => {
+  try {
+    await dispatch(deleteEmployeeDataActionInitiate(selectedEmployeeId));
+    dispatch(getEmployeeDataActionInitiate());
+
+  } catch (error) {
+    toast.error("Delete failed");
+  }
+
+  setOpenDeleteModal(false);
+};
 
 
-    if (confirmDelete) {
-
-      try {
-
-        await dispatch(deleteEmployeeDataActionInitiate(id));
-        dispatch(getEmployeeDataActionInitiate());
-
-      } catch (error) {
-
-        toast.error("Delete failed");
-
-      }
-
-    }
-
-  };
+const handleDeleteCancel = () => {
+  setOpenDeleteModal(false);
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -347,6 +348,37 @@ function HrDashboard({
             </DialogActions>
           </Dialog>
         )}
+        <Dialog
+  open={openDeleteModal}
+  onClose={handleDeleteCancel}
+>
+  <DialogTitle>
+    Delete Employee
+  </DialogTitle>
+
+  <DialogContent>
+    Are you sure you want to delete this employee?
+  </DialogContent>
+
+  <DialogActions>
+
+    <Button 
+    sx={{color:color.text,bgcolor:color.headings}}
+      onClick={handleDeleteCancel}
+    >
+      Cancel
+    </Button>
+
+    <Button
+      sx={{color:color.text,bgcolor:color.headings}}
+      onClick={handleDeleteConfirm}
+    >
+      Delete
+    </Button>
+
+  </DialogActions>
+
+</Dialog>
         {type !== "view" && (
           <EmployeeForm
             show={show}
