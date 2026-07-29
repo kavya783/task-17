@@ -71,25 +71,41 @@ export default function HrForm({
         setErrors(error);
         return Object.keys(error).length === 0;
     };
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!validate()) return;
-        const formData = new FormData();
-       formData.append("name", hrName);
-formData.append("email", hrEmail);
-formData.append("address", hrAddress);
-formData.append("password", hrPassword);   
-formData.append("role", "hr");
+   const handleSubmit = async (e) => {
+    e.preventDefault();
 
-if (hr.profileImageFile) {
-    formData.append("profile_image", hr.profileImageFile);
-}
-      submitHandle({
+    if (!validate()) return;
+
+    const formData = new FormData();
+
+    formData.append("name", hrName);
+    formData.append("email", hrEmail);
+    formData.append("address", hrAddress);
+    formData.append("password", hrPassword);
+    formData.append("role", "hr");
+
+    if (hr.profileImageFile) {
+        formData.append("profile_image", hr.profileImageFile);
+    }
+
+    try {
+        await submitHandle({
             formData,
             id: hr.id,
-    });
-          handleClose();  
-    };
+        });
+
+        toast.success(
+            type === "add"
+                ? "HR added successfully"
+                : "HR updated successfully"
+        );
+
+        handleClose();
+
+    } catch (error) {
+        toast.error("Something went wrong");
+    }
+};
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];

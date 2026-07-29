@@ -107,42 +107,17 @@ const confirmDeleteHR = async () => {
       [e.target.name]: e.target.value
     });
   };
- const submitHandle = async ({ formData, id }) => {
+const submitHandle = async ({ formData, id }) => {
 
-  try {
-
-    if (type === "add") {
-
-      await dispatch(
-        addHRDataActionInitiate(formData)
-      );
-
-
-
-    } else {
-
-      await dispatch(
-        updateHRDataActionInitiate(id, formData)
-      );
-
-    
-    }
-
-
-    setShowForm(false);  
-    setHr(initialHR);
-
-    dispatch(
-      getHRDataActionInitiate()
-    );
-
-
-  } catch (error) {
-
-    toast.error("Something went wrong");
-
+  if (type === "add") {
+    await dispatch(addHRDataActionInitiate(formData));
+  } else {
+    await dispatch(updateHRDataActionInitiate(id, formData));
   }
 
+  await dispatch(getHRDataActionInitiate());
+
+  return true;
 };
   return (
     <>
