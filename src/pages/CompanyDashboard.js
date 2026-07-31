@@ -241,7 +241,8 @@ useEffect(() => {
                   sx={{
                     width: 100,
                     height: 100,
-                    bgcolor: color.headings
+                    bgcolor: color.headings,
+                    mt:2
                   }}
 
                 >
