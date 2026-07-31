@@ -9,5 +9,7 @@ export default function Colors(darkMode) {
     text: darkMode ? "#FFFFFF" : "#000000",
     card:darkMode ? "#000000":"#000000",
      border: darkMode ? "#0d0e0f" : darken(themeColor, 0.4),
+     red: darkMode?"#f50f0f":"#ec1313",
+     white: darkMode?"#ddd1d1":"#f4eeee", 
   };
 }

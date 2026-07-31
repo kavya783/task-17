@@ -35,7 +35,7 @@ function App() {
               <CompanyDashboard
                 darkMode={darkMode}
                 setDarkMode={setDarkMode}
-               
+              
               />
             }
           />

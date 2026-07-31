@@ -71,41 +71,25 @@ export default function HrForm({
         setErrors(error);
         return Object.keys(error).length === 0;
     };
-   const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!validate()) return;
+        const formData = new FormData();
+       formData.append("name", hrName);
+formData.append("email", hrEmail);
+formData.append("address", hrAddress);
+formData.append("password", hrPassword);   
+formData.append("role", "hr");
 
-    if (!validate()) return;
-
-    const formData = new FormData();
-
-    formData.append("name", hrName);
-    formData.append("email", hrEmail);
-    formData.append("address", hrAddress);
-    formData.append("password", hrPassword);
-    formData.append("role", "hr");
-
-    if (hr.profileImageFile) {
-        formData.append("profile_image", hr.profileImageFile);
-    }
-
-    try {
-        await submitHandle({
+if (hr.profileImageFile) {
+    formData.append("profile_image", hr.profileImageFile);
+}
+        submitHandle({
             formData,
-            id: hr.id,
+            id: hr.id
+
         });
-
-        toast.success(
-            type === "add"
-                ? "HR added successfully"
-                : "HR updated successfully"
-        );
-
-        handleClose();
-
-    } catch (error) {
-        toast.error("Something went wrong");
-    }
-};
+    };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -140,7 +124,9 @@ export default function HrForm({
         if (show) {
 
             setErrors({});
-       }
+
+
+        }
     }, [show]);
 
     return (
@@ -361,24 +347,83 @@ export default function HrForm({
                         }}
 
                     />
-                   <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        gap: 2,
-                      }}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            gap: 2,
+
+                            flexDirection: {
+                                xs: "column",
+                                sm: "row"
+                            }
+                        }}
                     >
-                      <CommonButton onClick={handleClose} sx={{color:color.text,bgcolor:color.headings}}>
-                        Cancel
-                      </CommonButton>
-                  
-                      {type !== "view" && (
-                        <CommonButton type="submit" sx={{bgcolor:color.navbar,color:color.text}}>
-                          {type === "add"
-                            ? "Add HR"
-                            : "Update HR"}
+                        <CommonButton
+
+                            onClick={handleClose}
+                            sx={{
+                                bgcolor: color.navbar,
+                                color: color.text,
+
+                                width: {
+                                    xs: "100%",
+                                    sm: "auto"
+                                }
+                            }}
+                        >
+
+                            Cancel
+
                         </CommonButton>
-                      )}
+
+
+
+
+
+                        {
+                            type !== "view" &&
+
+
+                            <CommonButton
+                                type="submit"
+
+                                sx={{
+
+                                    bgcolor: color.navbar,
+
+                                    color: color.text
+
+                                }}
+
+                            >
+
+
+                                {
+
+                                    type === "add"
+
+                                        ?
+
+                                        "Add HR"
+
+                                        :
+
+                                        "Update HR"
+
+                                }
+
+
+
+                            </CommonButton>
+
+
+                        }
+
+
+
+
+
                     </Box>
 
 

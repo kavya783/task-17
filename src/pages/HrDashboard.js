@@ -8,7 +8,6 @@ import {
   DialogActions,
   TablePagination,
   Avatar,
-  Button,
 } from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -26,8 +25,10 @@ import { getEmployeeDataActionInitiate } from "../redux/actions/getEmployeeActio
 import { addEmployeeDataActionInitiate } from "../redux/actions/addEmployeeAction";
 import { updateEmployeeDataActionInitiate } from "../redux/actions/updateEmployeeAction";
 import { deleteEmployeeDataActionInitiate } from "../redux/actions/deleteEmployeeAction";
+import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
 import { Theme } from "../GlobalStyles";
 
+import { requestNotificationPermission } from "../notification";
 function HrDashboard({
   darkMode,
   setDarkMode,
@@ -37,6 +38,7 @@ function HrDashboard({
   const color = Colors(darkMode, themeColor);
 
   const dispatch = useDispatch();
+
 
   const employeeState = useSelector(
     (state) => state
@@ -61,16 +63,42 @@ function HrDashboard({
   const [type, setType] = useState("add");
   const [show, setShow] = useState(false);
   const [employee, setEmployee] = useState(initialEmployee);
- 
-const [openDeleteModal, setOpenDeleteModal] = useState(false);
-const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+const { notifications = [] } = useSelector(
+  (state) => state.getnotificationdata || {}
+);
 
-  useEffect(() => {
-    dispatch(getEmployeeDataActionInitiate());
-  }, [dispatch]);
+useEffect(() => {
+  dispatch(getEmployeeDataActionInitiate());
 
+}, [dispatch]);
+useEffect(() => {
+
+  const tokenSaved = localStorage.getItem(
+    "device_token_saved"
+  );
+
+  if(!tokenSaved){
+    requestNotificationPermission(dispatch);
+
+    localStorage.setItem(
+      "device_token_saved",
+      "true"
+    );
+  }
+
+}, [dispatch]);
+console.log("HR NOTIFICATIONS", notifications);
+
+
+
+useEffect(() => {
+
+  dispatch(getNotificationDataActionInitiate());
+
+}, [dispatch]);
   const normalizeEmployee = (item) => ({
     ...item,
     employeename: item.employeename || item.name || "",
@@ -98,28 +126,29 @@ const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
     }
   };
 
-  const handleDelete = (id) => {
-  setSelectedEmployeeId(id);
-  setOpenDeleteModal(true);
-};
+  const handleDelete = async (id) => {
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this employee?"
+    );
 
 
-const handleDeleteConfirm = async () => {
-  try {
-    await dispatch(deleteEmployeeDataActionInitiate(selectedEmployeeId));
-    dispatch(getEmployeeDataActionInitiate());
+    if (confirmDelete) {
 
-  } catch (error) {
-    toast.error("Delete failed");
-  }
+      try {
 
-  setOpenDeleteModal(false);
-};
+        await dispatch(deleteEmployeeDataActionInitiate(id));
+        dispatch(getEmployeeDataActionInitiate());
 
+      } catch (error) {
 
-const handleDeleteCancel = () => {
-  setOpenDeleteModal(false);
-};
+        toast.error("Delete failed");
+
+      }
+
+    }
+
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -201,7 +230,7 @@ const handleDeleteCancel = () => {
               Employee Details
             </DialogTitle>
 
-            <DialogContent sx={{ p: 4 }}>
+            <DialogContent sx={{ p: 2 }}>
 
               {/* Profile Image */}
               <Box
@@ -349,37 +378,6 @@ const handleDeleteCancel = () => {
             </DialogActions>
           </Dialog>
         )}
-        <Dialog
-  open={openDeleteModal}
-  onClose={handleDeleteCancel}
->
-  <DialogTitle>
-    Delete Employee
-  </DialogTitle>
-
-  <DialogContent>
-    Are you sure you want to delete this employee?
-  </DialogContent>
-
-  <DialogActions>
-
-    <Button
-    sx={{color:color.text,bgcolor:color.headings}}
-      onClick={handleDeleteCancel}
-    >
-      Cancel
-    </Button>
-
-    <Button
-      sx={{color:color.text,bgcolor:color.headings}}
-      onClick={handleDeleteConfirm}
-    >
-      Delete
-    </Button>
-
-  </DialogActions>
-
-</Dialog>
         {type !== "view" && (
           <EmployeeForm
             show={show}
@@ -419,6 +417,8 @@ const handleDeleteCancel = () => {
           }}
         />
       </Box>
+     
+     
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   AppBar,
   Toolbar,
@@ -9,27 +9,50 @@ import {
   MenuItem,
   IconButton,
   Divider,
+  Badge,
+  Popover,
 } from "@mui/material";
-
+import API from "../API/API";
 import MenuIcon from "@mui/icons-material/Menu";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import WorkIcon from "@mui/icons-material/Work";
 import PaletteIcon from "@mui/icons-material/Palette";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
 import Colors from "../colors";
 import NavBar from "./NavBar";
 import { SketchPicker } from "react-color";
 import { Theme } from "../GlobalStyles";
+import { toast } from "react-toastify";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 function AppBarr({
   roled,
   darkMode,
   setDarkMode,
   setShowHRs
 }) {
+  const dispatch = useDispatch();
+  const api = useMemo(() => new API(), []);
+  const { notifications = [] } = useSelector(
+    (state) => state.getnotificationdata
+  );
+
+
+  const leaveNotifications = notifications.filter(
+    (item) => item.notification_type !== "welcome"
+  );
+
+
+  const unreadNotifications = leaveNotifications.filter(
+    (item) => !item.read
+  );
+
   const [themeColor, setThemeColor] = useState(
     localStorage.getItem("themeColor") || "#7DB9B6"
   );
@@ -39,7 +62,7 @@ function AppBarr({
   const navigate = useNavigate();
   const color = Colors(darkMode, themeColor);
   const [colorAnchor, setColorAnchor] = useState(null);
-
+  const [notificationAnchor, setNotificationAnchor] = useState(null);
   const role = localStorage.getItem("role")?.toLowerCase();
 
   let title = "";
@@ -69,7 +92,38 @@ function AppBarr({
     localStorage.clear();
     navigate("/", { replace: true });
   };
+  useEffect(() => {
 
+    dispatch(getNotificationDataActionInitiate());
+
+    const interval = setInterval(() => {
+      dispatch(getNotificationDataActionInitiate());
+    }, 60000);
+
+
+    return () => clearInterval(interval);
+
+  }, [dispatch]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      api.get("notifications/welcome")
+        .then((response) => {
+          if (response.data) {
+            toast.success(response.data.message);
+
+            api.put(
+              `notifications/${response.data.id}/mark_as_read`,
+              null,
+              false
+            );
+          }
+        })
+        .catch(console.log);
+    }, 30000);
+
+    return () => clearTimeout(timer);
+  }, [api]);
+  console.log("Notification State:", notifications);
 
   return (
     <>
@@ -153,6 +207,124 @@ function AppBarr({
               gap: 0
             }}
           >
+            {role !== "company" && (
+              <>
+                <IconButton
+                  onClick={(e) => setNotificationAnchor(e.currentTarget)}
+                  sx={{ color: color.text }}
+                >
+                  <Badge
+                    badgeContent={unreadNotifications.length}
+                    color="error"
+                  >
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+
+                <Popover
+                  open={Boolean(notificationAnchor)}
+                  anchorEl={notificationAnchor}
+                  onClose={() => setNotificationAnchor(null)}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                >
+                  <Box sx={{ width: 300, p: 2 }}>
+                    {leaveNotifications.length === 0 ? (
+                      <Typography>No Notifications</Typography>
+                    ) : (
+                     leaveNotifications.map((item) => (
+  <Box
+    key={item.id}
+    onClick={async () => {
+
+      if (!item.read) {
+
+        await api.put(
+          `notifications/${item.id}/mark_as_read`
+        );
+
+       
+        dispatch(
+          getNotificationDataActionInitiate()
+        );
+
+      }
+
+    }}
+    sx={{
+      p: 2,
+      mb: 1.5,
+      cursor: "pointer",
+
+      border: item.read
+        ? `1px solid ${color.white}`
+        : `2px solid ${color.red}`,
+
+      borderRadius: "10px",
+
+      boxShadow: item.read
+        ? "none"
+        : `0 0 5px ${color.red}`,
+
+      "&:hover": {
+        background: color.white,
+      },
+    }}
+  >
+
+    <Typography
+      sx={{
+        fontWeight: "bold",
+        color: color.card,
+      }}
+    >
+      {item.title}
+    </Typography>
+
+
+    <Typography
+      variant="body2"
+      sx={{
+        mt: 0.5,
+        color: color.card,
+      }}
+    >
+      {item.message}
+    </Typography>
+
+
+    <DeleteIcon
+      onClick={async (e) => {
+
+        e.stopPropagation();
+
+        await api.delete(
+          `notifications/${item.id}`
+        );
+
+        
+
+        dispatch(
+          getNotificationDataActionInitiate()
+        );
+
+      }}
+      sx={{
+        ml: 30,
+        color: color.red,
+        cursor: "pointer"
+      }}
+    />
+
+  </Box>
+))
+                    )}
+                  </Box>
+                </Popover>
+              </>
+            )}
             <IconButton
               onClick={(e) => setColorAnchor(e.currentTarget)}
               sx={{ color: color.text }}

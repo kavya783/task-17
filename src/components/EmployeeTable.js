@@ -59,57 +59,144 @@ export default function EmployeeTable({
                 </CommonButton>
             </Box>
 
-            {isMobile ? (
-                <Box>
-                    {filteredData.map((item) => (
-                        <Card
-                            key={item.id}
+           {isMobile ? (
+    <Box>
+        {filteredData.length === 0 ? (
+            <Card
+                sx={{
+                    mb: 2,
+                    boxShadow: `0px 4px 10px ${color.text}`,
+                    color: color.text,
+                }}
+            >
+                <CardContent>
+                    <Typography
+                        align="center"
+                        sx={{
+                            color: color.text,
+                            fontSize: Theme.font16Bold,
+                            py: 3,
+                        }}
+                    >
+                        No Employees Found
+                    </Typography>
+                </CardContent>
+            </Card>
+        ) : (
+            filteredData.map((item) => (
+                <Card
+                    key={item.id}
+                    sx={{
+                        mb: 2,
+                        boxShadow: `0px 4px 10px ${color.text}`,
+                        color: color.text,
+                    }}
+                >
+                    <CardContent>
+
+                        <Box sx={{ textAlign: "center", mb: 1 }}>
+                            <img
+                                src={getProfileImage(item)}
+                                alt="profile"
+                                style={{
+                                    width: 80,
+                                    height: 80,
+                                    borderRadius: "50%",
+                                }}
+                            />
+                        </Box>
+
+                        <Typography
                             sx={{
-                                mb: 2,
-                                boxShadow: `0px 4px 10px ${color.text}`,
-                                color: color.text
+                                color: color.card,
+                                fontSize: Theme.font16Bold
                             }}
                         >
-                            <CardContent>
+                            Name: {item.employeename}
+                        </Typography>
 
-                                <Box sx={{ textAlign: "center", mb: 1 }}>
-                                    <img
-                                        src={getProfileImage(item)}
-                                        alt="profile"
-                                        style={{
-                                            width: 80,
-                                            height: 80,
-                                            borderRadius: "50%"
-                                        }}
-                                    />
-                                </Box>
+                        <Typography
+                            sx={{
+                                color: color.card,
+                                fontSize: Theme.font16Bold
+                            }}
+                        >
+                            Role: {item.role}
+                        </Typography>
 
-                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
-                                    Name: {item.employeename}
-                                </Typography>
+                        <Typography
+                            sx={{
+                                color: color.card,
+                                fontSize: Theme.font16Bold
+                            }}
+                        >
+                            Salary: {item.salary}
+                        </Typography>
 
-                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Role: {item.role}</Typography>
-                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Salary: {item.salary}</Typography>
-                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Address: {item.address}</Typography>
-                                <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>Email: {item.email}</Typography>
+                        <Typography
+                            sx={{
+                                color: color.card,
+                                fontSize: Theme.font16Bold
+                            }}
+                        >
+                            Address: {item.address}
+                        </Typography>
 
-                                <Box sx={{ display: "flex", gap: "clamp(90px, 3vw, 24px)", mt: 2,ml:1 }}>
-                                    <span onClick={() => handleView(item)}>
-                                        <VisibilityIcon sx={{ fontSize: Theme.font16Bold, color: color.card, ml: 1 }} />
-                                    </span>
-                                    <span onClick={() => handleEdit(item)}>
-                                        <EditIcon sx={{ fontSize: 24, color: color.card }} />
-                                    </span>
-                                    <span onClick={() => handleDelete(item.id)}>
-                                        <DeleteIcon sx={{ fontSize: 24, color: color.card }} />
-                                    </span>
-                                </Box>
+                        <Typography
+                            sx={{
+                                color: color.card,
+                                fontSize: Theme.font16Bold
+                            }}
+                        >
+                            Email: {item.email}
+                        </Typography>
 
-                            </CardContent>
-                        </Card>
-                    ))}
-                </Box>
-            ) : (
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                gap: "clamp(90px, 3vw, 24px)",
+                                mt: 2,
+                                ml: 1
+                            }}
+                        >
+
+                            <span onClick={() => handleView(item)}>
+                                <VisibilityIcon
+                                    sx={{
+                                        fontSize: Theme.font16Bold,
+                                        color: color.card,
+                                        ml: 1
+                                    }}
+                                />
+                            </span>
+
+                            <span onClick={() => handleEdit(item)}>
+                                <EditIcon
+                                    sx={{
+                                        fontSize: 24,
+                                        color: color.card
+                                    }}
+                                />
+                            </span>
+
+                            <span onClick={() => handleDelete(item.id)}>
+                                <DeleteIcon
+                                    sx={{
+                                        fontSize: 24,
+                                        color: color.card
+                                    }}
+                                />
+                            </span>
+
+                        </Box>
+
+                    </CardContent>
+                </Card>
+            ))
+        )}
+    </Box>
+) : (
 
                 <Box sx={{ mt: 2, width: { lg: "66%" }, ml: { md: "25%", lg: "20%" } }}>
                     <TableContainer
@@ -138,7 +225,22 @@ export default function EmployeeTable({
                             </TableHead>
 
                             <TableBody>
-                                {filteredData.map((item, index) => (
+                                  {data.length === 0 ? (
+                                                  <TableRow>
+                                                    <TableCell
+                                                      colSpan={7}
+                                                      align="center"
+                                                      sx={{
+                                                        color: color.text,
+                                                        fontSize: Theme.font16Bold,
+                                                        py: 3,
+                                                      }}
+                                                    >
+                                                      No Employees Found
+                                                    </TableCell>
+                                                  </TableRow>
+                                                ) : (
+                                filteredData.map((item, index) => (
                                     <TableRow key={item.id}>
 
                                         <TableCell sx={{ color: color.text }}>
@@ -191,7 +293,9 @@ export default function EmployeeTable({
 
 
                                     </TableRow>
-                                ))}
+                                ))
+                            )}
+                            
                             </TableBody>
 
                         </Table>

@@ -70,7 +70,30 @@ export default function LeaveTable({
 
       {isMobile ? (
         <Box>
-          {data.map((item) => (
+          {
+            data.length === 0 ? (
+                        <Card
+                            sx={{
+                                mb: 2,
+                                boxShadow: `0px 4px 10px ${color.text}`,
+                                color: color.text,
+                            }}
+                        >
+                            <CardContent>
+                                <Typography
+                                    align="center"
+                                    sx={{
+                                        color: color.text,
+                                        fontSize: Theme.font16Bold,
+                                        py: 3,
+                                    }}
+                                >
+                                    No Leaves Found
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    ) : (
+          data.map((item) => (
             <Card
               key={item.id}
               sx={{
@@ -182,7 +205,7 @@ export default function LeaveTable({
                 </Box>
               </CardContent>
             </Card>
-          ))}
+          )))}
         </Box>
       ) : (
         <Box

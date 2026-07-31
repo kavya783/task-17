@@ -6,10 +6,11 @@ import EmployeeHome from "../components/EmployeeHome";
 import AppBarr from "../components/appBar";
 import NavBar from "../components/NavBar";
 import Loader from "../components/Loader";
-
+import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
 import Colors from "../colors";
 
 import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
+import { requestNotificationPermission } from "../notification";
 
 
 function EmployeeDashboard({
@@ -22,24 +23,43 @@ function EmployeeDashboard({
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
 
-
   const {
     loading
   } = useSelector(
     (state) => state.getleavereducer || {}
   );
+const { notifications = [] } = useSelector(
+  (state) => state.getnotificationdata || {}
+);
 
 
+ useEffect(() => {
+  dispatch(getLeaveDataActionInitiate());
 
-  useEffect(() => {
+}, [dispatch]);
+useEffect(() => {
 
-    dispatch(
-      getLeaveDataActionInitiate()
+  const tokenSaved = localStorage.getItem(
+    "device_token_saved"
+  );
+
+  if(!tokenSaved){
+    requestNotificationPermission(dispatch);
+
+    localStorage.setItem(
+      "device_token_saved",
+      "true"
     );
+  }
 
-  }, [dispatch]);
+}, [dispatch]);
+ console.log("NOTIFICATIONS", notifications);
 
+useEffect(() => {
 
+  dispatch(getNotificationDataActionInitiate());
+
+}, [dispatch]);
 
   if (loading) {
     return <Loader />;
@@ -115,7 +135,7 @@ function EmployeeDashboard({
 
 
       </Box>
-
+      
 
     </>
   );

@@ -92,6 +92,28 @@ export default function HrTable({
             {isMobile ? (
                 <Box>
                     {
+                        filteredData.length === 0 ? (
+                                    <Card
+                                        sx={{
+                                            mb: 2,
+                                            boxShadow: `0px 4px 10px ${color.text}`,
+                                            color: color.text,
+                                        }}
+                                    >
+                                        <CardContent>
+                                            <Typography
+                                                align="center"
+                                                sx={{
+                                                    color: color.text,
+                                                    fontSize: Theme.font16Bold,
+                                                    py: 3,
+                                                }}
+                                            >
+                                                No HRs Found
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                ) : (
                         filteredData.map((item) => (
                             <Card
                                 key={item.id}
@@ -166,7 +188,7 @@ export default function HrTable({
                                     </Box>
                                 </CardContent>
                             </Card>
-                        ))
+                        )))
                     }
                 </Box>
             ) : (
@@ -211,7 +233,22 @@ export default function HrTable({
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {
+                                { 
+                                            data.length === 0 ? (
+                                                      <TableRow>
+                                                        <TableCell
+                                                          colSpan={7}
+                                                          align="center"
+                                                          sx={{
+                                                            color: color.text,
+                                                            fontSize: Theme.font16Bold,
+                                                            py: 3,
+                                                          }}
+                                                        >
+                                                          No HRs Found
+                                                        </TableCell>
+                                                      </TableRow>
+                                                    ) : (
                                     filteredData.map((item, index) => (
                                         <TableRow key={item.id}>
                                             <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
@@ -306,7 +343,7 @@ export default function HrTable({
                                         </TableRow>
 
 
-                                    ))
+                                    )))
 
                                 }
 

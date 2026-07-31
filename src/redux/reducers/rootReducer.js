@@ -12,7 +12,7 @@ import { putLeaveReducer } from "./updateLeaveReducer";
 
 import { loginReducer } from "./loginReducer";
 import { deviceTokenReducer } from "./deviceTokenReducer";
-
+import { getNotificationReducer } from "./getNotificationReducer";
 
 // HR reducers
 // HR reducers
@@ -51,6 +51,8 @@ export const rootReducer = combineReducers({
 
   // Firebase Token
   deviceToken: deviceTokenReducer,
+
+  getnotificationdata: getNotificationReducer,
 
 });
 

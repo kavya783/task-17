@@ -57,20 +57,23 @@ class API {
         });
     });
   }
-  put(url, data) {
-    return new Promise((resolve, reject) => {
-      // console.log('this is putAPI');
-      this.api(METHOD.PUT, url, data)
-        .then((response) => {
+put(url, data, showToast = true) {
+  return new Promise((resolve, reject) => {
+    this.api(METHOD.PUT, url, data)
+      .then((response) => {
+
+        if (showToast) {
           toast.success(response?.data?.message);
-          resolve(response);
-        })
-        .catch((error) => {
-          toast.error("Something went wrong");
-          // console.log(error);
-        });
-    });
-  }
+        }
+
+        resolve(response);
+      })
+      .catch((error) => {
+        toast.error("Something went wrong");
+        reject(error);
+      });
+  });
+}
   delete(url, data) {
     return new Promise((resolve, reject) => {
       // console.log('this is deleteAPI');
