@@ -28,32 +28,36 @@ export const requestNotificationPermission = async (dispatch) => {
     }
 
 
-    const token = await getToken(messaging, {
-      vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY,
-    });
+  const token = await getToken(messaging, {
+  vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY
+});
 
 
+const userId = localStorage.getItem("user_id");
+
+if (!userId) {
+  console.log("User id not found");
+  return null;
+}
 
 
-
-    const userId = localStorage.getItem("user_id");
-
-
-    if (!userId) {
-      console.log("User id not found");
-      return null;
-    }
+const savedToken = localStorage.getItem("device_token");
 
 
-    await dispatch(
-      saveDeviceTokenActionInitiate({
-        user_id: userId,
-        token: token,
-      })
-    );
+if (!savedToken || savedToken !== token) {
+
+  await dispatch(
+    saveDeviceTokenActionInitiate({
+      user_id: userId,
+      token: token,
+    })
+  );
+
+  localStorage.setItem("device_token", token);
+}
 
 
-    return token;
+return token;
 
 
   } catch(error){
