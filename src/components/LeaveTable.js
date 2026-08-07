@@ -28,6 +28,7 @@ export default function LeaveTable({
   page,
   rowsPerPage,
   darkMode,
+  appliedBy,
 }) {
   const dispatch = useDispatch();
 
@@ -42,7 +43,7 @@ export default function LeaveTable({
     };
 
     await dispatch(
-      updateLeaveDataActionInitiate(updatedLeave, item.id)
+      updateLeaveDataActionInitiate(updatedLeave, item.id, appliedBy)
     );
 
     // toast.success(

@@ -16,7 +16,7 @@ export const updateLeaveDataError = (error) => ({
   payload: error,
 });
 
-export const updateLeaveDataActionInitiate = (leave, id) => {
+export const updateLeaveDataActionInitiate = (leave, id, appliedBy) => {
   return async (dispatch) => {
     dispatch(updateLeaveDataStart());
 
@@ -25,9 +25,8 @@ export const updateLeaveDataActionInitiate = (leave, id) => {
 
       dispatch(updateLeaveDataSuccess(res));
 
-      // Refresh leave list for both HR and employee views
-      const appliedBy = localStorage.getItem("role") === "employee" ? "employee" : "hr";
-      dispatch(getLeaveDataActionInitiate(appliedBy));
+      const refreshAppliedBy = appliedBy || (localStorage.getItem("role") === "employee" ? "employee" : "hr");
+      dispatch(getLeaveDataActionInitiate(refreshAppliedBy));
     } catch (error) {
       dispatch(updateLeaveDataError(error.message));
       throw error;

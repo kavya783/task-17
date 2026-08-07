@@ -52,17 +52,16 @@ function LeavePage({
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [appliedBy, setAppliedBy] = useState("employee");
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const appliedBy = params.get("applied_by");
+    const queryAppliedBy = params.get("applied_by");
     const role = localStorage.getItem("role");
+    const fetchAppliedBy = role === "hr" ? (queryAppliedBy || "employee") : (queryAppliedBy || role);
 
-    if (role === "hr") {
-      dispatch(getLeaveDataActionInitiate("employee"));
-    } else {
-      dispatch(getLeaveDataActionInitiate(appliedBy));
-    }
+    setAppliedBy(fetchAppliedBy);
+    dispatch(getLeaveDataActionInitiate(fetchAppliedBy));
   }, [dispatch, location.search]);
 
   const handleClose = () => {
@@ -276,9 +275,7 @@ function LeavePage({
           rowsPerPage={rowsPerPage}
           darkMode={darkMode}
           themeColor={themeColor}
-          refreshLeaves={() =>
-            dispatch(getLeaveDataActionInitiate())
-          }
+          appliedBy={appliedBy}
         />
         <TablePagination
           component="div"
