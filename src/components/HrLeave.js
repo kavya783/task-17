@@ -424,6 +424,10 @@ export default function HRLeave({ darkMode, setDarkMode }) {
             rowsPerPageOptions={[5, 10, 25]}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+             sx={{
+            mt: 2,
+            color: color.text,
+          }}
           />
 
 

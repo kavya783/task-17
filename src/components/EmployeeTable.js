@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Box, Card, CardContent,
@@ -12,7 +12,13 @@ import { Theme } from "../GlobalStyles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
+} from "@mui/material";
 export default function EmployeeTable({
     data = [],
     handleEdit,
@@ -27,9 +33,24 @@ export default function EmployeeTable({
 
     const isMobile = useMediaQuery("(max-width:500px)");
     const filteredData = data.filter(item => item.role !== "hr");
-
+const [openDelete, setOpenDelete] = useState(false);
+const [selectedId, setSelectedId] = useState(null);
     const color = Colors(darkMode);
     const getProfileImage = (item) => item.profile_image_url || item.profileImage || "https://via.placeholder.com/60";
+const handleOpenDelete = (id) => {
+  setSelectedId(id);
+  setOpenDelete(true);
+};
+
+const handleCloseDelete = () => {
+  setOpenDelete(false);
+  setSelectedId(null);
+};
+
+const handleConfirmDelete = () => {
+  handleDelete(selectedId);
+  handleCloseDelete();
+};
 
     return (
         <>
@@ -180,7 +201,7 @@ export default function EmployeeTable({
                                 />
                             </span>
 
-                            <span onClick={() => handleDelete(item.id)}>
+                           <span onClick={() => handleOpenDelete(item.id)}>
                                 <DeleteIcon
                                     sx={{
                                         fontSize: 24,
@@ -285,7 +306,7 @@ export default function EmployeeTable({
                                                 <span onClick={() => handleEdit(item)}>
                                                     <EditIcon sx={{ fontSize: 18, color: color.text }} />
                                                 </span>
-                                                <span onClick={() => handleDelete(item.id)}>
+                                               <span onClick={() => handleOpenDelete(item.id)}>
                                                     <DeleteIcon sx={{ fontSize: 18, color: color.text }} />
                                                 </span>
                                             </Box>
@@ -302,6 +323,31 @@ export default function EmployeeTable({
                     </TableContainer>
                 </Box>
             )}
+               <Dialog open={openDelete} onClose={handleCloseDelete}>
+              <DialogTitle>Delete HR</DialogTitle>
+            
+              <DialogContent>
+                <DialogContentText>
+                  Are you sure you want to delete this HR?
+                </DialogContentText>
+              </DialogContent>
+            
+              <DialogActions>
+                <CommonButton onClick={handleCloseDelete}>
+                  Cancel
+                </CommonButton>
+            
+                <CommonButton
+                  onClick={handleConfirmDelete}
+                  sx={{
+                    backgroundColor: "red",
+                    color: "#fff"
+                  }}
+                >
+                  Delete
+                </CommonButton>
+              </DialogActions>
+            </Dialog>
         </>
     );
 }

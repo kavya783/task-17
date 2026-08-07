@@ -123,29 +123,14 @@ useEffect(() => {
 
   };
   // DELETE HR
-  const handleDelete = async (id) => {
-    const confirmDelete =
-      window.confirm(
-        "Are you sure you want to delete HR?"
-      );
-    if (confirmDelete) {
-      try {
-        await dispatch(
-          deleteHRDataActionInitiate(id)
-        );
-        dispatch(
-          getHRDataActionInitiate()
-        );
-
-      }
-      catch (error) {
-        toast.error(
-          "Delete failed"
-        );
-      }
-
-    }
-  };
+ const handleDelete = async (id) => {
+  try {
+    await dispatch(deleteHRDataActionInitiate(id));
+    await dispatch(getHRDataActionInitiate());
+  } catch (error) {
+    toast.error("Delete failed");
+  }
+};
   const handleChange = (e) => {
     setHr({
       ...hr,

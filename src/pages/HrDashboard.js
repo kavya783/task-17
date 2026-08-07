@@ -46,9 +46,8 @@ function HrDashboard({
   );
 
   // console.log("FULL REDUX STATE", employeeState);
-
-  const { data = [], loading = false } =
-    employeeState.getemployeedata || {};
+const { data = [] } =
+employeeState.getemployeedata || {};
   const initialEmployee = {
     id: "",
     profileImage: "",
@@ -64,17 +63,29 @@ function HrDashboard({
   const [type, setType] = useState("add");
   const [show, setShow] = useState(false);
   const [employee, setEmployee] = useState(initialEmployee);
-
+ const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { notifications = [] } = useSelector(
     (state) => state.getnotificationdata || {}
   );
 
-  useEffect(() => {
-    dispatch(getEmployeeDataActionInitiate());
+ useEffect(() => {
 
-  }, [dispatch]);
+  const fetchEmployees = async () => {
+    try {
+      setLoading(true);
+
+      await dispatch(getEmployeeDataActionInitiate());
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchEmployees();
+
+}, [dispatch]);
   useEffect(() => {
 
     const tokenSaved = localStorage.getItem(
@@ -114,42 +125,52 @@ function HrDashboard({
   };
 
   const submitHandle = async ({ formData, id }) => {
-    try {
-      if (type === "add") {
-        dispatch(addEmployeeDataActionInitiate(formData));
-      } else {
-        dispatch(updateEmployeeDataActionInitiate(formData, id));
-      }
 
-      handleClose();
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  };
+setShow(false);
+setLoading(true);
 
-  const handleDelete = async (id) => {
+try {
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this employee?"
+  if(type === "add"){
+
+    await dispatch(
+      addEmployeeDataActionInitiate(formData)
     );
 
+  } else {
 
-    if (confirmDelete) {
+    await dispatch(
+      updateEmployeeDataActionInitiate(formData,id)
+    );
 
-      try {
+  }
 
-        await dispatch(deleteEmployeeDataActionInitiate(id));
-        dispatch(getEmployeeDataActionInitiate());
 
-      } catch (error) {
+  await dispatch(getEmployeeDataActionInitiate());
 
-        toast.error("Delete failed");
+  setEmployee(initialEmployee);
 
-      }
 
-    }
+} catch(error){
 
-  };
+ toast.error("Something went wrong");
+
+} finally {
+
+ setLoading(false);
+
+}
+
+};
+
+const handleDelete = async (id) => {
+  try {
+    await dispatch(deleteEmployeeDataActionInitiate(id));
+    dispatch(getEmployeeDataActionInitiate());
+  } catch (error) {
+    toast.error("Delete failed");
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -193,7 +214,9 @@ function HrDashboard({
   );
 
   // console.log("Employee Redux State:", {data, loading});
-  if (loading) return <Loader />;
+if (loading) {
+  return <Loader />;
+}
   // console.log("HrDashboard rendered");
 
   return (
@@ -389,6 +412,7 @@ function HrDashboard({
             submitHandle={submitHandle}
             darkMode={darkMode}
             themeColor={themeColor}
+              loading={loading}
           />
         )}
 
@@ -419,6 +443,10 @@ function HrDashboard({
                 rowsPerPageOptions={[5, 10, 25]}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
+                 sx={{
+            mt: 2,
+            color: color.text,
+          }}
               />
             </>
           )

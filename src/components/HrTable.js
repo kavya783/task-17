@@ -14,7 +14,15 @@ import {
     useMediaQuery,
     Tooltip
 } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
+} from "@mui/material";
 
+import { useState } from "react";
 import CommonButton from "./CommonButton";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
@@ -41,11 +49,25 @@ export default function HrTable({
 
     const color = Colors(darkMode);
 
-
+const [openDelete, setOpenDelete] = useState(false);
+const [selectedId, setSelectedId] = useState(null);
     const filteredData = data.filter(
         (item) => item.role === "hr"
     );
+const handleOpenDelete = (id) => {
+  setSelectedId(id);
+  setOpenDelete(true);
+};
 
+const handleCloseDelete = () => {
+  setOpenDelete(false);
+  setSelectedId(null);
+};
+
+const handleConfirmDelete = () => {
+  handleDelete(selectedId);
+  handleCloseDelete();
+};
 
 
   return (
@@ -185,7 +207,7 @@ export default function HrTable({
 
                                             />
                                         </span>
-                                        <span onClick={() => handleDelete(item.id)}>
+                                        <span onClick={() => handleOpenDelete(item.id)}>
                                             <DeleteIcon
                                                 sx={{ fontSize: Theme.font24Bold, color: color.card, ml: 1 }}
                                             />
@@ -329,7 +351,7 @@ export default function HrTable({
 
 
 
-                                                    <span onClick={() => handleDelete(item.id)}>
+                                                    <span onClick={() => handleOpenDelete(item.id)}>
                                                         <DeleteIcon
                                                             sx={{ fontSize: Theme.font24Bold, color: color.text, ml: 1 }}
                                                         />
@@ -369,6 +391,31 @@ export default function HrTable({
             )}
       </>
     )}
+    <Dialog open={openDelete} onClose={handleCloseDelete}>
+  <DialogTitle>Delete HR</DialogTitle>
+
+  <DialogContent>
+    <DialogContentText>
+      Are you sure you want to delete this HR?
+    </DialogContentText>
+  </DialogContent>
+
+  <DialogActions>
+    <CommonButton onClick={handleCloseDelete}>
+      Cancel
+    </CommonButton>
+
+    <CommonButton
+      onClick={handleConfirmDelete}
+      sx={{
+        backgroundColor: "red",
+        color: "#fff"
+      }}
+    >
+      Delete
+    </CommonButton>
+  </DialogActions>
+</Dialog>
   </>
 );
 }
