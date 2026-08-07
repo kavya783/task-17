@@ -129,7 +129,7 @@ await requestNotificationPermission(dispatch, userId);
 
 
     if (role === "hr") {
-      navigate("/hr", { replace: true });
+      navigate("/hr/dashboard", { replace: true });
     } else {
       navigate("/employee", { replace: true });
     }

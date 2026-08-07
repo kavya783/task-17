@@ -23,6 +23,8 @@ import { deleteHRDataActionInitiate } from "../redux/actions/deleteHRAction";
 import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
 import { toast } from "react-toastify";
 import { requestNotificationPermission } from "../notification";
+import Loader from "../components/Loader";
+
 
 function CompanyDashboard({
   darkMode,
@@ -60,13 +62,21 @@ function CompanyDashboard({
   };
   const [showHRs, setShowHRs] = useState(true);
   const [showForm, setShowForm] = useState(false);
+ const [loading, setLoading] = useState(true);
   const [type, setType] = useState("add");
   const [hr, setHr] = useState(initialHR);
-  useEffect(() => {
+ useEffect(() => {
+  const fetchHRs = async () => {
+    try {
+      setLoading(true);
+      await dispatch(getHRDataActionInitiate());
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    dispatch(getHRDataActionInitiate());
-
-  }, [dispatch]);
+  fetchHRs();
+}, [dispatch]);
  useEffect(() => {
 
   const tokenSaved = localStorage.getItem(
@@ -91,6 +101,7 @@ useEffect(() => {
   dispatch(getNotificationDataActionInitiate());
 
 }, [dispatch]);
+
 
   // ADD HR
   const handleAdd = () => {
@@ -149,40 +160,37 @@ useEffect(() => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const submitHandle = async ({ formData, id }) => {
-    console.log([...formData.entries()]);
-    try {
-      if (type === "add") {
-        await dispatch(
-          addHRDataActionInitiate(formData)
-        );
+const submitHandle = async ({ formData, id }) => {
+  // Modal first close
+  setShowForm(false);
 
-      } else {
-        await dispatch(
-          updateHRDataActionInitiate(
-            id,
-            formData
-          )
-        );
-      }
-      dispatch(
-        getHRDataActionInitiate()
-      );
+  // Show Loader
+  setLoading(true);
 
-      setShowForm(false);
-      setHr(initialHR);
-    } catch (error) {
-      toast.error(
-        "Something went wrong"
-      );
-
+  try {
+    if (type === "add") {
+      await dispatch(addHRDataActionInitiate(formData));
+    } else {
+      await dispatch(updateHRDataActionInitiate(id, formData));
     }
 
-  };
+    await dispatch(getHRDataActionInitiate());
 
+    setHr(initialHR);
+  } catch (error) {
+    toast.error("Something went wrong");
+  } finally {
+    // Hide Loader
+    setLoading(false);
+  }
+};
+ 
+  if (loading)
+    return <Loader />;
 
   return (
     <>
+    
       <AppBarr
         roled="company"
         darkMode={darkMode}
@@ -207,6 +215,7 @@ useEffect(() => {
             handleEdit={handleEdit}
             handleDelete={handleDelete}
             handleView={handleView}
+             loading={loading}
           />
         )}
         {viewHR && (
@@ -360,6 +369,7 @@ useEffect(() => {
               setHr(initialHR);
             }}
             type={type}
+             loading={loading}
           />
 
         )}

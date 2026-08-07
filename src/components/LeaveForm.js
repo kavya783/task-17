@@ -19,8 +19,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
-
 import { getEmployeeDataActionInitiate } from "../redux/actions/getEmployeeAction";
+import { getHRDataActionInitiate } from "../redux/actions/getHRAction";
 import { addLeaveDataActionInitiate } from "../redux/actions/addLeaveAction";
 
 function LeaveForm({ darkMode }) {
@@ -28,13 +28,20 @@ function LeaveForm({ darkMode }) {
   localStorage.getItem("themeColor") || "#7DB9B6";
   const navigate = useNavigate();
   const dispatch = useDispatch();
+const role = localStorage.getItem("role");
 
  const color = Colors(darkMode, themeColor);
 
   const { data: employees = [] } = useSelector(
-    (state) => state.getemployeedata
-  );
+  (state) => state.getemployeedata || {}
+);
 
+const {
+  hrs = [],
+  data: hrData = [],
+} = useSelector(
+  (state) => state.gethrdata || {}
+);
   const initialLeave = {
     employeename: "",
     email: "",
@@ -51,30 +58,51 @@ function LeaveForm({ darkMode }) {
 const [loading, setLoading] = useState(false);
   const userEmail = localStorage.getItem("email");
 
-  useEffect(() => {
+
+
+useEffect(() => {
+  if (role === "hr") {
+    dispatch(getHRDataActionInitiate());
+  } else {
     dispatch(getEmployeeDataActionInitiate());
-  }, [dispatch]);
+  }
+}, [dispatch, role]);
 
-  useEffect(() => {
-    //  console.log("Employees:", employees);
-    if (employees.length > 0) {
-      const user = employees.find(
-        (emp) => emp.email === userEmail
-      );
+useEffect(() => {
 
-      if (user) {
-        setLeave((prev) => ({
-          ...prev,
-          employeename: user.name,
-          email: user.email,
-          profileImage:
-            user.profile_image_url || "",
-        }));
+  const list =
+    role === "hr"
+      ? (hrs.length ? hrs : hrData)
+      : employees;
+
+  const user = list.find(
+    (item) => item.email === userEmail
+  );
+
+  if(user){
+
+    setLeave(prev => {
+
+      if(
+        prev.employeename === user.name &&
+        prev.email === user.email &&
+        prev.profileImage === (user.profile_image_url || "")
+      ){
+        return prev;
       }
-    }
-    
-  }, [employees, userEmail]);
 
+      return {
+        ...prev,
+        employeename:user.name,
+        email:user.email,
+        profileImage:user.profile_image_url || ""
+      };
+
+    });
+
+  }
+
+}, [employees, hrs, hrData, role, userEmail]);
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -97,20 +125,20 @@ const [loading, setLoading] = useState(false);
     valid = false;
   }
 
-  if (!leave.fromDate) {
+  if (!leave.from_date) {
     newErrors.fromDate = "Select from date";
     valid = false;
   }
 
-  if (!leave.toDate) {
+  if (!leave.to_date) {
     newErrors.toDate = "Select to date";
     valid = false;
   }
 
   if (
-    leave.fromDate &&
-    leave.toDate &&
-    leave.fromDate > leave.toDate
+    leave.from_date &&
+    leave.to_date &&
+    leave.from_date > leave.to_date
   ) {
     newErrors.toDate = "To Date must be after From Date";
     valid = false;
@@ -134,36 +162,32 @@ const handleSubmit = async (e) => {
     return;
   }
 
- try {
+  try {
+    setLoading(true);
 
- setLoading(true);
+    await dispatch(
+      addLeaveDataActionInitiate({
+        employeename: leave.employeename,
+        email: leave.email,
+        leaveType: leave.leaveType,
+        from_date: leave.from_date,
+        to_date: leave.to_date,
+        reason: leave.reason,
+        status: "pending",
+        profileImage: leave.profileImage,
+        applied_by: role,
+      })
+    );
 
- await dispatch(
-   addLeaveDataActionInitiate({
-      employeename: leave.employeename,
-      email: leave.email,
-      leaveType: leave.leaveType,
-      from_date: leave.fromDate,
-      to_date: leave.toDate,
-      reason: leave.reason,
-      status:"pending",
-      profileImage: leave.profileImage,
-   })
- );
-
-
- navigate("/employee");
-
-}
-catch(error){
-
-//  console.log(error);
- toast.error("Failed to submit leave");
-
-}
-finally{
- setLoading(false);
-}
+    toast.success("Leave applied successfully");
+console.log("role:", role);
+console.log("navigating...");
+    navigate(role === "hr" ? "/hr" : "/employee");
+  } catch (error) {
+    toast.error("Failed to submit leave");
+  } finally {
+    setLoading(false);
+  }
 };
 
 return (
@@ -240,9 +264,9 @@ return (
           <Box sx={{ display: "flex", gap: 1 }}>
             <TextField
               type="date"
-              name="fromDate"
+              name="from_date"
               fullWidth
-              value={leave.fromDate}
+              value={leave.from_date}
               onChange={handleChange}
               error={!!errors.fromDate}
               helperText={errors.fromDate}
@@ -250,9 +274,9 @@ return (
 
             <TextField
               type="date"
-              name="toDate"
+              name="to_date"
               fullWidth
-              value={leave.toDate}
+              value={leave.to_date}
               onChange={handleChange}
               error={!!errors.toDate}
               helperText={errors.toDate}
@@ -276,7 +300,9 @@ return (
             <CommonButton
   variant="outlined"
   fullWidth
-  onClick={() => navigate("/employee")}
+onClick={() =>
+  navigate(role === "hr" ? "/hr" : "/employee")
+}
   sx={{
     borderColor: color.headings,
     color: color.headings,

@@ -27,13 +27,14 @@ import { updateEmployeeDataActionInitiate } from "../redux/actions/updateEmploye
 import { deleteEmployeeDataActionInitiate } from "../redux/actions/deleteEmployeeAction";
 import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
 import { Theme } from "../GlobalStyles";
-
+import HRHome from "../components/HrHome";
 import { requestNotificationPermission } from "../notification";
 function HrDashboard({
   darkMode,
   setDarkMode,
   themeColor,
   setThemeColor,
+  pageType
 }) {
   const color = Colors(darkMode, themeColor);
 
@@ -66,39 +67,39 @@ function HrDashboard({
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-const { notifications = [] } = useSelector(
-  (state) => state.getnotificationdata || {}
-);
-
-useEffect(() => {
-  dispatch(getEmployeeDataActionInitiate());
-
-}, [dispatch]);
-useEffect(() => {
-
-  const tokenSaved = localStorage.getItem(
-    "device_token_saved"
+  const { notifications = [] } = useSelector(
+    (state) => state.getnotificationdata || {}
   );
 
-  if(!tokenSaved){
-    requestNotificationPermission(dispatch);
+  useEffect(() => {
+    dispatch(getEmployeeDataActionInitiate());
 
-    localStorage.setItem(
-      "device_token_saved",
-      "true"
+  }, [dispatch]);
+  useEffect(() => {
+
+    const tokenSaved = localStorage.getItem(
+      "device_token_saved"
     );
-  }
 
-}, [dispatch]);
-console.log("HR NOTIFICATIONS", notifications);
+    if (!tokenSaved) {
+      requestNotificationPermission(dispatch);
+
+      localStorage.setItem(
+        "device_token_saved",
+        "true"
+      );
+    }
+
+  }, [dispatch]);
+  console.log("HR NOTIFICATIONS", notifications);
 
 
 
-useEffect(() => {
+  useEffect(() => {
 
-  dispatch(getNotificationDataActionInitiate());
+    dispatch(getNotificationDataActionInitiate());
 
-}, [dispatch]);
+  }, [dispatch]);
   const normalizeEmployee = (item) => ({
     ...item,
     employeename: item.employeename || item.name || "",
@@ -391,34 +392,40 @@ useEffect(() => {
           />
         )}
 
-        <EmployeeTable
-          data={paginatedEmployees}
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
-          handleAdd={handleAdd}
-          handleView={handleView}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          darkMode={darkMode}
-          themeColor={themeColor}
-        />
+        {
+          pageType === "dashboard" ? (
+            <HRHome
+              darkMode={darkMode}
+            />
+          ) : (
+            <>
+              <EmployeeTable
+                data={paginatedEmployees}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                handleAdd={handleAdd}
+                handleView={handleView}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                darkMode={darkMode}
+                themeColor={themeColor}
+              />
 
-        <TablePagination
-          component="div"
-          count={employees.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{
-            mt: 2,
-            color: color.text,
-          }}
-        />
+              <TablePagination
+                component="div"
+                count={employees.length}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[5, 10, 25]}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </>
+          )
+        }
       </Box>
-     
-     
+
+
     </>
   );
 }

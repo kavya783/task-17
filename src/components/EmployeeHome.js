@@ -25,8 +25,8 @@ function EmployeeHome({ darkMode }) {
   const navigate = useNavigate();
   const color = Colors(darkMode);
  
-  const { data, loading, error } = useSelector(
-    (state) => state.getemployeedata
+  const { data = [], loading, error } = useSelector(
+    (state) => state.getemployeedata || {}
   );
 
   const email = localStorage.getItem("email");
@@ -35,7 +35,9 @@ function EmployeeHome({ darkMode }) {
     dispatch(getEmployeeDataActionInitiate());
   }, [dispatch]);
 
-  const employee = data.find((emp) => emp.email === email);
+  const employee = Array.isArray(data)
+    ? data.find((emp) => emp.email === email)
+    : null;
 
   if (loading) {
     return (

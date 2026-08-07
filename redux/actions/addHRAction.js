@@ -32,16 +32,12 @@ export const addHRDataActionInitiate = (hr) => {
 
       dispatch(addHRDataSuccess(res));
 
-      // Wait until HR list is refreshed
-      await dispatch(getHRDataActionInitiate());
-
-      return res;
+      // refresh HR list
+      dispatch(getHRDataActionInitiate());
 
     } catch (error) {
 
       dispatch(addHRDataError(error.message));
-
-      throw error;
 
     }
 

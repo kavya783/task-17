@@ -25,10 +25,12 @@ export const updateLeaveDataActionInitiate = (leave, id) => {
 
       dispatch(updateLeaveDataSuccess(res));
 
-      // Refresh leave list
-      dispatch(getLeaveDataActionInitiate());
+      // Refresh leave list for both HR and employee views
+      const appliedBy = localStorage.getItem("role") === "employee" ? "employee" : "hr";
+      dispatch(getLeaveDataActionInitiate(appliedBy));
     } catch (error) {
       dispatch(updateLeaveDataError(error.message));
+      throw error;
     }
   };
 };

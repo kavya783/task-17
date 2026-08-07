@@ -8,6 +8,7 @@ import {
   Card,
   CardContent,
   useMediaQuery,
+  TablePagination,
   Table,
   TableBody,
   TableCell,
@@ -33,19 +34,27 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = React.useState(true);
-
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const isMobile = useMediaQuery("(max-width:600px)");
   const color = Colors(darkMode);
 
 
-  const userEmail = localStorage.getItem("email");
+  // const userEmail = localStorage.getItem("email");
 
 
   // REDUX DATA
   const { data = [] } = useSelector(
     (state) => state.getleavereducer || {}
   );
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   useEffect(() => {
 
@@ -69,8 +78,15 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
 
   // FILTER LOGIN USER LEAVES
 
-  const filteredData = data.filter((item) => item.email === userEmail);
+  const filteredData = (data || []).map((item) => ({
+    ...item,
+    status: (item.status || "pending").toLowerCase(),
+  }));
 
+  const paginatedLeaves = filteredData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
   const getStatusColor = (status) => {
     if (status === "approved") return "success";
     if (status === "rejected") return "error";
@@ -96,7 +112,7 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
         sx={{
           bgcolor: color.background,
           // height: { xs: "600px", sm: "810px", md: "1250px", lg: "1400px", xl: "673px" },
-          minHeight:"100vh"
+          minHeight: "100vh"
 
         }}
       >
@@ -146,7 +162,7 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
                 </CardContent>
               </Card>
             ) : (
-              filteredData.map((item) => (
+              paginatedLeaves.map((item) => (
                 <Card
                   key={item.id}
                   sx={{
@@ -156,7 +172,7 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
                   }}
                 >
                   <CardContent>
-                    <Typography sx={{ color: color.card  }}>
+                    <Typography sx={{ color: color.card }}>
                       <b>Name:</b> {item.employeename}
                     </Typography>
 
@@ -217,10 +233,10 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredData.map((item, index) => (
+                    paginatedLeaves.map((item, index) => (
                       <TableRow key={item.id} hover>
                         <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
-                          {index + 1}
+                          {page * rowsPerPage + index + 1}
                         </TableCell>
                         <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
                           {item.employeename}
@@ -248,7 +264,7 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
                                   : item.status === "rejected"
                                     ? color.headings
                                     : color.card,
-                              
+
                             }}
                           >
                             {item.status || "pending"}
@@ -262,6 +278,19 @@ export default function EmployeeLeave({ darkMode, setDarkMode }) {
             </TableContainer>
           )}
         </Box>
+        <TablePagination
+          component="div"
+          count={filteredData.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{
+            ml: { md: "240px" },
+            color: color.text,
+          }}
+        />
       </Box>
     </>
   );

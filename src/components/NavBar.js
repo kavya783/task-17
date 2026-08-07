@@ -23,8 +23,8 @@ import { Link, useLocation } from "react-router-dom";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 
-function NavBar({ darkMode, open, setOpen}) {
-    const [roled, setRoled] = useState("");
+function NavBar({ darkMode, open, setOpen }) {
+  const [roled, setRoled] = useState("");
 
   const location = useLocation();
 
@@ -74,6 +74,42 @@ function NavBar({ darkMode, open, setOpen}) {
           <>
             <ListItemButton
               component={Link}
+              to="/hr/dashboard"
+              sx={menuStyle("/hr/dashboard")}
+            >
+              <ListItemIcon>
+                <People
+                  sx={{
+                    color:
+                      location.pathname === "/hr"
+                        ? color.text
+                        : color.text,
+                    fontSize: Theme.font24Bold,
+
+                  }}
+                />
+              </ListItemIcon>
+
+              <ListItemText primary="Dashboard" />
+            </ListItemButton>
+            <ListItemButton
+              component={Link}
+              to="/hr/leave-status"
+              sx={menuStyle("/hr/leave-status")}
+            >
+              <ListItemIcon>
+                <AssignmentTurnedIn
+                  sx={{
+                    color: color.text
+                  }}
+                />
+              </ListItemIcon>
+
+              <ListItemText primary="Leave Status" />
+
+            </ListItemButton>
+            <ListItemButton
+              component={Link}
               to="/hr"
               sx={menuStyle("/hr")}
             >
@@ -93,9 +129,10 @@ function NavBar({ darkMode, open, setOpen}) {
               <ListItemText primary="Employees" />
             </ListItemButton>
 
+
             <ListItemButton
               component={Link}
-              to="/leave"
+              to="/leave?applied_by=employee"
               sx={menuStyle("/leave")}
             >
               <ListItemIcon>
@@ -109,7 +146,7 @@ function NavBar({ darkMode, open, setOpen}) {
                 />
               </ListItemIcon>
 
-              <ListItemText primary="Leaves" />
+              <ListItemText primary=" Employee Leaves" />
             </ListItemButton>
           </>
         )}
@@ -155,28 +192,42 @@ function NavBar({ darkMode, open, setOpen}) {
             </ListItemButton>
           </>
         )}
-     {roled === "company" && (
-  <>
-    <ListItemButton
-      component={Link}
-      to="/company"
-      sx={menuStyle("/company-dashboard")}
-    >
-      <ListItemIcon>
-        <People
-          sx={{
-            color: location.pathname === "/company-dashbaord"
-              ? color.text
-              : color.text,
-            fontSize: Theme.font24Bold,
-          }}
-        />
-      </ListItemIcon>
+        {roled === "company" && (
+          <>
+            <ListItemButton
+              component={Link}
+              to="/company-dashboard"
+              sx={menuStyle("/company-dashboard")}
+            >
+              <ListItemIcon>
+                <People
+                  sx={{
+                    color: color.text,
+                    fontSize: Theme.font24Bold,
+                  }}
+                />
+              </ListItemIcon>
 
-      <ListItemText primary="HRs" />
-    </ListItemButton>
-  </>
-)}
+              <ListItemText primary="HRs" />
+            </ListItemButton>
+
+            <ListItemButton
+              component={Link}
+              to="/leave?applied_by=hr"
+              sx={menuStyle("/leave")}
+            >
+              <ListItemIcon>
+                <Badge
+                  sx={{
+                    color: color.text,
+                  }}
+                />
+              </ListItemIcon>
+
+              <ListItemText primary="Leave Status" />
+            </ListItemButton>
+          </>
+        )}
       </List>
     </Box>
   );

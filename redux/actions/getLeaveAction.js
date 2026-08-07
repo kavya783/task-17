@@ -15,24 +15,23 @@ export const getLeaveDataError = (error) => ({
   payload: error,
 });
 
-export const getLeaveDataActionInitiate = () => {
+export const getLeaveDataActionInitiate = (appliedBy) => {
   return async (dispatch) => {
 
     dispatch(getLeaveDataStart());
 
     try {
 
-      const res = await fetchLeaveData();
+      const res = await fetchLeaveData(appliedBy);
 
-
-      const list = Object.keys(res || {}).map((key)=>({
-        id:key,
-        ...res[key]
-      }));
-
+      const list = Array.isArray(res)
+        ? res
+        : Object.keys(res || {}).map((key) => ({
+            id: key,
+            ...res[key],
+          }));
 
       dispatch(getLeaveDataSuccess(list));
-
 
     } catch (error) {
 

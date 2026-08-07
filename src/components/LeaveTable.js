@@ -233,7 +233,7 @@ export default function LeaveTable({
                 <TableRow>
                   <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>S.No</TableCell>
                   <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
-                    Employee
+                    Name
                   </TableCell>
                   <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                     Leave Type

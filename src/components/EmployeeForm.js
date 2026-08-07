@@ -148,13 +148,8 @@ const handleImageChange = (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  if (file.type !== "image/jpeg" && file.type !== "image/png") {
+  if (!["image/jpeg", "image/png"].includes(file.type)) {
     toast.error("Only JPG and PNG images are allowed");
-    return;
-  }
-
-  if (file.size > 2 * 1024 * 1024) {
-    toast.error("Image must be less than 2MB");
     return;
   }
 

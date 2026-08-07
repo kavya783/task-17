@@ -18,6 +18,7 @@ import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
 
 import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
+import { useLocation } from "react-router-dom";
 function LeavePage({
   darkMode,
   setDarkMode,
@@ -30,6 +31,7 @@ function LeavePage({
 
 
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const { data = [], loading = false } = useSelector(
     (state) => state.getleavereducer || {}
@@ -52,8 +54,16 @@ function LeavePage({
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    dispatch(getLeaveDataActionInitiate());
-  }, [dispatch]);
+    const params = new URLSearchParams(location.search);
+    const appliedBy = params.get("applied_by");
+    const role = localStorage.getItem("role");
+
+    if (role === "hr") {
+      dispatch(getLeaveDataActionInitiate("employee"));
+    } else {
+      dispatch(getLeaveDataActionInitiate(appliedBy));
+    }
+  }, [dispatch, location.search]);
 
   const handleClose = () => {
     setShow(false);
@@ -86,7 +96,7 @@ function LeavePage({
   return (
     <>
       <AppBarr
-        roled="hr"
+        roled={localStorage.getItem("role") || "hr"}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         themeColor={themeColor}

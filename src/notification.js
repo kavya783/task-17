@@ -1,7 +1,6 @@
 import {
   getToken,
   onMessage,
-  isSupported,
 } from "firebase/messaging";
 
 import { messaging } from "./firebase";
@@ -12,54 +11,39 @@ export const requestNotificationPermission = async (dispatch) => {
 
   try {
 
-    const supported = await isSupported();
-
-    if (!supported) {
-      console.log("Firebase messaging not supported");
-      return null;
-    }
-
-
     const permission = await Notification.requestPermission();
 
-
-    if (permission !== "granted") {
-      return null;
+    if(permission !== "granted"){
+      console.log("Notification permission denied");
+      return;
     }
 
 
-  const token = await getToken(messaging, {
-  vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY
-});
-
-const userId = localStorage.getItem("user_id");
-const companyId = localStorage.getItem("company_id");
+    const token = await getToken(messaging,{
+      vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY
+    });
 
 
-const savedToken = localStorage.getItem("device_token");
+    console.log("FCM TOKEN:", token);
 
 
-if (!savedToken || savedToken !== token) {
+    if(token){
 
- await dispatch(
-  saveDeviceTokenActionInitiate({
-    user_id: userId || null,
-    company_id: companyId || null,
-    token: token,
-  })
-);
+      await dispatch(
+        saveDeviceTokenActionInitiate({
+          token: token
+        })
+      );
 
-  localStorage.setItem("device_token", token);
-}
-
-
-return token;
+    }
 
 
   } catch(error){
 
-    console.log(error);
-    return null;
+    console.log(
+      "Notification Error",
+      error
+    );
 
   }
 
@@ -71,24 +55,24 @@ export const listenForMessages = () => {
 
   const unsubscribe = onMessage(
     messaging,
-    (payload)=>{
+    (payload) => {
 
-      // console.log(
-      //   "Foreground notification:",
-      //   payload
-      // );
+      console.log(
+        "Foreground notification:",
+        payload
+      );
 
 
       if(
         Notification.permission === "granted" &&
-        payload.notification
+        payload?.notification
       ){
 
         new Notification(
           payload.notification.title,
           {
             body: payload.notification.body,
-            icon:"/hr.png"
+            icon: "/hr.png",
           }
         );
 
@@ -99,5 +83,4 @@ export const listenForMessages = () => {
 
 
   return unsubscribe;
-
 };

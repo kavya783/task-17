@@ -19,6 +19,7 @@ import { Theme } from "../GlobalStyles";
 import { toast } from "react-toastify";
 
 
+
 export default function HrForm({
     darkMode,
     hr = {},
@@ -26,9 +27,11 @@ export default function HrForm({
     submitHandle,
     show,
     handleClose,
-    type
+    type,
+    loading
 }) {
     const [errors, setErrors] = useState({});
+
     const color = Colors(darkMode);
     const hrName = hr.name || "";
     const hrEmail = hr.email || "";
@@ -75,15 +78,15 @@ export default function HrForm({
         e.preventDefault();
         if (!validate()) return;
         const formData = new FormData();
-       formData.append("name", hrName);
-formData.append("email", hrEmail);
-formData.append("address", hrAddress);
-formData.append("password", hrPassword);   
-formData.append("role", "hr");
+        formData.append("name", hrName);
+        formData.append("email", hrEmail);
+        formData.append("address", hrAddress);
+        formData.append("password", hrPassword);
+        formData.append("role", "hr");
 
-if (hr.profileImageFile) {
-    formData.append("profile_image", hr.profileImageFile);
-}
+        if (hr.profileImageFile) {
+            formData.append("profile_image", hr.profileImageFile);
+        }
         submitHandle({
             formData,
             id: hr.id
@@ -93,32 +96,24 @@ if (hr.profileImageFile) {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-
         if (!file) return;
-        if (
-            file.type !== "image/jpeg" &&
-            file.type !== "image/png"
-        ) {
 
-            toast.error("Only JPG and PNG allowed");
-            return;
-
-        }
-        if (file.size > 2 * 1024 * 1024) {
-
-            toast.error("Image size should be less than 2MB");
+        if (!["image/jpeg", "image/png"].includes(file.type)) {
+            toast.error("Only JPG and PNG images are allowed");
             return;
         }
+
         handleChange({
-
             target: {
                 name: "profileImageFile",
-                value: file
-            }
-
+                value: file,
+            },
         });
 
-
+        setErrors((prev) => ({
+            ...prev,
+            profileImage: "",
+        }));
     };
     useEffect(() => {
         if (show) {
@@ -130,316 +125,305 @@ if (hr.profileImageFile) {
     }, [show]);
 
     return (
+        <>
+           
 
-        <Modal
-            open={show}
-            onClose={handleClose}
-            sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-            }}
-        >
-            <Paper
+            <Modal
+                open={show}
+                onClose={handleClose}
                 sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%,-50%)",
-
-                    width: {
-                        xs: "80%",
-                        sm: "70%",
-                        md: "45%",
-                        lg: "35%"
-                    },
-
-                    maxHeight: "90vh",
-                    overflowY: "auto",
-
-                    p: {
-                        xs: 2,
-                        sm: 3,
-                        md: 4
-                    },
-
-                    borderRadius: 3
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
                 }}
             >
-
-                <Box
+                <Paper
+                    elevation={10}
                     sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        mb: 3
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%,-50%)",
+
+                        width: {
+                            xs: "80%",
+                            sm: "70%",
+                            md: "45%",
+                            lg: "35%"
+                        },
+
+                        maxHeight: "90vh",
+                        overflowY: "auto",
+
+                        p: {
+                            xs: 2,
+                            sm: 3,
+                            md: 4
+                        },
+
+                        borderRadius: 3
                     }}
                 >
-                    <Typography
-                        sx={{
-                            fontSize: Theme.font20Bold
-                        }}
-                    >
-                        {
-                            type === "add"
-                                ?
-                                "Add HR"
-                                :
-                                type === "edit"
-                                    ?
-                                    "Edit HR"
-                                    :
-                                    "HR Details"
-                        }
-                    </Typography>
-                    <IconButton onClick={handleClose}>
 
-                        <CloseIcon />
-
-                    </IconButton>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        mb: 3
-                    }}
-                >
-                    <Box sx={{ position: "relative" }}>
-                        <Avatar
-                            src={
-                                hr.profileImageFile
-                                    ? URL.createObjectURL(hr.profileImageFile)
-                                    : hr.profile_image_url || ""
-                            }
-                            sx={{
-                                width: {
-                                    xs: 80,
-                                    sm: 100
-                                },
-                                height: {
-                                    xs: 80,
-                                    sm: 100
-                                },
-                                border: "4px solid #1976d2",
-                                boxShadow: 4,
-                            }}
-                        >
-                            {
-                                !hr.profile_image_url &&
-                                !hr.profileImageFile &&
-                                hrName.charAt(0).toUpperCase()
-                            }
-
-                        </Avatar>
-                        <IconButton
-
-                            component="label"
-                            sx={{
-                                position: "absolute",
-                                right: 0,
-                                bottom: 0,
-                                bgcolor: color.headings
-                            }}
-                        >
-                            <EditIcon />
-                            <input
-                                hidden
-                                type="file"
-                                accept="image/png,image/jpeg"
-                                onChange={handleImageChange}
-                            />
-                        </IconButton>
-                    </Box>
-                </Box>
-                {
-                    errors.profileImage && (
-                        <Typography
-                            sx={{
-                                color: "red",
-                                textAlign: "center",
-                                mb: 2
-                            }}
-                        >
-                            {errors.profileImage}
-                        </Typography>
-                    )
-                }
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        label="HR Name"
-                        name="name"
-                        value={hrName}
-                        onChange={handleInputChange}
-                        error={!!errors.name}
-                        helperText={errors.name}
-                        fullWidth
-                        sx={{
-                            mb: 2,
-                            "& .MuiInputBase-root": {
-                                fontSize: {
-                                    xs: "14px",
-                                    sm: "16px"
-                                }
-                            }
-                        }}
-                    />
-                    <TextField
-                        label="Email"
-                        name="email"
-                        value={hrEmail}
-                        onChange={handleInputChange}
-                        error={!!errors.email}
-                        helperText={errors.email}
-                        fullWidth
-                        sx={{
-                            mb: 2,
-                            "& .MuiInputBase-root": {
-                                fontSize: {
-                                    xs: "14px",
-                                    sm: "16px"
-                                }
-                            }
-                        }}
-                    />
-                    <TextField
-                        label="Address"
-                        name="address"
-                        value={hrAddress}
-                        onChange={handleInputChange}
-                        error={!!errors.address}
-                        helperText={errors.address}
-                        fullWidth
-                        sx={{
-                            mb: 2,
-                            "& .MuiInputBase-root": {
-                                fontSize: {
-                                    xs: "14px",
-                                    sm: "16px"
-                                }
-                            }
-                        }}
-                    />
-
-                    <TextField
-                        label="Password"
-                        type="password"
-                        name="password"
-                        value={hrPassword}
-                        onChange={handleInputChange}
-                        error={!!errors.password}
-                        helperText={
-                            type === "edit"
-                                ?
-                                "Leave blank to keep password"
-                                :
-                                errors.password
-                        }
-                        fullWidth
-                        sx={{
-                            mb: 2,
-                            "& .MuiInputBase-root": {
-                                fontSize: {
-                                    xs: "14px",
-                                    sm: "16px"
-                                }
-                            }
-                        }}
-
-                    />
                     <Box
                         sx={{
                             display: "flex",
-                            justifyContent: "flex-end",
-                            gap: 2,
-
-                            flexDirection: {
-                                xs: "column",
-                                sm: "row"
-                            }
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mb: 3
                         }}
                     >
-                        <CommonButton
-
-                            onClick={handleClose}
+                        <Typography
                             sx={{
-                                bgcolor: color.navbar,
-                                color: color.text,
+                                fontSize: Theme.font20Bold
+                            }}
+                        >
+                            {
+                                type === "add"
+                                    ?
+                                    "Add HR"
+                                    :
+                                    type === "edit"
+                                        ?
+                                        "Edit HR"
+                                        :
+                                        "HR Details"
+                            }
+                        </Typography>
+                        <IconButton onClick={handleClose}>
 
-                                width: {
-                                    xs: "100%",
-                                    sm: "auto"
+                            <CloseIcon />
+
+                        </IconButton>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            mb: 3
+                        }}
+                    >
+                        <Box sx={{ position: "relative" }}>
+                            <Avatar
+                                src={
+                                    hr.profileImageFile
+                                        ? URL.createObjectURL(hr.profileImageFile)
+                                        : hr.profile_image_url || ""
+                                }
+                                sx={{
+                                    width: {
+                                        xs: 80,
+                                        sm: 100
+                                    },
+                                    height: {
+                                        xs: 80,
+                                        sm: 100
+                                    },
+                                    border: "4px solid #1976d2",
+                                    boxShadow: 4,
+                                }}
+                            >
+                                {
+                                    !hr.profile_image_url &&
+                                    !hr.profileImageFile &&
+                                    hrName.charAt(0).toUpperCase()
+                                }
+
+                            </Avatar>
+                            <IconButton
+
+                                component="label"
+                                sx={{
+                                    position: "absolute",
+                                    right: 0,
+                                    bottom: 0,
+                                    bgcolor: color.headings
+                                }}
+                            >
+                                <EditIcon />
+                                <input
+                                    hidden
+                                    type="file"
+                                    accept="image/png,image/jpeg"
+                                    onChange={handleImageChange}
+                                />
+                            </IconButton>
+                        </Box>
+                    </Box>
+                    {
+                        errors.profileImage && (
+                            <Typography
+                                sx={{
+                                    color: "red",
+                                    textAlign: "center",
+                                    mb: 2
+                                }}
+                            >
+                                {errors.profileImage}
+                            </Typography>
+                        )
+                    }
+                    <form onSubmit={handleSubmit}>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                gap: 2,
+                                flexDirection: { xs: "column", md: "row" },
+                                mb: 2,
+                                mt: 2
+                            }}
+                        >
+                            <TextField
+                                label="HR Name"
+                                name="name"
+                                value={hrName}
+                                onChange={handleInputChange}
+                                error={!!errors.name}
+                                helperText={errors.name}
+                                fullWidth
+                                sx={{
+                                    mb: 2,
+                                    "& .MuiInputBase-root": {
+                                        fontSize: {
+                                            xs: "14px",
+                                            sm: "16px"
+                                        }
+                                    }
+                                }}
+                            />
+                            <TextField
+                                label="Email"
+                                name="email"
+                                value={hrEmail}
+                                onChange={handleInputChange}
+                                error={!!errors.email}
+                                helperText={errors.email}
+                                fullWidth
+                                sx={{
+                                    mb: 2,
+                                    "& .MuiInputBase-root": {
+                                        fontSize: {
+                                            xs: "14px",
+                                            sm: "16px"
+                                        }
+                                    }
+                                }}
+                            />
+                        </Box>
+                        <TextField
+                            label="Address"
+                            name="address"
+                            value={hrAddress}
+                            onChange={handleInputChange}
+                            error={!!errors.address}
+                            helperText={errors.address}
+                            fullWidth
+                            sx={{
+                                mb: 2,
+                                "& .MuiInputBase-root": {
+                                    fontSize: {
+                                        xs: "14px",
+                                        sm: "16px"
+                                    }
+                                }
+                            }}
+                        />
+
+                        <TextField
+                            label="Password"
+                            type="password"
+                            name="password"
+                            value={hrPassword}
+                            onChange={handleInputChange}
+                            error={!!errors.password}
+                            helperText={
+                                type === "edit"
+                                    ?
+                                    "Leave blank to keep password"
+                                    :
+                                    errors.password
+                            }
+                            fullWidth
+                            sx={{
+                                mb: 2,
+                                "& .MuiInputBase-root": {
+                                    fontSize: {
+                                        xs: "14px",
+                                        sm: "16px"
+                                    }
+                                }
+                            }}
+
+                        />
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                gap: 2,
+
+                                flexDirection: {
+                                    xs: "column",
+                                    sm: "row"
                                 }
                             }}
                         >
-
-                            Cancel
-
-                        </CommonButton>
-
-
-
-
-
-                        {
-                            type !== "view" &&
-
-
                             <CommonButton
-                                type="submit"
 
+                                onClick={handleClose}
                                 sx={{
-
                                     bgcolor: color.navbar,
+                                    color: color.text,
 
-                                    color: color.text
-
+                                    // width: {
+                                    //     xs: "100%",
+                                    //     sm: "auto"
+                                    // }
                                 }}
-
                             >
 
-
-                                {
-
-                                    type === "add"
-
-                                        ?
-
-                                        "Add HR"
-
-                                        :
-
-                                        "Update HR"
-
-                                }
-
-
+                                Cancel
 
                             </CommonButton>
 
 
-                        }
+
+
+
+                            {
+                                type !== "view" &&
+                                <CommonButton
+                                    type="submit"
+                                     sx={{bgcolor:color.navbar,color:color.text}}
+                                    disabled={loading}
+                                >
+                                    {loading
+                                        ? "Loading..."
+                                        : type === "add"
+                                            ? "Add HR"
+                                            : "Update HR"}
+                                </CommonButton>
+
+                            }
 
 
 
 
 
-                    </Box>
+                        </Box>
 
 
 
-                </form>
+                    </form>
 
 
 
-            </Paper>
+                </Paper>
 
 
 
-        </Modal>
-
+            </Modal>
+        </>
 
     );
-
 
 }

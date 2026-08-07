@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
 import { listenForMessages } from "./notification";
 import CompanyDashboard from "./pages/CompanyDashboard";
-
+import HrLeave from "./components/HrLeave";
 
 function App() {
 
@@ -35,8 +35,31 @@ function App() {
               <CompanyDashboard
                 darkMode={darkMode}
                 setDarkMode={setDarkMode}
-              
+
               />
+            }
+          />
+          <Route
+            path="/hr/dashboard"
+            element={
+              <ProtectedRoute roleAllowed={["hr"]}>
+                <HrDashboard
+                  darkMode={darkMode}
+                  setDarkMode={setDarkMode}
+                  pageType="dashboard"
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/hr/leave-status"
+            element={
+              <ProtectedRoute roleAllowed={["hr"]}>
+                <HrLeave
+                  darkMode={darkMode}
+                  setDarkMode={setDarkMode}
+                />
+              </ProtectedRoute>
             }
           />
 
@@ -47,6 +70,7 @@ function App() {
                 <HrDashboard
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
+                  pageType="employees"
                 />
               </ProtectedRoute>
             }
@@ -55,7 +79,7 @@ function App() {
           <Route
             path="/leave"
             element={
-              <ProtectedRoute roleAllowed={["hr"]}>
+              <ProtectedRoute roleAllowed={["hr", "company"]}>
                 <LeavePage
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
@@ -79,7 +103,7 @@ function App() {
           <Route
             path="/leave/form"
             element={
-              <ProtectedRoute roleAllowed={["employee"]}>
+              <ProtectedRoute roleAllowed={["employee", "hr"]}>
                 <LeaveForm
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
