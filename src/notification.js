@@ -14,7 +14,7 @@ export const requestNotificationPermission = async (dispatch) => {
     const permission = await Notification.requestPermission();
 
     if(permission !== "granted"){
-      console.log("Notification permission denied");
+      // console.log("Notification permission denied");
       return;
     }
 
@@ -40,10 +40,10 @@ export const requestNotificationPermission = async (dispatch) => {
 
   } catch(error){
 
-    console.log(
-      "Notification Error",
-      error
-    );
+    // console.log(
+    //   "Notification Error",
+    //   error
+    // );
 
   }
 

@@ -53,7 +53,7 @@ useEffect(() => {
   }
 
 }, [dispatch]);
- console.log("NOTIFICATIONS", notifications);
+//  console.log("NOTIFICATIONS", notifications);
 
 useEffect(() => {
 

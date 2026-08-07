@@ -102,7 +102,7 @@ employeeState.getemployeedata || {};
     }
 
   }, [dispatch]);
-  console.log("HR NOTIFICATIONS", notifications);
+  // console.log("HR NOTIFICATIONS", notifications);
 
 
 

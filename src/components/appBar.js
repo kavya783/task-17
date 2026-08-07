@@ -123,7 +123,7 @@ function AppBarr({
 
     return () => clearTimeout(timer);
   }, [api]);
-  console.log("Notification State:", notifications);
+  // console.log("Notification State:", notifications);
 
   return (
     <>
