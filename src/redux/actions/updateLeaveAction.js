@@ -1,5 +1,6 @@
 import * as types from "./actionTypes";
 import { updateLeaveData } from "../apis/updateLeaveApi";
+import { getLeaveDataActionInitiate } from "./getLeaveAction";
 
 export const updateLeaveDataStart = () => ({
   type: types.UPDATE_LEAVE_DATA_START,
@@ -15,7 +16,7 @@ export const updateLeaveDataError = (error) => ({
   payload: error,
 });
 
-export const updateLeaveDataActionInitiate = (leave, id) => {
+export const updateLeaveDataActionInitiate = (leave, id, appliedBy) => {
   return async (dispatch) => {
     dispatch(updateLeaveDataStart());
 
@@ -24,19 +25,10 @@ export const updateLeaveDataActionInitiate = (leave, id) => {
 
       dispatch(updateLeaveDataSuccess(res));
 
-      return res;
+      const refreshAppliedBy = appliedBy || (localStorage.getItem("role") === "employee" ? "employee" : "hr");
+      dispatch(getLeaveDataActionInitiate(refreshAppliedBy));
     } catch (error) {
-      console.error(
-        "Update leave error:",
-        error.response?.data || error.message
-      );
-
-      dispatch(
-        updateLeaveDataError(
-          error.response?.data?.error || error.message
-        )
-      );
-
+      dispatch(updateLeaveDataError(error.message));
       throw error;
     }
   };

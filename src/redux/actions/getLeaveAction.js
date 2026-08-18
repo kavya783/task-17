@@ -17,17 +17,27 @@ export const getLeaveDataError = (error) => ({
 
 export const getLeaveDataActionInitiate = (appliedBy) => {
   return async (dispatch) => {
+
     dispatch(getLeaveDataStart());
 
     try {
-      const response = await fetchLeaveData(appliedBy);
 
-      dispatch(getLeaveDataSuccess(response.data));
+      const res = await fetchLeaveData(appliedBy);
 
-      return response.data;
+      const list = Array.isArray(res)
+        ? res
+        : Object.keys(res || {}).map((key) => ({
+            id: key,
+            ...res[key],
+          }));
+
+      dispatch(getLeaveDataSuccess(list));
+
     } catch (error) {
+
       dispatch(getLeaveDataError(error.message));
-      throw error;
+
     }
+
   };
 };
