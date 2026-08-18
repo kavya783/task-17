@@ -102,7 +102,7 @@ export default function EmployeeForm({
       "Password must be at least 6 characters";
   }
 
-  // Profile Image
+  // Profile 
   if (type === "add" && !employee.profileImageFile) {
     newErrors.profileImage = "Image is required";
   }
@@ -133,9 +133,9 @@ const handleSubmit = async (e) => {
     formData.append("profile_image", employee.profileImageFile);
   }
 
-  for (let pair of formData.entries()) {
-    // console.log(pair[0], pair[1]);
-  }
+  // for (let pair of formData.entries()) {
+  //   // console.log(pair[0], pair[1]);
+  // }
 
   submitHandle({
     formData,
@@ -146,6 +146,7 @@ const handleSubmit = async (e) => {
 
 const handleImageChange = (e) => {
   const file = e.target.files[0];
+
   if (!file) return;
 
   if (!["image/jpeg", "image/png"].includes(file.type)) {
@@ -153,17 +154,109 @@ const handleImageChange = (e) => {
     return;
   }
 
-  handleChange({
-    target: {
-      name: "profileImageFile",
-      value: file,
-    },
-  });
+  const maxSize = 1 * 1024 * 1024; // 1 MB
 
-  setErrors((prev) => ({
-    ...prev,
-    profileImage: "",
-  }));
+  if (file.size <= maxSize) {
+    handleChange({
+      target: {
+        name: "profileImageFile",
+        value: file,
+      },
+    });
+
+    setErrors((prev) => ({
+      ...prev,
+      profileImage: "",
+    }));
+
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = (event) => {
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      const maxWidth = 1200;
+      const maxHeight = 1200;
+
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth || height > maxHeight) {
+        if (width > height) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        } else {
+          width = (width * maxHeight) / height;
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            toast.error("Image compression failed");
+            return;
+          }
+
+          const compressedFile = new File(
+            [blob],
+            file.name.replace(/\.[^/.]+$/, ".jpg"),
+            {
+              type: "image/jpeg",
+              lastModified: Date.now(),
+            }
+          );
+
+          if (compressedFile.size > maxSize) {
+            toast.error("Image is still larger than 1 MB");
+            return;
+          }
+
+          handleChange({
+            target: {
+              name: "profileImageFile",
+              value: compressedFile,
+            },
+          });
+
+          setErrors((prev) => ({
+            ...prev,
+            profileImage: "",
+          }));
+
+          console.log(
+            "Original size:",
+            (file.size / 1024 / 1024).toFixed(2),
+            "MB"
+          );
+
+          console.log(
+            "Compressed size:",
+            (compressedFile.size / 1024 / 1024).toFixed(2),
+            "MB"
+          );
+        },
+        "image/jpeg",
+        0.7
+      );
+    };
+
+    img.src = event.target.result;
+  };
+
+  reader.readAsDataURL(file);
 };
 useEffect(() => {
   if (show) {

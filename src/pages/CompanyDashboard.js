@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
@@ -24,7 +24,16 @@ import { getNotificationDataActionInitiate } from "../redux/actions/getNotificat
 import { toast } from "react-toastify";
 import { requestNotificationPermission } from "../notification";
 import Loader from "../components/Loader";
-
+const createInitialHR = () => ({
+  id: "",
+  name: "",
+  email: "",
+  password: "",
+  address: "",
+  role: "hr",
+  profileImageFile: null,
+  profile_image_url: ""
+});
 
 function CompanyDashboard({
   darkMode,
@@ -42,29 +51,22 @@ function CompanyDashboard({
   const { hrs = [] } = useSelector(
     (state) => state.gethrdata || {}
   );
-  const hrData = hrs.slice(
+ const hrData = useMemo(() => {
+  return hrs.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-  console.log("HR DATA", hrData);
+}, [hrs, page, rowsPerPage]);
+
   const { notifications = [] } = useSelector(
     (state) => state.getnotificationdata || {}
   );
-  const initialHR = {
-    id: "",
-    name: "",
-    email: "",
-    password: "",
-    address: "",
-    role: "hr",
-    profileImageFile: null,
-    profile_image_url: ""
-  };
+  
   const [showHRs, setShowHRs] = useState(true);
   const [showForm, setShowForm] = useState(false);
  const [loading, setLoading] = useState(true);
   const [type, setType] = useState("add");
-  const [hr, setHr] = useState(initialHR);
+ const [hr, setHr] = useState(createInitialHR);
  useEffect(() => {
   const fetchHRs = async () => {
     try {
@@ -104,52 +106,52 @@ useEffect(() => {
 
 
   // ADD HR
-  const handleAdd = () => {
-    setType("add");
-    setHr(initialHR);
-    setShowForm(true);
-  };
+ const handleAdd = useCallback(() => {
+  setType("add");
+  setHr(createInitialHR());
+  setShowForm(true);
+}, []);
   // EDIT HR
-  const handleEdit = (item) => {
-    setType("edit");
-    setHr({
-      ...item,
-      password: ""
-    });
-    setShowForm(true);
-  };
-  const handleView = (item) => {
-    setViewHR(item);
-
-  };
+  const handleEdit = useCallback((item) => {
+  setType("edit");
+  setHr({
+    ...item,
+    password: ""
+  });
+  setShowForm(true);
+}, []);
+ const handleView = useCallback((item) => {
+  setViewHR(item);
+}, []);
   // DELETE HR
- const handleDelete = async (id) => {
+const handleDelete = useCallback(async (id) => {
   try {
     await dispatch(deleteHRDataActionInitiate(id));
     await dispatch(getHRDataActionInitiate());
   } catch (error) {
     toast.error("Delete failed");
   }
-};
-  const handleChange = (e) => {
-    setHr({
-      ...hr,
-      [e.target.name]: e.target.value
-    });
-  };
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+}, [dispatch]);
+  const handleChange = useCallback((e) => {
+  const { name, value } = e.target;
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-const submitHandle = async ({ formData, id }) => {
-  // Modal first close
+  setHr((prev) => ({
+    ...prev,
+    [name]: value
+  }));
+}, []);
+ const handleChangePage = useCallback((event, newPage) => {
+  setPage(newPage);
+}, []);
+ const handleChangeRowsPerPage = useCallback((event) => {
+  setRowsPerPage(parseInt(event.target.value, 10));
+  setPage(0);
+}, []);
+const handleClose = useCallback(() => {
   setShowForm(false);
-
-  // Show Loader
+  setHr(createInitialHR());
+}, []);
+const submitHandle = useCallback(async ({ formData, id }) => {
   setLoading(true);
 
   try {
@@ -161,14 +163,14 @@ const submitHandle = async ({ formData, id }) => {
 
     await dispatch(getHRDataActionInitiate());
 
-    setHr(initialHR);
+    setHr(createInitialHR());
+    setShowForm(false);
   } catch (error) {
     toast.error("Something went wrong");
   } finally {
-    // Hide Loader
     setLoading(false);
   }
-};
+}, [type, dispatch]);
  
   if (loading)
     return <Loader />;
@@ -343,19 +345,16 @@ const submitHandle = async ({ formData, id }) => {
 
         {type !== "view" && (
 
-          <HrForm
-            darkMode={darkMode}
-            hr={hr}
-            handleChange={handleChange}
-            submitHandle={submitHandle}
-            show={showForm}
-            handleClose={() => {
-              setShowForm(false);
-              setHr(initialHR);
-            }}
-            type={type}
-             loading={loading}
-          />
+         <HrForm
+  darkMode={darkMode}
+  hr={hr}
+  handleChange={handleChange}
+  submitHandle={submitHandle}
+  show={showForm}
+  handleClose={handleClose}
+  type={type}
+  loading={loading}
+/>
 
         )}
 

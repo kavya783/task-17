@@ -1,6 +1,5 @@
 import * as types from "./actionTypes";
 import { updateEmployeeData } from "../apis/updateEmployeeApi";
-import { getEmployeeDataActionInitiate } from "./getEmployeeAction";
 
 export const updateEmployeeDataStart = () => ({
   type: types.UPDATE_EMPLOYEE_DATA_START,
@@ -23,12 +22,14 @@ export const updateEmployeeDataActionInitiate = (employee, id) => {
     try {
       const res = await updateEmployeeData(employee, id);
 
+      console.log("UPDATED EMPLOYEE RESPONSE:", res);
+
       dispatch(updateEmployeeDataSuccess(res));
 
-      // Refresh employee list
-      dispatch(getEmployeeDataActionInitiate());
+      return res;
     } catch (error) {
       dispatch(updateEmployeeDataError(error.message));
+      throw error;
     }
   };
 };

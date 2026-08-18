@@ -4,10 +4,15 @@ const initialState = {
   data: [],
   loading: false,
   error: null,
+  cachedAt: null,
 };
 
-export const getEmployeeReducer = (state = initialState, action) => {
+export const getEmployeeReducer = (
+  state = initialState,
+  action
+) => {
   switch (action.type) {
+
     case types.LOAD_EMPLOYEE_DATA_START:
       return {
         ...state,
@@ -19,6 +24,8 @@ export const getEmployeeReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         data: action.payload,
+        cachedAt: Date.now(),
+        error: null,
       };
 
     case types.LOAD_EMPLOYEE_DATA_ERROR:

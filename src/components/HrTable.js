@@ -1,5 +1,6 @@
 import React from "react";
-
+import { memo } from "react";
+import { useMemo, useCallback } from "react";
 import {
     Table,
     TableBody,
@@ -15,11 +16,11 @@ import {
     Tooltip
 } from "@mui/material";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions
 } from "@mui/material";
 
 import { useState } from "react";
@@ -31,10 +32,10 @@ import { Avatar } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Loader from "./Loader";
 
 
-export default function HrTable({
+
+function HrTable({
     data = [],
     handleEdit,
     handleDelete,
@@ -47,35 +48,34 @@ export default function HrTable({
 
     const isMobile = useMediaQuery("(max-width:500px)");
 
-    const color = Colors(darkMode);
+    const color = useMemo(() => {
+        return Colors(darkMode);
+    }, [darkMode]);
 
-const [openDelete, setOpenDelete] = useState(false);
-const [selectedId, setSelectedId] = useState(null);
-    const filteredData = data.filter(
-        (item) => item.role === "hr"
-    );
-const handleOpenDelete = (id) => {
-  setSelectedId(id);
-  setOpenDelete(true);
-};
+    const [openDelete, setOpenDelete] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
+    const filteredData = useMemo(() => {
+        return data.filter((item) => item.role === "hr");
+    }, [data]);
+    const handleOpenDelete = useCallback((id) => {
+        setSelectedId(id);
+        setOpenDelete(true);
+    }, []);
 
-const handleCloseDelete = () => {
-  setOpenDelete(false);
-  setSelectedId(null);
-};
+    const handleCloseDelete = useCallback(() => {
+        setOpenDelete(false);
+        setSelectedId(null);
+    }, []);
+    const handleConfirmDelete = useCallback(() => {
+        handleDelete(selectedId);
+        handleCloseDelete();
+    }, [handleDelete, handleCloseDelete, selectedId]);
 
-const handleConfirmDelete = () => {
-  handleDelete(selectedId);
-  handleCloseDelete();
-};
+
+    return (
+        <>
 
 
-  return (
-  <>
-    {loading ? (
-      <Loader />
-    ) : (
-      <>
 
             <Box
                 sx={{
@@ -120,102 +120,99 @@ const handleConfirmDelete = () => {
                 <Box>
                     {
                         filteredData.length === 0 ? (
-                                    <Card
-                                        sx={{
-                                            mb: 2,
-                                            boxShadow: `0px 4px 10px ${color.text}`,
-                                            color: color.text,
-                                        }}
-                                    >
-                                        <CardContent>
-                                            <Typography
-                                                align="center"
-                                                sx={{
-                                                    color: color.text,
-                                                    fontSize: Theme.font16Bold,
-                                                    py: 3,
-                                                }}
-                                            >
-                                                No HRs Found
-                                            </Typography>
-                                        </CardContent>
-                                    </Card>
-                                ) : (
-                        filteredData.map((item) => (
                             <Card
-                                key={item.id}
                                 sx={{
                                     mb: 2,
-                                    mx: 2
+                                    boxShadow: `0px 4px 10px ${color.text}`,
+                                    color: color.text,
                                 }}
                             >
                                 <CardContent>
-                                    <Box
+                                    <Typography
+                                        align="center"
                                         sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 1
+                                            color: color.text,
+                                            fontSize: Theme.font16Bold,
+                                            py: 3,
                                         }}
                                     >
-                                        <img
-                                            src={item.profile_image_url}
-                                            alt="profile"
-                                            style={{
-                                                width: 80,
-                                                height: 80,
-                                                borderRadius: "50%"
-                                            }}
-                                        />
-                                    </Box>
-                                    {/* <Avatar
-                                            src={item.profile_image_url}
+                                        No HRs Found
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        ) : (
+                            filteredData.map((item) => (
+                                <Card
+                                    key={item.id}
+                                    sx={{
+                                        mb: 2,
+                                        mx: 2
+                                    }}
+                                >
+                                    <CardContent>
+                                        <Box
                                             sx={{
-                                                width: 35,
-                                                height: 35
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 1
+                                            }}
+                                        >
+                                           
+                                        </Box>
+                                        <Avatar
+                                            src={item.profileImage || item.profile_image_url || ""}
+                                             loading="lazy"
+
+
+                                            alt={item.name}
+                                            sx={{
+                                                width: 45,
+                                                height: 45,
+                                                ml:12
                                             }}
                                         >
                                             {item.name?.charAt(0).toUpperCase()}
-                                        </Avatar> */}
+                                        </Avatar>
 
 
-                                    <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
-                                        Name:{item.name}
-                                    </Typography>
+                                        <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
+                                            Name:{item.name}
+                                        </Typography>
 
 
-                                    <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
-                                        Email : {item.email}
-                                    </Typography>
-                                    <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
-                                        Address : {item.address}
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            gap: 9,
-                                            mt: 2
-                                        }}
-                                    >
-                                        <span onClick={() => handleView(item)}>
-                                            <VisibilityIcon
-                                                sx={{ fontSize: Theme.font24Bold, color: color.card, ml: 0 }}
-                                            />
-                                        </span>
-                                        <span onClick={() => handleEdit(item)}>
-                                            <EditIcon
-                                                sx={{ fontSize: Theme.font24Bold, color: color.card, ml: 1 }}
+                                        <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
+                                            Email : {item.email}
+                                        </Typography>
+                                        <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
+                                            Address : {item.address}
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                gap: 9,
+                                                mt: 2
+                                            }}
+                                        >
+                                            <span onClick={() => handleView(item)}>
+                                                <VisibilityIcon
+                                                    sx={{ fontSize: Theme.font24Bold, color: color.card, ml: 0 }}
+                                                />
+                                            </span>
+                                            <span onClick={() => handleEdit(item)}>
+                                                <EditIcon
+                                                    sx={{ fontSize: Theme.font24Bold, color: color.card, ml: 1 }}
 
-                                            />
-                                        </span>
-                                        <span onClick={() => handleOpenDelete(item.id)}>
-                                            <DeleteIcon
-                                                sx={{ fontSize: Theme.font24Bold, color: color.card, ml: 1 }}
-                                            />
-                                        </span>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        )))
+                                                />
+                                            </span>
+                                            <span onClick={() => handleOpenDelete(item.id)}>
+                                                <DeleteIcon
+                                                    sx={{ fontSize: Theme.font24Bold, color: color.card, ml: 1 }}
+                                                />
+                                            </span>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            )))
                     }
                 </Box>
             ) : (
@@ -231,7 +228,7 @@ const handleConfirmDelete = () => {
                             boxShadow: 2,
                             borderRadius: 2,
                             borderRight: "1px solid white",
-                             borderLeft: "1px solid white"
+                            borderLeft: "1px solid white"
                         }}
                     >
                         <Table size="small">
@@ -241,136 +238,137 @@ const handleConfirmDelete = () => {
                                 }}
                             >
                                 <TableRow>
-                                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold }}>
+                                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                                         S.no
                                     </TableCell>
 
-                                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                                         Name
                                     </TableCell>
-                                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                                         Email
                                     </TableCell>
-                                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                                         Address
                                     </TableCell>
-                                    <TableCell sx={{ color: color.text,fontSize:Theme.font16Bold  }}>
+                                    <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
                                         Action
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                { 
-                                            data.length === 0 ? (
-                                                      <TableRow>
-                                                        <TableCell
-                                                          colSpan={7}
-                                                          align="center"
-                                                          sx={{
-                                                            color: color.text,
-                                                            fontSize: Theme.font16Bold,
-                                                            py: 3,
-                                                          }}
-                                                        >
-                                                          No HRs Found
-                                                        </TableCell>
-                                                      </TableRow>
-                                                    ) : (
-                                    filteredData.map((item, index) => (
-                                        <TableRow key={item.id}>
-                                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
-                                                {index + 1}
+                                {
+                                    data.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={7}
+                                                align="center"
+                                                sx={{
+                                                    color: color.text,
+                                                    fontSize: Theme.font16Bold,
+                                                    py: 3,
+                                                }}
+                                            >
+                                                No HRs Found
                                             </TableCell>
-                                            <TableCell>
-                                                <Box
-                                                    sx={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        gap: 1,
-
-                                                    }}
-                                                >
-                                                    <Avatar
-                                                        src={item.profile_image_url}
+                                        </TableRow>
+                                    ) : (
+                                        filteredData.map((item, index) => (
+                                            <TableRow key={item.id}>
+                                                <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
+                                                    {index + 1}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Box
                                                         sx={{
-                                                            width: 35,
-                                                            height: 35
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            gap: 1,
+
                                                         }}
                                                     >
-                                                        {item.name?.charAt(0).toUpperCase()}
-                                                    </Avatar>
-                                                    <Tooltip title={item.name}>
-
-                                                        <Typography
+                                                        <Avatar
+                                                              src={item.profileImage || item.profile_image_url || ""}
+                                                               loading="lazy"
                                                             sx={{
-                                                                color: color.text,
-                                                                maxWidth: "120px",
-                                                                overflow: "hidden",
-                                                                textOverflow: "ellipsis",
-                                                                whiteSpace: "nowrap",
-                                                                 fontSize: Theme.font14Regular
+                                                                width: 35,
+                                                                height: 35
                                                             }}
                                                         >
+                                                            {item.name?.charAt(0).toUpperCase()}
+                                                        </Avatar>
+                                                        <Tooltip title={item.name}>
 
-                                                            {item.name}
+                                                            <Typography
+                                                                sx={{
+                                                                    color: color.text,
+                                                                    maxWidth: "120px",
+                                                                    overflow: "hidden",
+                                                                    textOverflow: "ellipsis",
+                                                                    whiteSpace: "nowrap",
+                                                                    fontSize: Theme.font14Regular
+                                                                }}
+                                                            >
 
-                                                        </Typography>
-                                                    </Tooltip>
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
-                                                {item.email}
-                                            </TableCell>
-                                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
-                                                {item.address}
-                                            </TableCell>
-                                            <TableCell>
+                                                                {item.name}
 
-
-                                                <Box
-                                                    sx={{
-                                                        display: "flex",
-                                                        gap: 1
-                                                    }}
-                                                >
-
-
-                                                    <span onClick={() => handleView(item)}>
-                                                        <VisibilityIcon
-                                                            sx={{ fontSize: Theme.font24Bold, color: color.text, ml: 0 }}
-                                                        />
-                                                    </span>
-
+                                                            </Typography>
+                                                        </Tooltip>
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
+                                                    {item.email}
+                                                </TableCell>
+                                                <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
+                                                    {item.address}
+                                                </TableCell>
+                                                <TableCell>
 
 
-                                                    <span onClick={() => handleEdit(item)}>
-                                                        <EditIcon
-                                                            sx={{ fontSize: Theme.font24Bold, color: color.text, ml: 1 }}
-                                                        />
-                                                    </span>
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            gap: 1
+                                                        }}
+                                                    >
 
 
-
-                                                    <span onClick={() => handleOpenDelete(item.id)}>
-                                                        <DeleteIcon
-                                                            sx={{ fontSize: Theme.font24Bold, color: color.text, ml: 1 }}
-                                                        />
-                                                    </span>
+                                                        <span onClick={() => handleView(item)}>
+                                                            <VisibilityIcon
+                                                                sx={{ fontSize: Theme.font24Bold, color: color.text, ml: 0 }}
+                                                            />
+                                                        </span>
 
 
 
-                                                </Box>
+                                                        <span onClick={() => handleEdit(item)}>
+                                                            <EditIcon
+                                                                sx={{ fontSize: Theme.font24Bold, color: color.text, ml: 1 }}
+                                                            />
+                                                        </span>
 
 
-                                            </TableCell>
+
+                                                        <span onClick={() => handleOpenDelete(item.id)}>
+                                                            <DeleteIcon
+                                                                sx={{ fontSize: Theme.font24Bold, color: color.text, ml: 1 }}
+                                                            />
+                                                        </span>
+
+
+
+                                                    </Box>
+
+
+                                                </TableCell>
 
 
 
 
-                                        </TableRow>
+                                            </TableRow>
 
 
-                                    )))
+                                        )))
 
                                 }
 
@@ -389,34 +387,35 @@ const handleConfirmDelete = () => {
 
 
             )}
-      </>
-    )}
-    <Dialog open={openDelete} onClose={handleCloseDelete}>
-  <DialogTitle>Delete HR</DialogTitle>
 
-  <DialogContent>
-    <DialogContentText>
-      Are you sure you want to delete this HR?
-    </DialogContentText>
-  </DialogContent>
 
-  <DialogActions>
-    <CommonButton onClick={handleCloseDelete}>
-      Cancel
-    </CommonButton>
+            <Dialog open={openDelete} onClose={handleCloseDelete}>
+                <DialogTitle>Delete HR</DialogTitle>
 
-    <CommonButton
-      onClick={handleConfirmDelete}
-      sx={{
-        backgroundColor: "red",
-        color: "#fff"
-      }}
-    >
-      Delete
-    </CommonButton>
-  </DialogActions>
-</Dialog>
-  </>
-);
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete this HR?
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions>
+                    <CommonButton onClick={handleCloseDelete}>
+                        Cancel
+                    </CommonButton>
+
+                    <CommonButton
+                        onClick={handleConfirmDelete}
+                        sx={{
+                            backgroundColor: "red",
+                            color: "#fff"
+                        }}
+                    >
+                        Delete
+                    </CommonButton>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
 }
+export default memo(HrTable);
 

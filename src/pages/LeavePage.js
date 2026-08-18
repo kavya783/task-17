@@ -7,8 +7,10 @@ import {
   DialogContent,
   DialogActions,
   TablePagination,
+  
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { createSelector } from "@reduxjs/toolkit";
 
 import LeaveTable from "../components/LeaveTable";
 import CommonButton from "../components/CommonButton";
@@ -19,6 +21,13 @@ import { Theme } from "../GlobalStyles";
 
 import { getLeaveDataActionInitiate } from "../redux/actions/getLeaveAction";
 import { useLocation } from "react-router-dom";
+const selectLeaveData = createSelector(
+  [(state) => state.getleavereducer],
+  (leaveState) => ({
+    data: leaveState?.data || [],
+    loading: leaveState?.loading || false,
+  })
+);
 function LeavePage({
   darkMode,
   setDarkMode,
@@ -33,10 +42,7 @@ function LeavePage({
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const { data = [], loading = false } = useSelector(
-    (state) => state.getleavereducer || {}
-  );
-
+const { data, loading } = useSelector(selectLeaveData);
   const initialEmployee = {
     employeename: "",
     leaveType: "",
@@ -112,12 +118,26 @@ function LeavePage({
           p: 2,
         }}
       >
-        <Dialog
-          open={show}
-          onClose={handleClose}
-          maxWidth="xs"
-          fullWidth
-        >
+      <Dialog
+  open={show}
+  onClose={handleClose}
+  fullWidth
+  sx={{
+    "& .MuiDialog-paper": {
+      width: {
+        xs: "95%",
+        sm: "500px",
+      },
+      height: {
+        xs: "100vh",
+        sm: "auto",
+      },
+      maxWidth: "none",
+      margin: "auto",
+      borderRadius: "12px",
+    },
+  }}
+>
           <DialogTitle
             sx={{
               // bgcolor: color.background,
@@ -279,7 +299,7 @@ function LeavePage({
         />
         <TablePagination
           component="div"
-          count={data?.length || 0}
+         count={data.length}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}

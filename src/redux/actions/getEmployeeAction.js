@@ -20,11 +20,34 @@ export const getEmployeeDataActionInitiate = () => {
     dispatch(getEmployeeDataStart());
 
     try {
+      const cachedEmployees = sessionStorage.getItem("employees");
+
+      if (cachedEmployees) {
+        dispatch(
+          getEmployeeDataSuccess(
+            JSON.parse(cachedEmployees)
+          )
+        );
+        return;
+      }
+
       const data = await fetchEmployeeData();
 
-      dispatch(getEmployeeDataSuccess(data));
+      console.log("FRESH API DATA:", data);
+
+      sessionStorage.setItem(
+        "employees",
+        JSON.stringify(data)
+      );
+
+      dispatch(
+        getEmployeeDataSuccess(data)
+      );
+
     } catch (error) {
-      dispatch(getEmployeeDataError(error.message));
+      dispatch(
+        getEmployeeDataError(error.message)
+      );
     }
   };
 };

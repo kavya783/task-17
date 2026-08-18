@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback
+} from "react";
 import {
   Box,
   Typography,
@@ -29,26 +34,7 @@ import { getNotificationDataActionInitiate } from "../redux/actions/getNotificat
 import { Theme } from "../GlobalStyles";
 import HRHome from "../components/HrHome";
 import { requestNotificationPermission } from "../notification";
-function HrDashboard({
-  darkMode,
-  setDarkMode,
-  themeColor,
-  setThemeColor,
-  pageType
-}) {
-  const color = Colors(darkMode, themeColor);
-
-  const dispatch = useDispatch();
-
-
-  const employeeState = useSelector(
-    (state) => state
-  );
-
-  // console.log("FULL REDUX STATE", employeeState);
-const { data = [] } =
-employeeState.getemployeedata || {};
-  const initialEmployee = {
+ const initialEmployee = {
     id: "",
     profileImage: "",
     profileImageFile: null,
@@ -59,22 +45,53 @@ employeeState.getemployeedata || {};
     email: "",
     password: "",
   };
+function HrDashboard({
+  darkMode,
+  setDarkMode,
+  themeColor,
+  setThemeColor,
+  pageType,
+  setShowHRs
+}) {
+  const color = Colors(darkMode, themeColor);
+
+  const dispatch = useDispatch();
+
+
+  const { data = [] } = useSelector(
+    (state) => state.getemployeedata || {}
+  );
+
+  const { notifications = [] } = useSelector(
+    (state) => state.getnotificationdata || {}
+  );
+ 
 
   const [type, setType] = useState("add");
   const [show, setShow] = useState(false);
   const [employee, setEmployee] = useState(initialEmployee);
- const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { notifications = [] } = useSelector(
-    (state) => state.getnotificationdata || {}
-  );
+ const [search, setSearch] = useState("");
+const [debouncedSearch, setDebouncedSearch] = useState("");
 
  useEffect(() => {
-
   const fetchEmployees = async () => {
     try {
       setLoading(true);
+
+      const cachedEmployees = sessionStorage.getItem("employees");
+
+      if (cachedEmployees) {
+        dispatch({
+          type: "LOAD_EMPLOYEE_DATA_SUCCESS",
+          payload: JSON.parse(cachedEmployees),
+        });
+
+        setLoading(false);
+        return;
+      }
 
       await dispatch(getEmployeeDataActionInitiate());
 
@@ -84,7 +101,6 @@ employeeState.getemployeedata || {};
   };
 
   fetchEmployees();
-
 }, [dispatch]);
   useEffect(() => {
 
@@ -102,7 +118,7 @@ employeeState.getemployeedata || {};
     }
 
   }, [dispatch]);
-  // console.log("HR NOTIFICATIONS", notifications);
+  console.log("HR NOTIFICATIONS", notifications);
 
 
 
@@ -111,66 +127,86 @@ employeeState.getemployeedata || {};
     dispatch(getNotificationDataActionInitiate());
 
   }, [dispatch]);
-  const normalizeEmployee = (item) => ({
+  const normalizeEmployee = useCallback((item) => ({
     ...item,
     employeename: item.employeename || item.name || "",
-    profileImage: item.profile_image_url || item.profileImage || "",
-  });
+    profileImage:
+      item.profile_image_url || item.profileImage || "",
+  }), []);
 
-  const employees = (data || []).map(normalizeEmployee);
+  const employees = useMemo(() => {
+  const normalizedEmployees = (data || []).map(normalizeEmployee);
 
-  const handleClose = () => {
-    setShow(false);
-    setEmployee(initialEmployee);
-  };
+  const searchText = debouncedSearch.toLowerCase().trim();
 
-  const submitHandle = async ({ formData, id }) => {
-
-setShow(false);
-setLoading(true);
-
-try {
-
-  if(type === "add"){
-
-    await dispatch(
-      addEmployeeDataActionInitiate(formData)
-    );
-
-  } else {
-
-    await dispatch(
-      updateEmployeeDataActionInitiate(formData,id)
-    );
-
+  if (!searchText) {
+    return normalizedEmployees;
   }
 
+  return normalizedEmployees.filter((employee) =>
+    employee.employeename?.toLowerCase().includes(searchText) ||
+    employee.email?.toLowerCase().includes(searchText) ||
+    employee.role?.toLowerCase().includes(searchText)
+  );
+}, [data, normalizeEmployee, debouncedSearch]);
 
-  await dispatch(getEmployeeDataActionInitiate());
+ 
 
-  setEmployee(initialEmployee);
+  const handleClose = useCallback(() => {
+    setShow(false);
+    setEmployee(initialEmployee);
+  }, []);
+const submitHandle = async ({ formData, id }) => {
+  setLoading(true);
 
-
-} catch(error){
-
- toast.error("Something went wrong");
-
-} finally {
-
- setLoading(false);
-
-}
-
-};
-
-const handleDelete = async (id) => {
   try {
-    await dispatch(deleteEmployeeDataActionInitiate(id));
-    dispatch(getEmployeeDataActionInitiate());
+    if (type === "add") {
+      await dispatch(
+        addEmployeeDataActionInitiate(formData)
+      );
+    } else {
+      await dispatch(
+        updateEmployeeDataActionInitiate(formData, id)
+      );
+    }
+
+    // Remove old cached data
+    sessionStorage.removeItem("employees");
+
+    // Fetch fresh data from API
+    await dispatch(
+      getEmployeeDataActionInitiate()
+    );
+
+    setEmployee(initialEmployee);
+    setShow(false);
+
+  } catch (error) {
+    console.error("Employee update error:", error);
+    toast.error("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};          
+
+ const handleDelete = useCallback(async (id) => {
+  try {
+    await dispatch(
+      deleteEmployeeDataActionInitiate(id)
+    );
+
+    // Clear old cache
+    sessionStorage.removeItem("employees");
+
+    // Fetch fresh data
+    await dispatch(
+      getEmployeeDataActionInitiate()
+    );
+
   } catch (error) {
     toast.error("Delete failed");
   }
-};
+}, [dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -181,54 +217,79 @@ const handleDelete = async (id) => {
     }));
   };
 
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     setType("add");
     setEmployee(initialEmployee);
     setShow(true);
-  };
+  }, []);
 
-  const handleEdit = (item) => {
+  const handleEdit = useCallback((item) => {
     setType("edit");
-    setEmployee(normalizeEmployee(item));
-    setShow(true);
-  };
 
-  const handleView = (item) => {
+    setEmployee({
+      ...item,
+      employeename: item.employeename || item.name || "",
+      profileImage:
+        item.profile_image_url || item.profileImage || "",
+    });
+
+    setShow(true);
+  }, []);
+  const handleView = useCallback((item) => {
     setType("view");
-    setEmployee(normalizeEmployee(item));
+
+    setEmployee({
+      ...item,
+      employeename: item.employeename || item.name || "",
+      profileImage:
+        item.profile_image_url || item.profileImage || "",
+    });
+
     setShow(true);
-  };
+  }, []);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = useCallback((event, newPage) => {
     setPage(newPage);
-  };
+  }, []);
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = useCallback((event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
+  }, []);
 
-  const paginatedEmployees = employees.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const paginatedEmployees = useMemo(() => {
+    const start = page * rowsPerPage;
 
+    return employees.slice(
+      start,
+      start + rowsPerPage
+    );
+  }, [employees, page, rowsPerPage]);
+  
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [search]);
   // console.log("Employee Redux State:", {data, loading});
-if (loading) {
-  return <Loader />;
-}
+  if (loading) {
+    return <Loader />;
+  }
   // console.log("HrDashboard rendered");
 
   return (
     <>
-      <AppBarr
-        roled="hr"
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        themeColor={themeColor}
-        setThemeColor={setThemeColor}
-      />
-
+     <AppBarr
+  roled="hr"
+  darkMode={darkMode}
+  setDarkMode={setDarkMode}
+  themeColor={themeColor}
+  setThemeColor={setThemeColor}
+  setShowHRs={setShowHRs}
+  setSearch={setSearch}
+/>
       <Box
         sx={{
           p: 2,
@@ -412,7 +473,7 @@ if (loading) {
             submitHandle={submitHandle}
             darkMode={darkMode}
             themeColor={themeColor}
-              loading={loading}
+            loading={loading}
           />
         )}
 
@@ -443,10 +504,10 @@ if (loading) {
                 rowsPerPageOptions={[5, 10, 25]}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-                 sx={{
-            mt: 2,
-            color: color.text,
-          }}
+                sx={{
+                  mt: 2,
+                  color: color.text,
+                }}  
               />
             </>
           )

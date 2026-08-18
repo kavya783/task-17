@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   AppBar,
   Toolbar,
@@ -12,6 +12,7 @@ import {
   Badge,
   Popover,
 } from "@mui/material";
+import { TextField } from "@mui/material";
 import API from "../API/API";
 import MenuIcon from "@mui/icons-material/Menu";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -35,10 +36,12 @@ function AppBarr({
   roled,
   darkMode,
   setDarkMode,
-  setShowHRs
+  setShowHRs,
+   setSearch: setParentSearch
 }) {
   const dispatch = useDispatch();
   const api = useMemo(() => new API(), []);
+  
   const { notifications = [] } = useSelector(
     (state) => state.getnotificationdata
   );
@@ -62,6 +65,8 @@ function AppBarr({
   const navigate = useNavigate();
   const color = Colors(darkMode, themeColor);
   const [colorAnchor, setColorAnchor] = useState(null);
+  const [search, setSearch] = useState("");
+
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const role = localStorage.getItem("role")?.toLowerCase();
 
@@ -92,6 +97,28 @@ function AppBarr({
     localStorage.clear();
     navigate("/", { replace: true });
   };
+  const handleResize = useCallback(() => {
+  console.log("Window width:", window.innerWidth);
+}, []);
+
+useEffect(() => {
+  let lastRun = 0;
+
+  const throttledResize = () => {
+    const now = Date.now();
+
+    if (now - lastRun >= 300) {
+      handleResize();
+      lastRun = now;
+    }
+  };
+
+  window.addEventListener("resize", throttledResize);
+
+  return () => {
+    window.removeEventListener("resize", throttledResize);
+  };
+}, [handleResize]);
   useEffect(() => {
 
     dispatch(getNotificationDataActionInitiate());
@@ -104,6 +131,7 @@ function AppBarr({
     return () => clearInterval(interval);
 
   }, [dispatch]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       api.get("notifications/welcome")
@@ -123,7 +151,7 @@ function AppBarr({
 
     return () => clearTimeout(timer);
   }, [api]);
-  // console.log("Notification State:", notifications);
+  console.log("Notification State:", notifications);
 
   return (
     <>
@@ -207,6 +235,16 @@ function AppBarr({
               gap: 0
             }}
           >
+           <TextField
+  size="small"
+  placeholder="Search Employee..."
+  value={search}
+  onChange={(e) => {
+    const value = e.target.value;
+    setSearch(value);
+    setParentSearch?.(value);
+  }}
+/>
             {role !== "company" && (
               <>
                 <IconButton
