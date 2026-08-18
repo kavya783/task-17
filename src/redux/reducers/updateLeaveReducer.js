@@ -6,7 +6,10 @@ const initialState = {
   error: null,
 };
 
-export const putLeaveReducer = (state = initialState, action) => {
+export const putLeaveReducer = (
+  state = initialState,
+  action
+) => {
   switch (action.type) {
     case types.UPDATE_LEAVE_DATA_START:
       return {
@@ -20,7 +23,12 @@ export const putLeaveReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         data: state.data.map((item) =>
-          item.id === action.payload.id ? action.payload : item
+          item.id === action.payload.id
+            ? {
+                ...item,
+                ...action.payload,
+              }
+            : item
         ),
         error: null,
       };

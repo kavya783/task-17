@@ -16,19 +16,47 @@ export const updateLeaveDataError = (error) => ({
   payload: error,
 });
 
-export const updateLeaveDataActionInitiate = (leave, id, appliedBy) => {
+export const updateLeaveDataActionInitiate = (
+  leave,
+  id,
+  appliedBy
+) => {
   return async (dispatch) => {
     dispatch(updateLeaveDataStart());
 
     try {
-      const res = await updateLeaveData(leave, id);
+      const response = await updateLeaveData(leave, id);
 
-      dispatch(updateLeaveDataSuccess(res));
+      // Backend response:
+      // {
+      //   message: "...",
+      //   leave: {...}
+      // }
 
-      const refreshAppliedBy = appliedBy || (localStorage.getItem("role") === "employee" ? "employee" : "hr");
-      dispatch(getLeaveDataActionInitiate(refreshAppliedBy));
+      const updatedLeave = response.leave;
+
+      dispatch(updateLeaveDataSuccess(updatedLeave));
+
+      const refreshAppliedBy =
+        appliedBy ||
+        (localStorage.getItem("role") === "employee"
+          ? "employee"
+          : "hr");
+
+      // IMPORTANT: wait until latest data comes
+      await dispatch(
+        getLeaveDataActionInitiate(refreshAppliedBy)
+      );
+
+      return updatedLeave;
     } catch (error) {
-      dispatch(updateLeaveDataError(error.message));
+      dispatch(
+        updateLeaveDataError(
+          error.response?.data?.error ||
+          error.message
+        )
+      );
+
       throw error;
     }
   };
