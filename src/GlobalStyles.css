@@ -1,23 +1,27 @@
 @font-face {
   font-family: "Bold";
-  src: url("./assets/Fonts/GoogleSans_17pt-Bold.ttf") format("truetype");
+  src: url("./assets/Fonts/GoogleSans-Bold.woff2") format("woff2");
   font-weight: 700;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Medium";
-  src: url("./assets/Fonts/GoogleSans_17pt-Medium.ttf") format("truetype");
+  src: url("./assets/Fonts/GoogleSans-Medium.woff2") format("woff2");
   font-weight: 500;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Regular";
-  src: url("./assets/Fonts/GoogleSans_17pt-Regular.ttf") format("truetype");
+  src: url("./assets/Fonts/GoogleSans-Regular.woff2") format("woff2");
   font-weight: 400;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "SemiBold";
-  src: url("./assets/Fonts/GoogleSans_17pt-SemiBold.ttf") format("truetype");
+  src: url("./assets/Fonts/GoogleSans-SemiBold.woff2") format("woff2");
   font-weight: 600;
+  font-display: swap;
 }
