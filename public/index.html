@@ -2,31 +2,38 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-
     <link rel="icon" href="%PUBLIC_URL%/hr.png" />
-
-    <!-- Preload primary font file to break critical chain delay in Lighthouse -->
-    <link
-      rel="preload"
-      href="%PUBLIC_URL%/static/media/GoogleSans_17pt-Regular.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
-    />
-
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1"
-    />
-
-    <meta
-      name="description"
-      content="HR Portal - Employee and HR Management System"
-    />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="HR Portal - Employee and HR Management System" />
     <meta name="theme-color" content="#ffffff" />
 
+    <!-- 1. Preconnect to Google Fonts CDN to remove font chain delay -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" 
+      rel="stylesheet"
+    />
+
     <title>HR Portal</title>
+
+    <!-- 2. Defer Google Tag Manager until after page load to fix unused JS warning -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-BHCMLCTZEQ';
+          document.head.appendChild(script);
+
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){ dataLayer.push(arguments); }
+          window.gtag = gtag;
+          gtag('js', new Date());
+          gtag('config', 'G-BHCMLCTZEQ');
+        }, 2000); // 2-second delay keeps GTM off the critical rendering path
+      });
+    </script>
   </head>
 
   <body>
