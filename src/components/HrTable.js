@@ -1,6 +1,4 @@
-import React from "react";
-import { memo } from "react";
-import { useMemo, useCallback } from "react";
+import React, { memo, useMemo, useCallback, useState } from "react";
 import {
     Table,
     TableBody,
@@ -23,7 +21,7 @@ import {
     DialogActions
 } from "@mui/material";
 
-import { useState } from "react";
+
 import CommonButton from "./CommonButton";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
@@ -159,21 +157,17 @@ function HrTable({
                                         >
                                            
                                         </Box>
-                                        <Avatar
-                                            src={item.profileImage || item.profile_image_url || ""}
-                                             loading="lazy"
-
-
-                                            alt={item.name}
-                                            sx={{
-                                                width: 45,
-                                                height: 45,
-                                                ml:12
-                                            }}
-                                        >
-                                            {item.name?.charAt(0).toUpperCase()}
-                                        </Avatar>
-
+                                       <Avatar
+  src={item.profileImage || item.profile_image_url || ""}
+  alt={item.name}
+  sx={{
+    width: 45,
+    height: 45,
+    ml: 12
+  }}
+>
+  {item.name?.charAt(0).toUpperCase()}
+</Avatar>
 
                                         <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
                                             Name:{item.name}
@@ -287,16 +281,16 @@ function HrTable({
 
                                                         }}
                                                     >
-                                                        <Avatar
-                                                              src={item.profileImage || item.profile_image_url || ""}
-                                                               loading="lazy"
-                                                            sx={{
-                                                                width: 35,
-                                                                height: 35
-                                                            }}
-                                                        >
-                                                            {item.name?.charAt(0).toUpperCase()}
-                                                        </Avatar>
+                                                       <Avatar
+  src={item.profileImage || item.profile_image_url || ""}
+  alt={item.name}
+  sx={{
+    width: 35,
+    height: 35
+  }}
+>
+  {item.name?.charAt(0).toUpperCase()}
+</Avatar>
                                                         <Tooltip title={item.name}>
 
                                                             <Typography

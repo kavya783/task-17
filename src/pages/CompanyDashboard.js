@@ -20,7 +20,6 @@ import { addHRDataActionInitiate } from "../redux/actions/addHRAction";
 import { getHRDataActionInitiate } from "../redux/actions/getHRAction";
 import { updateHRDataActionInitiate } from "../redux/actions/updateHRAction";
 import { deleteHRDataActionInitiate } from "../redux/actions/deleteHRAction";
-// import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
 import { toast } from "react-toastify";
 import { requestNotificationPermission } from "../notification";
 
@@ -58,9 +57,6 @@ function CompanyDashboard({
   );
 }, [hrs, page, rowsPerPage]);
 
-  // const { notifications = [] } = useSelector(
-  //   (state) => state.getnotificationdata || {}
-  // );
   
   const [showHRs, setShowHRs] = useState(true);
   const [showForm, setShowForm] = useState(false);

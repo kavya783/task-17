@@ -119,18 +119,17 @@ function AppBarr({
       window.removeEventListener("resize", throttledResize);
     };
   }, [handleResize]);
-  useEffect(() => {
+useEffect(() => {
+  if (role === "company") return;
 
+  dispatch(getNotificationDataActionInitiate());
+
+  const interval = setInterval(() => {
     dispatch(getNotificationDataActionInitiate());
+  }, 60000);
 
-    const interval = setInterval(() => {
-      dispatch(getNotificationDataActionInitiate());
-    }, 60000);
-
-
-    return () => clearInterval(interval);
-
-  }, [dispatch]);
+  return () => clearInterval(interval);
+}, [dispatch, role]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -334,22 +333,22 @@ function AppBarr({
                           </Typography>
 
 
-                         <IconButton
-  aria-label={`Delete notification from ${item.title}`}
-  onClick={async (e) => {
-    e.stopPropagation();
+                          <IconButton
+                            aria-label={`Delete notification from ${item.title}`}
+                            onClick={async (e) => {
+                              e.stopPropagation();
 
-    await api.delete(`notifications/${item.id}`);
+                              await api.delete(`notifications/${item.id}`);
 
-    dispatch(getNotificationDataActionInitiate());
-  }}
-  sx={{
-    ml: 30,
-    color: color.red,
-  }}
->
-  <DeleteIcon />
-</IconButton>
+                              dispatch(getNotificationDataActionInitiate());
+                            }}
+                            sx={{
+                              ml: 30,
+                              color: color.red,
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
 
                         </Box>
                       ))
@@ -386,29 +385,29 @@ function AppBarr({
               </Box>
             </Menu>
             <IconButton
-  aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-  onClick={() => setDarkMode(!darkMode)}
-  sx={{ color: color.text }}
->
+              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              onClick={() => setDarkMode(!darkMode)}
+              sx={{ color: color.text }}
+            >
               {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
 
             <IconButton
-  aria-label="Open profile menu"
-  onClick={handleOpen}
->
- <Avatar
-  alt="User profile"
-  sx={{
-    bgcolor: color.headings,
-    color: color.text,
-    width: 40,
-    height: 40,
-    fontWeight: "bold",
-  }}
->
-  {firstLetter}
-</Avatar>
+              aria-label="Open profile menu"
+              onClick={handleOpen}
+            >
+              <Avatar
+                alt="User profile"
+                sx={{
+                  bgcolor: color.headings,
+                  color: color.text,
+                  width: 40,
+                  height: 40,
+                  fontWeight: "bold",
+                }}
+              >
+                {firstLetter}
+              </Avatar>
             </IconButton>
 
             <Menu
