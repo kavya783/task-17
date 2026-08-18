@@ -37,11 +37,11 @@ function AppBarr({
   darkMode,
   setDarkMode,
   setShowHRs,
-   setSearch: setParentSearch
+  setSearch: setParentSearch
 }) {
   const dispatch = useDispatch();
   const api = useMemo(() => new API(), []);
-  
+
   const { notifications = [] } = useSelector(
     (state) => state.getnotificationdata
   );
@@ -98,27 +98,27 @@ function AppBarr({
     navigate("/", { replace: true });
   };
   const handleResize = useCallback(() => {
-  console.log("Window width:", window.innerWidth);
-}, []);
+    console.log("Window width:", window.innerWidth);
+  }, []);
 
-useEffect(() => {
-  let lastRun = 0;
+  useEffect(() => {
+    let lastRun = 0;
 
-  const throttledResize = () => {
-    const now = Date.now();
+    const throttledResize = () => {
+      const now = Date.now();
 
-    if (now - lastRun >= 300) {
-      handleResize();
-      lastRun = now;
-    }
-  };
+      if (now - lastRun >= 300) {
+        handleResize();
+        lastRun = now;
+      }
+    };
 
-  window.addEventListener("resize", throttledResize);
+    window.addEventListener("resize", throttledResize);
 
-  return () => {
-    window.removeEventListener("resize", throttledResize);
-  };
-}, [handleResize]);
+    return () => {
+      window.removeEventListener("resize", throttledResize);
+    };
+  }, [handleResize]);
   useEffect(() => {
 
     dispatch(getNotificationDataActionInitiate());
@@ -177,6 +177,7 @@ useEffect(() => {
             }}
           >
             <IconButton
+              aria-label="Open navigation menu"
               onClick={() => setOpen(true)}
               sx={{
                 display: { xs: "flex", md: "none" },
@@ -185,7 +186,6 @@ useEffect(() => {
             >
               <MenuIcon />
             </IconButton>
-
 
             <WorkIcon
               sx={{
@@ -235,19 +235,20 @@ useEffect(() => {
               gap: 0
             }}
           >
-           <TextField
-  size="small"
-  placeholder="Search Employee..."
-  value={search}
-  onChange={(e) => {
-    const value = e.target.value;
-    setSearch(value);
-    setParentSearch?.(value);
-  }}
-/>
+            <TextField
+              size="small"
+              placeholder="Search Employee..."
+              value={search}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+                setParentSearch?.(value);
+              }}
+            />
             {role !== "company" && (
               <>
                 <IconButton
+                  aria-label={`Notifications, ${unreadNotifications.length} unread`}
                   onClick={(e) => setNotificationAnchor(e.currentTarget)}
                   sx={{ color: color.text }}
                 >
@@ -272,98 +273,93 @@ useEffect(() => {
                     {leaveNotifications.length === 0 ? (
                       <Typography>No Notifications</Typography>
                     ) : (
-                     leaveNotifications.map((item) => (
-  <Box
-    key={item.id}
-    onClick={async () => {
+                      leaveNotifications.map((item) => (
+                        <Box
+                          key={item.id}
+                          onClick={async () => {
 
-      if (!item.read) {
+                            if (!item.read) {
 
-        await api.put(
-          `notifications/${item.id}/mark_as_read`
-        );
-
-       
-        dispatch(
-          getNotificationDataActionInitiate()
-        );
-
-      }
-
-    }}
-    sx={{
-      p: 2,
-      mb: 1.5,
-      cursor: "pointer",
-
-      border: item.read
-        ? `1px solid ${color.white}`
-        : `2px solid ${color.red}`,
-
-      borderRadius: "10px",
-
-      boxShadow: item.read
-        ? "none"
-        : `0 0 5px ${color.red}`,
-
-      "&:hover": {
-        background: color.white,
-      },
-    }}
-  >
-
-    <Typography
-      sx={{
-        fontWeight: "bold",
-        color: color.card,
-      }}
-    >
-      {item.title}
-    </Typography>
+                              await api.put(
+                                `notifications/${item.id}/mark_as_read`
+                              );
 
 
-    <Typography
-      variant="body2"
-      sx={{
-        mt: 0.5,
-        color: color.card,
-      }}
-    >
-      {item.message}
-    </Typography>
+                              dispatch(
+                                getNotificationDataActionInitiate()
+                              );
+
+                            }
+
+                          }}
+                          sx={{
+                            p: 2,
+                            mb: 1.5,
+                            cursor: "pointer",
+
+                            border: item.read
+                              ? `1px solid ${color.white}`
+                              : `2px solid ${color.red}`,
+
+                            borderRadius: "10px",
+
+                            boxShadow: item.read
+                              ? "none"
+                              : `0 0 5px ${color.red}`,
+
+                            "&:hover": {
+                              background: color.white,
+                            },
+                          }}
+                        >
+
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                              color: color.card,
+                            }}
+                          >
+                            {item.title}
+                          </Typography>
 
 
-    <DeleteIcon
-      onClick={async (e) => {
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              mt: 0.5,
+                              color: color.card,
+                            }}
+                          >
+                            {item.message}
+                          </Typography>
 
-        e.stopPropagation();
 
-        await api.delete(
-          `notifications/${item.id}`
-        );
+                         <IconButton
+  aria-label={`Delete notification from ${item.title}`}
+  onClick={async (e) => {
+    e.stopPropagation();
 
-        
+    await api.delete(`notifications/${item.id}`);
 
-        dispatch(
-          getNotificationDataActionInitiate()
-        );
+    dispatch(getNotificationDataActionInitiate());
+  }}
+  sx={{
+    ml: 30,
+    color: color.red,
+  }}
+>
+  <DeleteIcon />
+</IconButton>
 
-      }}
-      sx={{
-        ml: 30,
-        color: color.red,
-        cursor: "pointer"
-      }}
-    />
-
-  </Box>
-))
+                        </Box>
+                      ))
                     )}
                   </Box>
                 </Popover>
               </>
             )}
             <IconButton
+              aria-label="Change theme color"
               onClick={(e) => setColorAnchor(e.currentTarget)}
               sx={{ color: color.text }}
             >
@@ -390,24 +386,29 @@ useEffect(() => {
               </Box>
             </Menu>
             <IconButton
-              onClick={() => setDarkMode(!darkMode)}
-              sx={{ color: color.text }}
-            >
+  aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+  onClick={() => setDarkMode(!darkMode)}
+  sx={{ color: color.text }}
+>
               {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
 
-            <IconButton onClick={handleOpen}>
-              <Avatar
-                sx={{
-                  bgcolor: color.headings,
-                  color: color.text,
-                  width: 40,
-                  height: 40,
-                  fontWeight: "bold",
-                }}
-              >
-                {firstLetter}
-              </Avatar>
+            <IconButton
+  aria-label="Open profile menu"
+  onClick={handleOpen}
+>
+ <Avatar
+  alt="User profile"
+  sx={{
+    bgcolor: color.headings,
+    color: color.text,
+    width: 40,
+    height: 40,
+    fontWeight: "bold",
+  }}
+>
+  {firstLetter}
+</Avatar>
             </IconButton>
 
             <Menu
