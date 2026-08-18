@@ -1,5 +1,5 @@
 const systemFont =
-  "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  "'Google Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 export const Theme = {
   container: {

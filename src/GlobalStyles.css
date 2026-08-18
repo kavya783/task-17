@@ -1,31 +1,31 @@
 @font-face {
-  font-family: "Bold";
-  src: url("./assets/Fonts/GoogleSans_17pt-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Medium";
-  src: url("./assets/Fonts/GoogleSans_17pt-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Regular";
-  src: url("./assets/Fonts/GoogleSans_17pt-Regular.woff2") format("woff2");
+  font-family: 'Google Sans';
+  src: url('./assets/Fonts/GoogleSans_17pt-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SemiBold";
-  src: url("./assets/Fonts/GoogleSans_17pt-SemiBold.woff2") format("woff2");
+  font-family: 'Google Sans';
+  src: url('./assets/Fonts/GoogleSans_17pt-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('./assets/Fonts/GoogleSans_17pt-SemiBold.woff2') format('woff2');
   font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('./assets/Fonts/GoogleSans_17pt-Bold.woff2') format('woff2');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
