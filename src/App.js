@@ -4,8 +4,8 @@ import { ToastContainer } from "react-toastify";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Loader from "./components/Loader";
-import { listenForMessages } from "./notification";
 
+// Lazy-loaded pages/components
 const Authentication = lazy(() =>
   import("./pages/Authentication")
 );
@@ -39,31 +39,43 @@ const EmployeeLeave = lazy(() =>
 );
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = listenForMessages();
+    let unsubscribe;
+
+    const setupNotifications = async () => {
+      try {
+        const { listenForMessages } = await import("./notification");
+
+        unsubscribe = listenForMessages();
+      } catch (error) {
+        console.error("Failed to initialize notifications:", error);
+      }
+    };
+
+    setupNotifications();
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
   }, []);
 
-  const [darkMode, setDarkMode] = useState(false);
-
   return (
-    <>
-      <ErrorBoundary>
+    <ErrorBoundary>
       <BrowserRouter>
-
         <Suspense fallback={<Loader />}>
-
           <Routes>
 
+            {/* Authentication */}
             <Route
               path="/"
               element={<Authentication />}
             />
 
+            {/* Company Dashboard */}
             <Route
               path="/company-dashboard"
               element={
@@ -74,6 +86,7 @@ function App() {
               }
             />
 
+            {/* HR Dashboard */}
             <Route
               path="/hr/dashboard"
               element={
@@ -87,6 +100,7 @@ function App() {
               }
             />
 
+            {/* HR Leave Status */}
             <Route
               path="/hr/leave-status"
               element={
@@ -99,6 +113,7 @@ function App() {
               }
             />
 
+            {/* HR Employees */}
             <Route
               path="/hr"
               element={
@@ -112,6 +127,7 @@ function App() {
               }
             />
 
+            {/* Leave Page */}
             <Route
               path="/leave"
               element={
@@ -124,6 +140,7 @@ function App() {
               }
             />
 
+            {/* Employee Dashboard */}
             <Route
               path="/employee"
               element={
@@ -136,6 +153,7 @@ function App() {
               }
             />
 
+            {/* Leave Form */}
             <Route
               path="/leave/form"
               element={
@@ -148,6 +166,7 @@ function App() {
               }
             />
 
+            {/* Employee Leave Status */}
             <Route
               path="/leave/status"
               element={
@@ -161,14 +180,11 @@ function App() {
             />
 
           </Routes>
-
         </Suspense>
-
       </BrowserRouter>
-      </ErrorBoundary>
 
       <ToastContainer />
-    </>
+    </ErrorBoundary>
   );
 }
 

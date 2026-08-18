@@ -21,7 +21,7 @@ import { getHRDataActionInitiate } from "../redux/actions/getHRAction";
 import { updateHRDataActionInitiate } from "../redux/actions/updateHRAction";
 import { deleteHRDataActionInitiate } from "../redux/actions/deleteHRAction";
 import { toast } from "react-toastify";
-import { requestNotificationPermission } from "../notification";
+
 
 const createInitialHR = () => ({
   id: "",
@@ -76,21 +76,33 @@ useEffect(() => {
 
   fetchHRs();
 }, [dispatch]);
- useEffect(() => {
+useEffect(() => {
+  const tokenSaved = localStorage.getItem("device_token_saved");
 
-  const tokenSaved = localStorage.getItem(
-    "device_token_saved"
-  );
-
-  if(!tokenSaved){
-    requestNotificationPermission(dispatch);
-
-    localStorage.setItem(
-      "device_token_saved",
-      "true"
-    );
+  if (tokenSaved) {
+    return;
   }
 
+  const setupNotificationPermission = async () => {
+    try {
+      const { requestNotificationPermission } =
+        await import("../notification");
+
+      await requestNotificationPermission(dispatch);
+
+      localStorage.setItem(
+        "device_token_saved",
+        "true"
+      );
+    } catch (error) {
+      console.error(
+        "Failed to setup notification permission:",
+        error
+      );
+    }
+  };
+
+  setupNotificationPermission();
 }, [dispatch]);
   // console.log("NOTIFICATIONS", notifications);
 
