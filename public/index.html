@@ -2,32 +2,46 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/hr.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="HR Portal - Employee and HR Management System" />
-    <meta name="theme-color" content="#ffffff" />
 
-    <!-- Google Sans CDN directly in HTML (Render-blocking ని నివారిస్తుంది) -->
-    <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin />
-    <link href="https://fonts.cdnfonts.com/css/google-sans" rel="stylesheet" />
+    <link rel="icon" href="%PUBLIC_URL%/hr.png" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+
+    <meta
+      name="description"
+      content="HR Portal - Employee and HR Management System"
+    />
+
+    <meta name="theme-color" content="#ffffff" />
 
     <title>HR Portal</title>
 
-    <!-- Defer Google Tag Manager to fix Unused JS and Main-Thread Work -->
+    <!-- Google Analytics loaded after page load -->
     <script>
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          var script = document.createElement('script');
+      window.addEventListener("load", function () {
+        setTimeout(function () {
+          var script = document.createElement("script");
+
           script.async = true;
-          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-BHCMLCTZEQ';
+          script.src =
+            "https://www.googletagmanager.com/gtag/js?id=G-BHCMLCTZEQ";
+
           document.head.appendChild(script);
 
           window.dataLayer = window.dataLayer || [];
-          function gtag(){ dataLayer.push(arguments); }
+
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+
           window.gtag = gtag;
-          gtag('js', new Date());
-          gtag('config', 'G-BHCMLCTZEQ');
-        }, 3500); // 3.5 seconds delay keeps GTM completely off critical path
+
+          gtag("js", new Date());
+          gtag("config", "G-BHCMLCTZEQ");
+        }, 3500);
       });
     </script>
   </head>

@@ -5,7 +5,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Loader from "./components/Loader";
 import { listenForMessages } from "./notification";
-import './GlobalStyles.css';
+
 const ToastContainer = lazy(() =>
   import("react-toastify").then((module) => ({
     default: module.ToastContainer,
