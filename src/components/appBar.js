@@ -1,4 +1,12 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  lazy,
+  Suspense,
+  useCallback,
+} from "react";
+
 import {
   AppBar,
   Toolbar,
@@ -11,9 +19,11 @@ import {
   Divider,
   Badge,
   Popover,
+  TextField,
 } from "@mui/material";
-import { TextField } from "@mui/material";
+
 import API from "../API/API";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
@@ -22,15 +32,26 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import WorkIcon from "@mui/icons-material/Work";
 import PaletteIcon from "@mui/icons-material/Palette";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
+
+import {
+  getNotificationDataActionInitiate,
+} from "../redux/actions/getNotificationAction";
+
 import Colors from "../colors";
 import NavBar from "./NavBar";
-import { SketchPicker } from "react-color";
+
 import { Theme } from "../GlobalStyles";
 import { toast } from "react-toastify";
-import DeleteIcon from "@mui/icons-material/Delete";
+
+const SketchPicker = lazy(() =>
+  import("react-color").then((module) => ({
+    default: module.SketchPicker,
+  }))
+);
 
 function AppBarr({
   roled,
@@ -46,15 +67,18 @@ function AppBarr({
     (state) => state.getnotificationdata
   );
 
+ const leaveNotifications = useMemo(
+  () =>
+    notifications.filter(
+      (item) => item.notification_type !== "welcome"
+    ),
+  [notifications]
+);
 
-  const leaveNotifications = notifications.filter(
-    (item) => item.notification_type !== "welcome"
-  );
-
-
-  const unreadNotifications = leaveNotifications.filter(
-    (item) => !item.read
-  );
+const unreadNotifications = useMemo(
+  () => leaveNotifications.filter((item) => !item.read),
+  [leaveNotifications]
+);
 
   const [themeColor, setThemeColor] = useState(
     localStorage.getItem("themeColor") || "#7DB9B6"
@@ -63,24 +87,23 @@ function AppBarr({
   const [anchorEl, setAnchorEl] = useState(null);
 
   const navigate = useNavigate();
-  const color = Colors(darkMode, themeColor);
+  const color = useMemo(
+  () => Colors(darkMode, themeColor),
+  [darkMode, themeColor]
+);
   const [colorAnchor, setColorAnchor] = useState(null);
   const [search, setSearch] = useState("");
 
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const role = localStorage.getItem("role")?.toLowerCase();
 
-  let title = "";
+const titleMap = {
+  company: "COMPANY DASHBOARD",
+  hr: "HR PORTAL",
+  employee: "EMPLOYEE PORTAL",
+};
 
-  if (role === "company") {
-    title = "COMPANY DASHBOARD";
-  } else if (role === "hr") {
-    title = "HR PORTAL";
-  } else if (role === "employee") {
-    title = "EMPLOYEE PORTAL";
-  } else {
-    title = "PORTAL";
-  }
+const title = titleMap[role] || "PORTAL";
 
   const userEmail = localStorage.getItem("email") || "";
   const firstLetter = userEmail.charAt(0).toUpperCase();
@@ -119,17 +142,17 @@ function AppBarr({
       window.removeEventListener("resize", throttledResize);
     };
   }, [handleResize]);
-useEffect(() => {
-  if (role === "company") return;
+  useEffect(() => {
+    if (role === "company") return;
 
-  dispatch(getNotificationDataActionInitiate());
-
-  const interval = setInterval(() => {
     dispatch(getNotificationDataActionInitiate());
-  }, 60000);
 
-  return () => clearInterval(interval);
-}, [dispatch, role]);
+    const interval = setInterval(() => {
+      dispatch(getNotificationDataActionInitiate());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [dispatch, role]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -370,18 +393,19 @@ useEffect(() => {
               onClose={() => setColorAnchor(null)}
             >
               <Box sx={{ p: 2 }}>
-                <SketchPicker
-                  color={themeColor}
-                  onChangeComplete={(updatedColor) => {
-                    const selectedColor = updatedColor.hex;
+                <Suspense fallback={<Box sx={{ p: 2 }}>Loading...</Box>}>
+                  <SketchPicker
+                    color={themeColor}
+                    onChangeComplete={(updatedColor) => {
+                      const selectedColor = updatedColor.hex;
 
-                    setThemeColor(selectedColor);
-                    localStorage.setItem("themeColor", selectedColor);
+                      setThemeColor(selectedColor);
+                      localStorage.setItem("themeColor", selectedColor);
 
-
-                    window.location.reload();
-                  }}
-                />
+                      window.location.reload();
+                    }}
+                  />
+                </Suspense>
               </Box>
             </Menu>
             <IconButton
