@@ -20,10 +20,10 @@ import { addHRDataActionInitiate } from "../redux/actions/addHRAction";
 import { getHRDataActionInitiate } from "../redux/actions/getHRAction";
 import { updateHRDataActionInitiate } from "../redux/actions/updateHRAction";
 import { deleteHRDataActionInitiate } from "../redux/actions/deleteHRAction";
-import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
+// import { getNotificationDataActionInitiate } from "../redux/actions/getNotificationAction";
 import { toast } from "react-toastify";
 import { requestNotificationPermission } from "../notification";
-import Loader from "../components/Loader";
+
 const createInitialHR = () => ({
   id: "",
   name: "",
@@ -58,19 +58,20 @@ function CompanyDashboard({
   );
 }, [hrs, page, rowsPerPage]);
 
-  const { notifications = [] } = useSelector(
-    (state) => state.getnotificationdata || {}
-  );
+  // const { notifications = [] } = useSelector(
+  //   (state) => state.getnotificationdata || {}
+  // );
   
   const [showHRs, setShowHRs] = useState(true);
   const [showForm, setShowForm] = useState(false);
  const [loading, setLoading] = useState(true);
   const [type, setType] = useState("add");
  const [hr, setHr] = useState(createInitialHR);
- useEffect(() => {
+useEffect(() => {
   const fetchHRs = async () => {
+    setLoading(true);
+
     try {
-      setLoading(true);
       await dispatch(getHRDataActionInitiate());
     } finally {
       setLoading(false);
@@ -98,11 +99,11 @@ function CompanyDashboard({
   // console.log("NOTIFICATIONS", notifications);
 
  
-useEffect(() => {
+// useEffect(() => {
 
-  dispatch(getNotificationDataActionInitiate());
+//   dispatch(getNotificationDataActionInitiate());
 
-}, [dispatch]);
+// }, [dispatch]);
 
 
   // ADD HR
@@ -172,8 +173,7 @@ const submitHandle = useCallback(async ({ formData, id }) => {
   }
 }, [type, dispatch]);
  
-  if (loading)
-    return <Loader />;
+
 
   return (
     <>
