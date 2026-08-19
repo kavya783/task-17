@@ -179,7 +179,7 @@ const handleSubmit = async (e) => {
       })
     );
 
-    toast.success("Leave applied successfully");
+   
 console.log("role:", role);
 console.log("navigating...");
     navigate(role === "hr" ? "/hr" : "/employee");
