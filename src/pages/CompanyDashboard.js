@@ -34,6 +34,10 @@ import { deleteHRDataActionInitiate } from "../redux/actions/deleteHRAction";
 import { toast } from "react-toastify";
 
 
+/* =====================================================
+   INITIAL HR OBJECT
+===================================================== */
+
 const createInitialHR = () => ({
   id: "",
   name: "",
@@ -46,37 +50,47 @@ const createInitialHR = () => ({
 });
 
 
+/* =====================================================
+   COMPANY DASHBOARD
+===================================================== */
+
 function CompanyDashboard({
   darkMode,
   setDarkMode,
   themeColor,
   setThemeColor,
-  showHRs,
+
+  // Parent nunchi vasthe use chestham.
+  // Parent ivvakapothe true ga untundi.
+  showHRs = true,
   setShowHRs,
 }) {
   const dispatch = useDispatch();
 
-  /*
-   * Theme colors
-   * themeColor is passed from parent.
-   */
+
+  /* =====================================================
+     THEME
+  ===================================================== */
+
   const color = useMemo(
     () => Colors(darkMode, themeColor),
     [darkMode, themeColor]
   );
 
 
-  /*
-   * HR data from Redux
-   */
+  /* =====================================================
+     REDUX HR DATA
+  ===================================================== */
+
   const { hrs = [] } = useSelector(
     (state) => state.gethrdata || {}
   );
 
 
-  /*
-   * Local states
-   */
+  /* =====================================================
+     LOCAL STATES
+  ===================================================== */
+
   const [viewHR, setViewHR] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -92,30 +106,34 @@ function CompanyDashboard({
   const [hr, setHr] = useState(createInitialHR);
 
 
-  /*
-   * Pagination
-   *
-   * Only the required HR records are rendered.
-   */
+  /* =====================================================
+     PAGINATION
+  ===================================================== */
+
   const hrData = useMemo(() => {
     const startIndex = page * rowsPerPage;
 
-    const endIndex = startIndex + rowsPerPage;
+    const endIndex =
+      startIndex + rowsPerPage;
 
-    return hrs.slice(startIndex, endIndex);
+    return hrs.slice(
+      startIndex,
+      endIndex
+    );
   }, [hrs, page, rowsPerPage]);
 
 
-  /*
-   * Fetch HR data
-   */
+  /* =====================================================
+     FETCH HR DATA
+  ===================================================== */
+
   useEffect(() => {
     let mounted = true;
 
     const fetchHRs = async () => {
-      setLoading(true);
-
       try {
+        setLoading(true);
+
         await dispatch(
           getHRDataActionInitiate()
         );
@@ -143,12 +161,11 @@ function CompanyDashboard({
   }, [dispatch]);
 
 
-  /*
-   * Firebase notification permission
-   *
-   * notification module is loaded only when required.
-   * This keeps it outside the initial bundle path.
-   */
+  /* =====================================================
+     FIREBASE NOTIFICATION
+     LAZY LOAD
+  ===================================================== */
+
   useEffect(() => {
     const tokenSaved =
       localStorage.getItem(
@@ -200,21 +217,25 @@ function CompanyDashboard({
   }, [dispatch]);
 
 
-  /*
-   * ADD HR
-   */
+  /* =====================================================
+     ADD HR
+  ===================================================== */
+
   const handleAdd = useCallback(() => {
     setType("add");
 
-    setHr(createInitialHR());
+    setHr(
+      createInitialHR()
+    );
 
     setShowForm(true);
   }, []);
 
 
-  /*
-   * EDIT HR
-   */
+  /* =====================================================
+     EDIT HR
+  ===================================================== */
+
   const handleEdit = useCallback(
     (item) => {
       setType("edit");
@@ -230,9 +251,10 @@ function CompanyDashboard({
   );
 
 
-  /*
-   * VIEW HR
-   */
+  /* =====================================================
+     VIEW HR
+  ===================================================== */
+
   const handleView = useCallback(
     (item) => {
       setViewHR(item);
@@ -241,9 +263,10 @@ function CompanyDashboard({
   );
 
 
-  /*
-   * DELETE HR
-   */
+  /* =====================================================
+     DELETE HR
+  ===================================================== */
+
   const handleDelete = useCallback(
     async (id) => {
       try {
@@ -258,12 +281,15 @@ function CompanyDashboard({
         );
 
         /*
-         * If the current page becomes empty
-         * after deleting the last record,
-         * move back one page.
+         * Current page empty ayithe
+         * previous page ki move chestham.
          */
+
         const remainingRecords =
-          hrs.length - 1;
+          Math.max(
+            hrs.length - 1,
+            0
+          );
 
         const maxPage = Math.max(
           0,
@@ -298,9 +324,10 @@ function CompanyDashboard({
   );
 
 
-  /*
-   * FORM CHANGE
-   */
+  /* =====================================================
+     FORM CHANGE
+  ===================================================== */
+
   const handleChange = useCallback(
     (event) => {
       const {
@@ -308,18 +335,21 @@ function CompanyDashboard({
         value,
       } = event.target;
 
-      setHr((previousHR) => ({
-        ...previousHR,
-        [name]: value,
-      }));
+      setHr(
+        (previousHR) => ({
+          ...previousHR,
+          [name]: value,
+        })
+      );
     },
     []
   );
 
 
-  /*
-   * PAGE CHANGE
-   */
+  /* =====================================================
+     PAGE CHANGE
+  ===================================================== */
+
   const handleChangePage =
     useCallback(
       (event, newPage) => {
@@ -329,9 +359,10 @@ function CompanyDashboard({
     );
 
 
-  /*
-   * ROWS PER PAGE CHANGE
-   */
+  /* =====================================================
+     ROWS PER PAGE
+  ===================================================== */
+
   const handleChangeRowsPerPage =
     useCallback(
       (event) => {
@@ -351,83 +382,117 @@ function CompanyDashboard({
     );
 
 
-  /*
-   * CLOSE HR FORM
-   */
-  const handleClose = useCallback(
-    () => {
+  /* =====================================================
+     CLOSE FORM
+  ===================================================== */
+
+  const handleClose =
+    useCallback(() => {
       setShowForm(false);
 
-      setHr(createInitialHR());
-    },
-    []
-  );
+      setHr(
+        createInitialHR()
+      );
+    }, []);
 
 
-  /*
-   * SUBMIT HR
-   */
-  const submitHandle = useCallback(
-    async ({ formData, id }) => {
-      setLoading(true);
+  /* =====================================================
+     SUBMIT HR
+  ===================================================== */
 
-      try {
-        if (type === "add") {
-          /*
-           * Add HR
-           */
-          await dispatch(
-            addHRDataActionInitiate(
-              formData
-            )
+  const submitHandle =
+    useCallback(
+      async ({
+        formData,
+        id,
+      }) => {
+        try {
+          setLoading(true);
+
+          if (type === "add") {
+            /*
+             * ADD HR
+             */
+
+            await dispatch(
+              addHRDataActionInitiate(
+                formData
+              )
+            );
+
+            /*
+             * Fresh HR list
+             */
+
+            await dispatch(
+              getHRDataActionInitiate()
+            );
+
+            /*
+             * New HR add ayyaka
+             * first page ki return.
+             */
+
+            setPage(0);
+          } else {
+            /*
+             * UPDATE HR
+             */
+
+            await dispatch(
+              updateHRDataActionInitiate(
+                id,
+                formData
+              )
+            );
+
+            /*
+             * Update tarvata
+             * fresh data fetch.
+             */
+
+            await dispatch(
+              getHRDataActionInitiate()
+            );
+          }
+
+          setHr(
+            createInitialHR()
           );
 
-          /*
-           * Refresh HR list
-           */
-          await dispatch(
-            getHRDataActionInitiate()
+          setShowForm(false);
+
+          toast.success(
+            type === "add"
+              ? "HR added successfully"
+              : "HR updated successfully"
           );
-        } else {
-          /*
-           * Update HR
-           */
-          await dispatch(
-            updateHRDataActionInitiate(
-              id,
-              formData
-            )
+        } catch (error) {
+          console.error(
+            "HR submit error:",
+            error
           );
+
+          toast.error(
+            "Something went wrong"
+          );
+        } finally {
+          setLoading(false);
         }
+      },
+      [type, dispatch]
+    );
 
-        /*
-         * Reset form
-         */
-        setHr(createInitialHR());
 
-        setShowForm(false);
-      } catch (error) {
-        console.error(
-          "HR submit error:",
-          error
-        );
-
-        toast.error(
-          "Something went wrong"
-        );
-      } finally {
-        setLoading(false);
-      }
-    },
-    [type, dispatch]
-  );
-
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
     <>
-      {/* =========================
+      {/* =================================================
           APP BAR
-      ========================== */}
+      ================================================= */}
 
       <AppBarr
         roled="company"
@@ -439,25 +504,31 @@ function CompanyDashboard({
       />
 
 
-      {/* =========================
+      {/* =================================================
           MAIN CONTENT
-      ========================== */}
+      ================================================= */}
 
       <Box
         component="main"
         sx={{
           p: 2,
-          background: color.background,
-          minHeight: {
-            xs: "100vh",
-            xl: "697px",
-          },
+
+          /*
+           * Navbar height kosam top spacing.
+           */
+
+          pt: 10,
+
+          background:
+            color.background,
+
+          minHeight: "100vh",
         }}
       >
 
-        {/* =========================
+        {/* =================================================
             HR TABLE
-        ========================== */}
+        ================================================= */}
 
         {showHRs && (
           <HrTable
@@ -472,9 +543,9 @@ function CompanyDashboard({
         )}
 
 
-        {/* =========================
-            VIEW HR DIALOG
-        ========================== */}
+        {/* =================================================
+            HR VIEW DIALOG
+        ================================================= */}
 
         {viewHR && (
           <Dialog
@@ -486,19 +557,28 @@ function CompanyDashboard({
             fullWidth
           >
 
+            {/* HEADER */}
+
             <DialogTitle
               sx={{
-                textAlign: "center",
+                textAlign:
+                  "center",
+
                 fontSize:
                   Theme.font20Bold,
+
                 backgroundColor:
                   color.navbar,
-                color: color.text,
+
+                color:
+                  color.text,
               }}
             >
               HR Details
             </DialogTitle>
 
+
+            {/* CONTENT */}
 
             <DialogContent
               sx={{
@@ -506,16 +586,20 @@ function CompanyDashboard({
               }}
             >
 
-              {/* Profile Image */}
+              {/* PROFILE IMAGE */}
 
               <Box
                 sx={{
-                  display: "flex",
+                  display:
+                    "flex",
+
                   justifyContent:
                     "center",
+
                   mb: 3,
                 }}
               >
+
                 <Avatar
                   src={
                     viewHR.profile_image_url ||
@@ -528,70 +612,98 @@ function CompanyDashboard({
                   sx={{
                     width: 100,
                     height: 100,
+
                     bgcolor:
                       color.headings,
+
                     mt: 2,
+
+                    fontSize: 40,
                   }}
                 >
                   {viewHR.name
                     ?.charAt(0)
                     .toUpperCase()}
                 </Avatar>
+
               </Box>
 
 
-              {/* HR Details */}
+              {/* HR DETAILS */}
 
               <Box
                 sx={{
-                  display: "flex",
+                  display:
+                    "flex",
+
                   flexDirection:
                     "column",
+
                   gap: 2,
                 }}
               >
 
-                {/* Name */}
+                {/* NAME */}
 
                 <Box
                   sx={{
-                    display: "flex",
+                    display:
+                      "flex",
+
                     gap: 2,
+
                     borderBottom:
                       "1px solid #ddd",
+
                     pb: 1,
                   }}
                 >
+
                   <Typography
                     sx={{
                       fontSize:
                         Theme.font16Bold,
+
+                      minWidth: 65,
                     }}
                   >
                     Name:
                   </Typography>
 
-                  <Typography>
+                  <Typography
+                    sx={{
+                      wordBreak:
+                        "break-word",
+                    }}
+                  >
                     {viewHR.name}
                   </Typography>
+
                 </Box>
 
 
-                {/* Email */}
+                {/* EMAIL */}
 
                 <Box
                   sx={{
-                    display: "flex",
+                    display:
+                      "flex",
+
                     gap: 2,
+
                     borderBottom:
                       "1px solid #ddd",
+
                     pb: 1,
                   }}
                 >
+
                   <Typography
                     sx={{
                       fontSize:
                         Theme.font16Bold,
+
+                      minWidth: 65,
                     }}
                   >
                     Email:
@@ -605,24 +717,32 @@ function CompanyDashboard({
                   >
                     {viewHR.email}
                   </Typography>
+
                 </Box>
 
 
-                {/* Address */}
+                {/* ADDRESS */}
 
                 <Box
                   sx={{
-                    display: "flex",
+                    display:
+                      "flex",
+
                     gap: 2,
+
                     borderBottom:
                       "1px solid #ddd",
+
                     pb: 1,
                   }}
                 >
+
                   <Typography
                     sx={{
                       fontSize:
                         Theme.font16Bold,
+
+                      minWidth: 65,
                     }}
                   >
                     Address:
@@ -636,6 +756,7 @@ function CompanyDashboard({
                   >
                     {viewHR.address}
                   </Typography>
+
                 </Box>
 
               </Box>
@@ -643,15 +764,17 @@ function CompanyDashboard({
             </DialogContent>
 
 
-            {/* Dialog Actions */}
+            {/* ACTIONS */}
 
             <DialogActions
               sx={{
                 justifyContent:
                   "center",
+
                 pb: 3,
               }}
             >
+
               <CommonButton
                 onClick={() =>
                   setViewHR(null)
@@ -659,20 +782,23 @@ function CompanyDashboard({
                 sx={{
                   backgroundColor:
                     color.navbar,
-                  color: color.text,
+
+                  color:
+                    color.text,
                 }}
               >
                 Close
               </CommonButton>
+
             </DialogActions>
 
           </Dialog>
         )}
 
 
-        {/* =========================
+        {/* =================================================
             ADD / EDIT HR FORM
-        ========================== */}
+        ================================================= */}
 
         <HrForm
           darkMode={darkMode}
@@ -686,31 +812,45 @@ function CompanyDashboard({
         />
 
 
-        {/* =========================
+        {/* =================================================
             PAGINATION
-        ========================== */}
+        ================================================= */}
 
-        <TablePagination
-          component="div"
-          count={hrs.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[
-            5,
-            10,
-            25,
-          ]}
-          onPageChange={
-            handleChangePage
-          }
-          onRowsPerPageChange={
-            handleChangeRowsPerPage
-          }
-          sx={{
-            mt: 2,
-            color: color.text,
-          }}
-        />
+        {showHRs && (
+          <TablePagination
+            component="div"
+
+            count={
+              hrs.length
+            }
+
+            page={page}
+
+            rowsPerPage={
+              rowsPerPage
+            }
+
+            rowsPerPageOptions={[
+              5,
+              10,
+              25,
+            ]}
+
+            onPageChange={
+              handleChangePage
+            }
+
+            onRowsPerPageChange={
+              handleChangeRowsPerPage
+            }
+
+            sx={{
+              mt: 2,
+              color:
+                color.text,
+            }}
+          />
+        )}
 
       </Box>
     </>
