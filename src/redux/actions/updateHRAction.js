@@ -1,6 +1,5 @@
 import * as types from "./actionTypes";
 import { updateHRData } from "../apis/updateHRApi";
-import { getHRDataActionInitiate } from "./getHRAction";
 
 export const updateHRDataStart = () => ({
   type: types.UPDATE_HR_DATA_START,
@@ -17,29 +16,24 @@ export const updateHRDataError = (error) => ({
 });
 
 export const updateHRDataActionInitiate = (id, hr) => {
-
   return async (dispatch) => {
-
     dispatch(updateHRDataStart());
 
     try {
-
       const res = await updateHRData(id, hr);
 
-      dispatch(updateHRDataSuccess(res));
+      console.log("UPDATE HR RESPONSE:", res);
 
-      dispatch(getHRDataActionInitiate());
+      // API response lo actual HR res.user lo undi
+      const updatedHR = res.user;
 
-      return res;
+      // Actual HR object ni Redux ki pampisthunnam
+      dispatch(updateHRDataSuccess(updatedHR));
 
+      return updatedHR;
     } catch (error) {
-
       dispatch(updateHRDataError(error.message));
-
-      throw error;  
-
+      throw error;
     }
-
   };
-
 };

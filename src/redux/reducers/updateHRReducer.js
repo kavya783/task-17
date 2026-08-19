@@ -1,52 +1,38 @@
 import * as types from "../actions/actionTypes";
 
-
 const initialState = {
-  hr:null,
-  loading:false,
-  error:null,
+  hr: null,
+  loading: false,
+  error: null,
 };
 
+const putHRReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case types.UPDATE_HR_DATA_START:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
 
-const putHRReducer=(state=initialState,action)=>{
+    case types.UPDATE_HR_DATA_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        hr: action.payload,
+        error: null,
+      };
 
+    case types.UPDATE_HR_DATA_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
 
-switch(action.type){
-
-
-case types.UPDATE_HR_DATA_START:
-
-return{
- ...state,
- loading:true
+    default:
+      return state;
+  }
 };
-
-
-case types.UPDATE_HR_DATA_SUCCESS:
-
-return{
- ...state,
- loading:false,
- hr:action.payload
-};
-
-
-case types.UPDATE_HR_DATA_ERROR:
-
-return{
- ...state,
- loading:false,
- error:action.payload
-};
-
-
-default:
-return state;
-
-}
-
-
-};
-
 
 export default putHRReducer;

@@ -160,26 +160,34 @@ const handleClose = useCallback(() => {
   setShowForm(false);
   setHr(createInitialHR());
 }, []);
-const submitHandle = useCallback(async ({ formData, id }) => {
-  setLoading(true);
+const submitHandle = useCallback(
+  async ({ formData, id }) => {
+    setLoading(true);
 
-  try {
-    if (type === "add") {
-      await dispatch(addHRDataActionInitiate(formData));
-    } else {
-      await dispatch(updateHRDataActionInitiate(id, formData));
+    try {
+      if (type === "add") {
+        await dispatch(addHRDataActionInitiate(formData));
+
+        // Add tarvata list fresh ga fetch cheyyali
+        await dispatch(getHRDataActionInitiate());
+      } else {
+        // Update tarvata Redux lo direct ga list update avutundi
+        await dispatch(updateHRDataActionInitiate(id, formData));
+      }
+
+      setHr(createInitialHR());
+      setShowForm(false);
+
+     
+    } catch (error) {
+      console.error("HR submit error:", error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
-
-    await dispatch(getHRDataActionInitiate());
-
-    setHr(createInitialHR());
-    setShowForm(false);
-  } catch (error) {
-    toast.error("Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-}, [type, dispatch]);
+  },
+  [type, dispatch]
+);
  
 
 
