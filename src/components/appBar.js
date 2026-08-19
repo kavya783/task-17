@@ -393,7 +393,7 @@ const title = titleMap[role] || "PORTAL";
               onClose={() => setColorAnchor(null)}
             >
               <Box sx={{ p: 2 }}>
-                <Suspense fallback={<Box sx={{ p: 2 }}>Loading...</Box>}>
+                <Suspense fallback={<Box sx={{ p: 2,mr:20 }}>Loading...</Box>}>
                   <SketchPicker
                     color={themeColor}
                     onChangeComplete={(updatedColor) => {
