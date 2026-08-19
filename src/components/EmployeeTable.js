@@ -1,4 +1,5 @@
 import React, { useState, memo } from "react";
+
 import {
   Table,
   TableBody,
@@ -19,8 +20,6 @@ import {
   DialogActions,
 } from "@mui/material";
 
-import { List } from "react-window";
-
 import CommonButton from "./CommonButton";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
@@ -35,219 +34,92 @@ function EmployeeTable({
   handleDelete,
   handleAdd,
   handleView,
-  page,
-  rowsPerPage,
   darkMode,
 }) {
   const isMobile = useMediaQuery("(max-width:500px)");
-
-  const filteredData = data.filter(
-    (item) => item.role !== "hr"
-  );
 
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
   const color = Colors(darkMode);
 
-  const getProfileImage = (item) =>
-    item.profile_image_url ||
-    item.profileImage ||
-    "https://via.placeholder.com/60";
+  /*
+   * Make sure data is always an array.
+   *
+   * If API directly sends an array:
+   * data = [...]
+   *
+   * If parent accidentally sends undefined/null:
+   * []
+   */
+  const employeeData = Array.isArray(data) ? data : [];
 
+  /*
+   * Only employees should be displayed.
+   *
+   * HR users are removed from this table.
+   */
+  const filteredData = employeeData.filter(
+    (item) => item?.role?.toLowerCase() !== "hr"
+  );
+
+  /*
+   * Profile image
+   */
+  const getProfileImage = (item) => {
+    return (
+      item?.profile_image_url ||
+      item?.profileImage ||
+      "https://via.placeholder.com/60"
+    );
+  };
+
+  /*
+   * Open Delete Dialog
+   */
   const handleOpenDelete = (id) => {
+    if (!id) {
+      console.error("Employee ID is missing:", id);
+      return;
+    }
+
     setSelectedId(id);
     setOpenDelete(true);
   };
 
+  /*
+   * Close Delete Dialog
+   */
   const handleCloseDelete = () => {
     setOpenDelete(false);
     setSelectedId(null);
   };
 
-  const handleConfirmDelete = () => {
-    if (selectedId) {
-      handleDelete(selectedId);
+  /*
+   * Confirm Delete
+   */
+  const handleConfirmDelete = async () => {
+    if (!selectedId) {
+      return;
     }
 
-    handleCloseDelete();
-  };
+    try {
+      /*
+       * Send actual employee/user ID to parent.
+       */
+      await handleDelete(selectedId);
 
-  /*
-   * Virtualized Employee Row
-   *
-   * Only the rows currently visible inside
-   * the scrolling area are rendered.
-   */
-const VirtualizedRow = ({ index, style }) => {
-    const item = filteredData[index];
-
-    if (!item) return null;
-
-    return (
-      <div style={style}>
-        <TableRow
-          sx={{
-            display: "table",
-            tableLayout: "fixed",
-            width: "100%",
-            height: "60px",
-          }}
-        >
-          <TableCell
-            sx={{
-              color: color.text,
-              width: "8%",
-            }}
-          >
-            {page * rowsPerPage + index + 1}
-          </TableCell>
-
-          <TableCell
-            sx={{
-              width: "18%",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-             <img
-  src={getProfileImage(item)}
-  alt="profile"
-  width="80"
-  height="80"
-  fetchPriority="high"
-  decoding="async"
-  style={{
-    width: 80,
-    height: 80,
-    borderRadius: "50%",
-    objectFit: "cover",
-  }}
-/>
-
-              <Tooltip
-                title={item.employeename || ""}
-                arrow
-              >
-                <Typography
-                  sx={{
-                    color: color.text,
-                    fontSize: Theme.font16Bold,
-                    maxWidth: "80px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {item.employeename}
-                </Typography>
-              </Tooltip>
-            </Box>
-          </TableCell>
-
-          <TableCell
-            sx={{
-              color: color.text,
-              fontSize: Theme.font14Regular,
-              width: "12%",
-            }}
-          >
-            {item.role}
-          </TableCell>
-
-          <TableCell
-            sx={{
-              color: color.text,
-              fontSize: Theme.font14Regular,
-              width: "12%",
-            }}
-          >
-            {item.salary}
-          </TableCell>
-
-          <TableCell
-            sx={{
-              color: color.text,
-              fontSize: Theme.font14Regular,
-              width: "18%",
-            }}
-          >
-            {item.address}
-          </TableCell>
-
-          <TableCell
-            sx={{
-              color: color.text,
-              fontSize: Theme.font14Regular,
-              width: "20%",
-            }}
-          >
-            {item.email}
-          </TableCell>
-
-          <TableCell
-            sx={{
-              width: "12%",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-              }}
-            >
-              <span
-                onClick={() => handleView(item)}
-                style={{ cursor: "pointer" }}
-              >
-                <VisibilityIcon
-                  sx={{
-                    fontSize: 18,
-                    color: color.text,
-                  }}
-                />
-              </span>
-
-              <span
-                onClick={() => handleEdit(item)}
-                style={{ cursor: "pointer" }}
-              >
-                <EditIcon
-                  sx={{
-                    fontSize: 18,
-                    color: color.text,
-                  }}
-                />
-              </span>
-
-              <span
-                onClick={() =>
-                  handleOpenDelete(item.id)
-                }
-                style={{ cursor: "pointer" }}
-              >
-                <DeleteIcon
-                  sx={{
-                    fontSize: 18,
-                    color: color.text,
-                  }}
-                />
-              </span>
-            </Box>
-          </TableCell>
-        </TableRow>
-      </div>
-    );
+      handleCloseDelete();
+    } catch (error) {
+      console.error("Delete employee error:", error);
+    }
   };
 
   return (
     <>
-      {/* ================= HEADER ================= */}
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
       <Box
         sx={{
@@ -255,18 +127,23 @@ const VirtualizedRow = ({ index, style }) => {
           justifyContent: "space-between",
           alignItems: "center",
           mb: 2,
+
           ml: {
             md: 31,
             lg: 35,
             xl: 38,
           },
+
           mr: {
             lg: 28,
             xl: 26,
           },
+
           mt: 15,
         }}
       >
+        {/* Desktop Heading */}
+
         <Typography
           sx={{
             mr: {
@@ -276,8 +153,10 @@ const VirtualizedRow = ({ index, style }) => {
               lg: 10,
               xl: 5,
             },
+
             color: color.text,
             fontSize: Theme.font24Bold,
+
             display: {
               xs: "none",
               md: "block",
@@ -287,6 +166,8 @@ const VirtualizedRow = ({ index, style }) => {
           Employee List:
         </Typography>
 
+        {/* Mobile Heading */}
+
         <Typography
           sx={{
             mr: {
@@ -296,8 +177,10 @@ const VirtualizedRow = ({ index, style }) => {
               lg: 10,
               xl: 5,
             },
+
             color: color.text,
             fontSize: Theme.font16Bold,
+
             display: {
               xs: "block",
               md: "none",
@@ -307,6 +190,8 @@ const VirtualizedRow = ({ index, style }) => {
           Employee List:
         </Typography>
 
+        {/* Mobile Add Employee */}
+
         <CommonButton
           variant="contained"
           sx={{
@@ -314,6 +199,7 @@ const VirtualizedRow = ({ index, style }) => {
             backgroundColor: color.headings,
             ml: 3,
             fontSize: Theme.font12Bold,
+
             display: {
               xs: "block",
               md: "none",
@@ -324,6 +210,8 @@ const VirtualizedRow = ({ index, style }) => {
           Add Employee
         </CommonButton>
 
+        {/* Desktop Add Employee */}
+
         <CommonButton
           variant="contained"
           sx={{
@@ -331,6 +219,7 @@ const VirtualizedRow = ({ index, style }) => {
             backgroundColor: color.headings,
             ml: 3,
             fontSize: Theme.font16Bold,
+
             display: {
               xs: "none",
               md: "block",
@@ -342,7 +231,9 @@ const VirtualizedRow = ({ index, style }) => {
         </CommonButton>
       </Box>
 
-      {/* ================= MOBILE ================= */}
+      {/* =====================================================
+          MOBILE VIEW
+      ====================================================== */}
 
       {isMobile ? (
         <Box>
@@ -378,28 +269,31 @@ const VirtualizedRow = ({ index, style }) => {
                 }}
               >
                 <CardContent>
+                  {/* Profile Image */}
+
                   <Box
                     sx={{
                       textAlign: "center",
                       mb: 1,
                     }}
                   >
-                 <img
-  src={getProfileImage(item)}
-  alt="profile"
-  width="80"
-  height="80"
-  fetchPriority="high"
-  decoding="async"
-  style={{
-    width: 80,
-    height: 80,
-    borderRadius: "50%",
-    objectFit: "cover",
-  }}
-/>
-
+                    <img
+                      src={getProfileImage(item)}
+                      alt="profile"
+                      width="80"
+                      height="80"
+                      loading="lazy"
+                      decoding="async"
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
                   </Box>
+
+                  {/* Employee Name */}
 
                   <Typography
                     sx={{
@@ -407,8 +301,10 @@ const VirtualizedRow = ({ index, style }) => {
                       fontSize: Theme.font16Bold,
                     }}
                   >
-                    Name: {item.employeename}
+                    Name: {item.employeename || item.name}
                   </Typography>
+
+                  {/* Role */}
 
                   <Typography
                     sx={{
@@ -419,6 +315,8 @@ const VirtualizedRow = ({ index, style }) => {
                     Role: {item.role}
                   </Typography>
 
+                  {/* Salary */}
+
                   <Typography
                     sx={{
                       color: color.card,
@@ -427,6 +325,8 @@ const VirtualizedRow = ({ index, style }) => {
                   >
                     Salary: {item.salary}
                   </Typography>
+
+                  {/* Address */}
 
                   <Typography
                     sx={{
@@ -437,6 +337,8 @@ const VirtualizedRow = ({ index, style }) => {
                     Address: {item.address}
                   </Typography>
 
+                  {/* Email */}
+
                   <Typography
                     sx={{
                       color: color.card,
@@ -446,52 +348,56 @@ const VirtualizedRow = ({ index, style }) => {
                     Email: {item.email}
                   </Typography>
 
+                  {/* Actions */}
+
                   <Box
                     sx={{
                       display: "flex",
-                      gap: "clamp(90px, 3vw, 24px)",
+                      justifyContent: "space-around",
+                      alignItems: "center",
                       mt: 2,
-                      ml: 1,
                     }}
                   >
-                    <span
-                      onClick={() => handleView(item)}
-                      style={{ cursor: "pointer" }}
-                    >
+                    {/* View */}
+
+                    <Tooltip title="View">
                       <VisibilityIcon
                         sx={{
-                          fontSize: Theme.font16Bold,
+                          fontSize: 24,
                           color: color.card,
-                          ml: 1,
+                          cursor: "pointer",
                         }}
+                        onClick={() => handleView(item)}
                       />
-                    </span>
+                    </Tooltip>
 
-                    <span
-                      onClick={() => handleEdit(item)}
-                      style={{ cursor: "pointer" }}
-                    >
+                    {/* Edit */}
+
+                    <Tooltip title="Edit">
                       <EditIcon
                         sx={{
                           fontSize: 24,
                           color: color.card,
+                          cursor: "pointer",
                         }}
+                        onClick={() => handleEdit(item)}
                       />
-                    </span>
+                    </Tooltip>
 
-                    <span
-                      onClick={() =>
-                        handleOpenDelete(item.id)
-                      }
-                      style={{ cursor: "pointer" }}
-                    >
+                    {/* Delete */}
+
+                    <Tooltip title="Delete">
                       <DeleteIcon
                         sx={{
                           fontSize: 24,
                           color: color.card,
+                          cursor: "pointer",
                         }}
+                        onClick={() =>
+                          handleOpenDelete(item.id)
+                        }
                       />
-                    </span>
+                    </Tooltip>
                   </Box>
                 </CardContent>
               </Card>
@@ -499,14 +405,18 @@ const VirtualizedRow = ({ index, style }) => {
           )}
         </Box>
       ) : (
-        /* ================= DESKTOP TABLE ================= */
+        /* =====================================================
+           DESKTOP VIEW
+        ====================================================== */
 
         <Box
           sx={{
             mt: 2,
+
             width: {
               lg: "66%",
             },
+
             ml: {
               md: "25%",
               lg: "20%",
@@ -529,15 +439,13 @@ const VirtualizedRow = ({ index, style }) => {
                 width: "100%",
               }}
             >
-              {/* ================= TABLE HEADER ================= */}
+              {/* =====================================================
+                  TABLE HEADER
+              ====================================================== */}
 
               <TableHead
                 sx={{
                   bgcolor: color.headings,
-                  height: 50,
-                  display: "table",
-                  width: "100%",
-                  tableLayout: "fixed",
                 }}
               >
                 <TableRow>
@@ -612,13 +520,13 @@ const VirtualizedRow = ({ index, style }) => {
                   </TableCell>
                 </TableRow>
               </TableHead>
-            </Table>
 
-            {/* ================= VIRTUALIZED BODY ================= */}
+              {/* =====================================================
+                  TABLE BODY
+              ====================================================== */}
 
-            {filteredData.length === 0 ? (
-              <Table>
-                <TableBody>
+              <TableBody>
+                {filteredData.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={7}
@@ -632,25 +540,206 @@ const VirtualizedRow = ({ index, style }) => {
                       No Employees Found
                     </TableCell>
                   </TableRow>
-                </TableBody>
-              </Table>
-            ) : (
-               <List
-    style={{
-      height: 180,
-      width: "100%",
-    }}
-    rowCount={filteredData.length}
-    rowHeight={60}
-    rowComponent={VirtualizedRow}
-    rowProps={{}}
-  />
-            )}
+                ) : (
+                  filteredData.map((item, index) => (
+                    <TableRow key={item.id}>
+                      {/* =================================================
+                          S.NO
+                      ================================================== */}
+
+                      <TableCell
+                        sx={{
+                          color: color.text,
+                        }}
+                      >
+                        {index + 1}
+                      </TableCell>
+
+                      {/* =================================================
+                          EMPLOYEE
+                      ================================================== */}
+
+                      <TableCell
+                        sx={{
+                          color: color.text,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <img
+                            src={getProfileImage(item)}
+                            alt="profile"
+                            width="40"
+                            height="40"
+                            loading="lazy"
+                            decoding="async"
+                            style={{
+                              width: 40,
+                              height: 40,
+                              minWidth: 40,
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                            }}
+                          />
+
+                          <Typography
+                            sx={{
+                              color: color.text,
+                              fontSize: Theme.font14,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {item.employeename || item.name}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+
+                      {/* =================================================
+                          ROLE
+                      ================================================== */}
+
+                      <TableCell
+                        sx={{
+                          color: color.text,
+                        }}
+                      >
+                        {item.role}
+                      </TableCell>
+
+                      {/* =================================================
+                          SALARY
+                      ================================================== */}
+
+                      <TableCell
+                        sx={{
+                          color: color.text,
+                        }}
+                      >
+                        {item.salary}
+                      </TableCell>
+
+                      {/* =================================================
+                          ADDRESS
+                      ================================================== */}
+
+                      <TableCell
+                        sx={{
+                          color: color.text,
+                        }}
+                      >
+                        <Tooltip title={item.address || ""}>
+                          <Typography
+                            sx={{
+                              color: color.text,
+                              fontSize: Theme.font14,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {item.address}
+                          </Typography>
+                        </Tooltip>
+                      </TableCell>
+
+                      {/* =================================================
+                          EMAIL
+                      ================================================== */}
+
+                      <TableCell
+                        sx={{
+                          color: color.text,
+                        }}
+                      >
+                        <Tooltip title={item.email || ""}>
+                          <Typography
+                            sx={{
+                              color: color.text,
+                              fontSize: Theme.font14,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {item.email}
+                          </Typography>
+                        </Tooltip>
+                      </TableCell>
+
+                      {/* =================================================
+                          ACTIONS
+                      ================================================== */}
+
+                      <TableCell>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
+                          {/* View */}
+
+                          <Tooltip title="View">
+                            <VisibilityIcon
+                              sx={{
+                                fontSize: 20,
+                                color: color.text,
+                                cursor: "pointer",
+                              }}
+                              onClick={() => handleView(item)}
+                            />
+                          </Tooltip>
+
+                          {/* Edit */}
+
+                          <Tooltip title="Edit">
+                            <EditIcon
+                              sx={{
+                                fontSize: 20,
+                                color: color.text,
+                                cursor: "pointer",
+                              }}
+                              onClick={() => handleEdit(item)}
+                            />
+                          </Tooltip>
+
+                          {/* Delete */}
+
+                          <Tooltip title="Delete">
+                            <DeleteIcon
+                              sx={{
+                                fontSize: 20,
+                                color: color.text,
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                handleOpenDelete(item.id)
+                              }
+                            />
+                          </Tooltip>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </TableContainer>
         </Box>
       )}
 
-      {/* ================= DELETE DIALOG ================= */}
+      {/* =====================================================
+          DELETE DIALOG
+      ====================================================== */}
 
       <Dialog
         open={openDelete}
@@ -662,15 +751,12 @@ const VirtualizedRow = ({ index, style }) => {
 
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this
-            employee?
+            Are you sure you want to delete this employee?
           </DialogContentText>
         </DialogContent>
 
         <DialogActions>
-          <CommonButton
-            onClick={handleCloseDelete}
-          >
+          <CommonButton onClick={handleCloseDelete}>
             Cancel
           </CommonButton>
 
