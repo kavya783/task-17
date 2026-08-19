@@ -11,6 +11,7 @@ import {
   CardContent,
   Typography,
   useMediaQuery,
+  Paper,
 } from "@mui/material";
 
 import { useDispatch } from "react-redux";

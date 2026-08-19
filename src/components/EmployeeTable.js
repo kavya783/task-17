@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Paper,
 } from "@mui/material";
 
 import CommonButton from "./CommonButton";
