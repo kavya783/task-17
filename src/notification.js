@@ -1,65 +1,135 @@
-import { saveDeviceTokenActionInitiate } from "./redux/actions/deviceTokenAction";
+import {
+  getToken,
+  onMessage
+} from "firebase/messaging";
 
-export const requestNotificationPermission = async (
-  dispatch,
-  userId = null,
-  companyId = null
-) => {
+import { messaging } from "./firebase";
+
+const API_URL = process.env.REACT_APP_API_URL;
+
+export const saveFcmToken = async () => {
+
   try {
+
+    if (!messaging) {
+      console.error("Firebase messaging is not initialized");
+      return null;
+    }
+
     const permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
-      console.log("Notification permission denied");
-      return;
+      console.warn("Notification permission denied");
+      return null;
     }
 
-    const { getToken } = await import("firebase/messaging");
-    const { messaging } = await import("./firebase");
-
-    const token = await getToken(messaging, {
-      vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY,
-    });
-
-    console.log("FCM TOKEN:", token);
-
-    if (token) {
-      await dispatch(
-        saveDeviceTokenActionInitiate({
-          token,
-          user_id: userId,
-          company_id: companyId,
-        })
-      );
-    }
-  } catch (error) {
-    console.log("Notification Error", error);
-  }
-};
-export const listenForMessages = async () => {
-  try {
-    const { onMessage } = await import("firebase/messaging");
-    const { messaging } = await import("./firebase");
-
-    const unsubscribe = onMessage(
+    const token = await getToken(
       messaging,
-      (payload) => {
-        console.log("Foreground notification:", payload);
-
-        if (
-          Notification.permission === "granted" &&
-          payload?.notification
-        ) {
-          new Notification(payload.notification.title, {
-            body: payload.notification.body,
-            icon: "/hr.png",
-          });
-        }
+      {
+        vapidKey:
+          process.env.REACT_APP_FIREBASE_VAPID_KEY
       }
     );
 
-    return unsubscribe;
+    if (!token) {
+      console.warn("FCM token was not generated");
+      return null;
+    }
+
+    console.log("FCM TOKEN:", token);
+
+    const authToken =
+      localStorage.getItem("token");
+
+    if (!authToken) {
+      console.warn(
+        "User authentication token not found"
+      );
+
+      return token;
+    }
+
+    const response = await fetch(
+      `${API_URL}/api/device_tokens`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`
+        },
+
+        body: JSON.stringify({
+          token: token
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+
+      console.error(
+        "Failed to save FCM token:",
+        data
+      );
+
+      return token;
+    }
+
+    console.log(
+      "FCM token saved successfully:",
+      data
+    );
+
+    return token;
+
   } catch (error) {
-    console.error("Failed to initialize Firebase messaging:", error);
-    return undefined;
+
+    console.error(
+      "FCM token error:",
+      error
+    );
+
+    return null;
   }
+};
+
+
+export const listenForMessages = () => {
+
+  const unsubscribe = onMessage(
+    messaging,
+    (payload) => {
+
+      console.log(
+        "Foreground FCM message:",
+        payload
+      );
+
+      const title =
+        payload.notification?.title ||
+        "HR Portal";
+
+      const body =
+        payload.notification?.body ||
+        "";
+
+      if (
+        Notification.permission === "granted"
+      ) {
+
+        new Notification(
+          title,
+          {
+            body: body
+          }
+        );
+
+      }
+
+    }
+  );
+
+  return unsubscribe;
 };
