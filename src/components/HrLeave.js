@@ -249,20 +249,23 @@ export default function HRLeave({ darkMode, setDarkMode }) {
 
 
 
-             <TableContainer
-  component={Paper}
-  sx={{
-    borderRadius: 4,
-    width: "90%",
-    mx: "auto",
-    overflowX: "auto",
-  }}
->
-  <Table
-    sx={{
-      minWidth: 1000,
-    }}
-  >
+              <TableContainer
+                component={Paper}
+                sx={{
+                  borderRadius: 4,
+                  width: "90%",
+                  mx: "auto",
+                  overflowX: "auto",
+                }}
+              >
+                <Table
+                  sx={{
+                    minWidth: 1000,
+                    bgcolor: color.background,
+                   borderLeft: "1px solid white",
+                    borderRight: "1px solid white",
+                  }}
+                >
 
                   <TableHead sx={{ bgcolor: color.headings, height: 50 }}>
 
@@ -306,7 +309,7 @@ export default function HRLeave({ darkMode, setDarkMode }) {
 
 
 
-                  <TableBody>
+                  <TableBody sx={{bgcolor:color.background}}>
 
 
                     {
@@ -338,59 +341,51 @@ export default function HRLeave({ darkMode, setDarkMode }) {
                           <TableRow key={item.id} hover>
 
 
-                            <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
                               {page * rowsPerPage + index + 1}
                             </TableCell>
 
 
-                            <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{  color: color.text, fontSize: Theme.font14Regular }}>
                               {item.employeename}
                             </TableCell>
 
 
-                            <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{  color: color.text, fontSize: Theme.font14Regular }}>
                               {item.leaveType}
                             </TableCell>
 
 
-                            <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{  color: color.text, fontSize: Theme.font14Regular }}>
                               {item.from_date}
                             </TableCell>
 
 
-                            <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{  color: color.text, fontSize: Theme.font14Regular }}>
                               {item.to_date}
                             </TableCell>
 
 
                             <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
-
-
-                              <CommonButton
-                                variant="contained"
-                                size="small"
-                                sx={{
-                                  borderRadius: "20px",
-                                  textTransform: "capitalize",
-
-                                  backgroundColor:
-                                    item.status === "approved"
-                                      ? color.navbar
-                                      :
-                                      item.status === "rejected"
-                                        ? color.headings
-                                        :
-                                        color.card
-
-                                }}
-                              >
-
-                                {item.status || "pending"}
-
-                              </CommonButton>
-
-
-                            </TableCell>
+                                                     <CommonButton
+                                                       variant="contained"
+                                                       size="small"
+                                                       sx={{
+                                                         textTransform: "capitalize",
+                                                         fontSize: Theme.font12Bold,
+                                                         borderRadius: "20px",
+                                                         backgroundColor:
+                                                           item.status === "approved"
+                                                             ? color.navbar
+                                                             : item.status === "rejected"
+                                                               ? color.headings
+                                                               : color.card,
+                           
+                                                       }}
+                                                     >
+                                                       {item.status || "pending"}
+                                                     </CommonButton>
+                                                   </TableCell>
 
 
                           </TableRow>
@@ -426,10 +421,10 @@ export default function HRLeave({ darkMode, setDarkMode }) {
             rowsPerPageOptions={[5, 10, 25]}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-             sx={{
-            mt: 2,
-            color: color.text,
-          }}
+            sx={{
+              mt: 2,
+              color: color.text,
+            }}
           />
 
 
