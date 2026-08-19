@@ -1,42 +1,57 @@
-  import * as types from "./actionTypes";
-  import { fetchHRData } from "../apis/getHRApi";
+import * as types from "./actionTypes";
+import { fetchHRData } from "../apis/getHRApi";
 
 
-  export const getHRDataStart = () => ({
-    type: types.LOAD_HR_DATA_START,
-  });
+export const getHRDataStart = () => ({
+  type: types.LOAD_HR_DATA_START,
+});
 
 
-  export const getHRDataSuccess = (hrs) => ({
-    type: types.LOAD_HR_DATA_SUCCESS,
-    payload: hrs,
-  });
+export const getHRDataSuccess = (hrs) => ({
+  type: types.LOAD_HR_DATA_SUCCESS,
+  payload: hrs,
+});
 
 
-  export const getHRDataError = (error) => ({
-    type: types.LOAD_HR_DATA_ERROR,
-    payload: error,
-  });
+export const getHRDataError = (error) => ({
+  type: types.LOAD_HR_DATA_ERROR,
+  payload: error,
+});
 
 
-  export const getHRDataActionInitiate = () => {
+export const getHRDataActionInitiate = () => {
 
-    return async (dispatch) => {
+  return async (dispatch) => {
 
-      dispatch(getHRDataStart());
+    dispatch(
+      getHRDataStart()
+    );
 
-      try {
+    try {
 
-        const res = await fetchHRData();
+      const res =
+        await fetchHRData();
 
-        dispatch(getHRDataSuccess(res));
+      dispatch(
+        getHRDataSuccess(res)
+      );
 
-      } catch (error) {
+      return res;
 
-        dispatch(getHRDataError(error.message));
+    } catch (error) {
 
-      }
+      dispatch(
+        getHRDataError(
+          error.message
+        )
+      );
 
-    };
-
+      /*
+       * Important:
+       * Error ni parent component ki
+       * kuda propagate chestundi.
+       */
+      throw error;
+    }
   };
+};
