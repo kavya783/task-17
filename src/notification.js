@@ -7,44 +7,89 @@ import { messaging } from "./firebase";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-// Request notification permission + generate/save FCM token
 export const requestNotificationPermission = async () => {
   try {
+    console.log("========== FCM START ==========");
+
     if (!messaging) {
       console.error("Firebase messaging is not initialized");
       return null;
     }
 
     if (!("Notification" in window)) {
-      console.error("This browser does not support notifications");
+      console.error("Browser does not support notifications");
       return null;
     }
 
-    const permission = await Notification.requestPermission();
+    // Ask permission
+    let permission = Notification.permission;
+
+    if (permission !== "granted") {
+      permission = await Notification.requestPermission();
+    }
+
+    console.log("Notification permission:", permission);
 
     if (permission !== "granted") {
       console.warn("Notification permission denied");
       return null;
     }
 
-    const token = await getToken(messaging, {
-      vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY
-    });
-
-    if (!token) {
-      console.warn("FCM token was not generated");
+    // Make sure service worker exists
+    if (!("serviceWorker" in navigator)) {
+      console.error("Service Worker is not supported");
       return null;
     }
 
-    console.log("FCM TOKEN:", token);
+    const registration =
+      await navigator.serviceWorker.register(
+        "/firebase-messaging-sw.js"
+      );
 
-    const authToken = localStorage.getItem("token");
+    console.log(
+      "Firebase service worker registered:",
+      registration
+    );
+
+    // Get FCM token
+    const token = await getToken(
+      messaging,
+      {
+        vapidKey:
+          process.env.REACT_APP_FIREBASE_VAPID_KEY,
+
+        serviceWorkerRegistration:
+          registration
+      }
+    );
+
+    if (!token) {
+      console.error("FCM token was not generated");
+      return null;
+    }
+
+    console.log("========== FCM TOKEN ==========");
+    console.log(token);
+    console.log("===============================");
+
+    // Rails JWT token
+    const authToken =
+      localStorage.getItem("token");
+
+    console.log(
+      "Auth token exists:",
+      !!authToken
+    );
 
     if (!authToken) {
-      console.warn("User authentication token not found");
+      console.error(
+        "JWT token not found in localStorage"
+      );
+
       return token;
     }
 
+    // Save FCM token in Rails
     const response = await fetch(
       `${API_URL}/api/device_tokens`,
       {
@@ -63,6 +108,12 @@ export const requestNotificationPermission = async () => {
 
     const data = await response.json();
 
+    console.log(
+      "Device token API response:",
+      response.status,
+      data
+    );
+
     if (!response.ok) {
       console.error(
         "Failed to save FCM token:",
@@ -73,15 +124,15 @@ export const requestNotificationPermission = async () => {
     }
 
     console.log(
-      "FCM token saved successfully:",
-      data
+      "========== FCM TOKEN SAVED =========="
     );
 
     return token;
 
   } catch (error) {
+
     console.error(
-      "FCM token error:",
+      "FCM initialization error:",
       error
     );
 
@@ -90,16 +141,20 @@ export const requestNotificationPermission = async () => {
 };
 
 
-// Keep this function if other files are already using saveFcmToken
+// Keep this also because other files may use it
 export const saveFcmToken = async () => {
   return requestNotificationPermission();
 };
 
 
-// Foreground notifications
+// Foreground notification
 export const listenForMessages = () => {
+
   if (!messaging) {
-    console.error("Firebase messaging is not initialized");
+    console.error(
+      "Firebase messaging is not initialized"
+    );
+
     return () => {};
   }
 
@@ -124,6 +179,7 @@ export const listenForMessages = () => {
         "Notification" in window &&
         Notification.permission === "granted"
       ) {
+
         new Notification(
           title,
           {
