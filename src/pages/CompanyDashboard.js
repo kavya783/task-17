@@ -1,12 +1,5 @@
-import {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-} from "react";
-
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   Box,
   Dialog,
@@ -15,28 +8,20 @@ import {
   DialogActions,
   TablePagination,
   Avatar,
-  Typography,
+  Typography
 } from "@mui/material";
-
 import CommonButton from "../components/CommonButton";
 import Colors from "../colors";
 import { Theme } from "../GlobalStyles";
-
 import AppBarr from "../components/appBar";
 import HrTable from "../components/HrTable";
 import HrForm from "../components/HrForm";
-
 import { addHRDataActionInitiate } from "../redux/actions/addHRAction";
 import { getHRDataActionInitiate } from "../redux/actions/getHRAction";
 import { updateHRDataActionInitiate } from "../redux/actions/updateHRAction";
 import { deleteHRDataActionInitiate } from "../redux/actions/deleteHRAction";
-
 import { toast } from "react-toastify";
 
-
-/* =====================================================
-   INITIAL HR OBJECT
-===================================================== */
 
 const createInitialHR = () => ({
   id: "",
@@ -46,454 +31,169 @@ const createInitialHR = () => ({
   address: "",
   role: "hr",
   profileImageFile: null,
-  profile_image_url: "",
+  profile_image_url: ""
 });
-
-
-/* =====================================================
-   COMPANY DASHBOARD
-===================================================== */
 
 function CompanyDashboard({
   darkMode,
   setDarkMode,
   themeColor,
   setThemeColor,
-
-  // Parent nunchi vasthe use chestham.
-  // Parent ivvakapothe true ga untundi.
-  showHRs = true,
-  setShowHRs,
 }) {
+  const color = Colors(darkMode);
+  const [viewHR, setViewHR] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+ 
   const dispatch = useDispatch();
-
-
-  /* =====================================================
-     THEME
-  ===================================================== */
-
-  const color = useMemo(
-    () => Colors(darkMode, themeColor),
-    [darkMode, themeColor]
-  );
-
-
-  /* =====================================================
-     REDUX HR DATA
-  ===================================================== */
 
   const { hrs = [] } = useSelector(
     (state) => state.gethrdata || {}
   );
+ const hrData = useMemo(() => {
+  return hrs.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+}, [hrs, page, rowsPerPage]);
 
-
-  /* =====================================================
-     LOCAL STATES
-  ===================================================== */
-
-  const [viewHR, setViewHR] = useState(null);
-
-  const [page, setPage] = useState(0);
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  
+  const [showHRs, setShowHRs] = useState(true);
   const [showForm, setShowForm] = useState(false);
-
-  const [loading, setLoading] = useState(true);
-
+ const [loading, setLoading] = useState(true);
   const [type, setType] = useState("add");
+ const [hr, setHr] = useState(createInitialHR);
+useEffect(() => {
+  const fetchHRs = async () => {
+    setLoading(true);
 
-  const [hr, setHr] = useState(createInitialHR);
-
-
-  /* =====================================================
-     PAGINATION
-  ===================================================== */
-
-  const hrData = useMemo(() => {
-    const startIndex = page * rowsPerPage;
-
-    const endIndex =
-      startIndex + rowsPerPage;
-
-    return hrs.slice(
-      startIndex,
-      endIndex
-    );
-  }, [hrs, page, rowsPerPage]);
-
-
-  /* =====================================================
-     FETCH HR DATA
-  ===================================================== */
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchHRs = async () => {
-      try {
-        setLoading(true);
-
-        await dispatch(
-          getHRDataActionInitiate()
-        );
-      } catch (error) {
-        console.error(
-          "Failed to fetch HRs:",
-          error
-        );
-
-        toast.error(
-          "Failed to load HR data"
-        );
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchHRs();
-
-    return () => {
-      mounted = false;
-    };
-  }, [dispatch]);
-
-
-  /* =====================================================
-     FIREBASE NOTIFICATION
-     LAZY LOAD
-  ===================================================== */
-
-  useEffect(() => {
-    const tokenSaved =
-      localStorage.getItem(
-        "device_token_saved"
-      );
-
-    if (tokenSaved) {
-      return;
+    try {
+      await dispatch(getHRDataActionInitiate());
+    } finally {
+      setLoading(false);
     }
+  };
 
-    let mounted = true;
+  fetchHRs();
+}, [dispatch]);
+useEffect(() => {
+  const tokenSaved = localStorage.getItem("device_token_saved");
 
-    const setupNotificationPermission =
-      async () => {
-        try {
-          const {
-            requestNotificationPermission,
-          } = await import(
-            "../notification"
-          );
+  if (tokenSaved) {
+    return;
+  }
 
-          if (!mounted) {
-            return;
-          }
+  const setupNotificationPermission = async () => {
+    try {
+      const { requestNotificationPermission } =
+        await import("../notification");
 
-          await requestNotificationPermission(
-            dispatch
-          );
+      await requestNotificationPermission(dispatch);
 
-          if (mounted) {
-            localStorage.setItem(
-              "device_token_saved",
-              "true"
-            );
-          }
-        } catch (error) {
-          console.error(
-            "Failed to setup notification permission:",
-            error
-          );
-        }
-      };
-
-    setupNotificationPermission();
-
-    return () => {
-      mounted = false;
-    };
-  }, [dispatch]);
-
-
-  /* =====================================================
-     ADD HR
-  ===================================================== */
-
-  const handleAdd = useCallback(() => {
-    setType("add");
-
-    setHr(
-      createInitialHR()
-    );
-
-    setShowForm(true);
-  }, []);
-
-
-  /* =====================================================
-     EDIT HR
-  ===================================================== */
-
-  const handleEdit = useCallback(
-    (item) => {
-      setType("edit");
-
-      setHr({
-        ...item,
-        password: "",
-      });
-
-      setShowForm(true);
-    },
-    []
-  );
-
-
-  /* =====================================================
-     VIEW HR
-  ===================================================== */
-
-  const handleView = useCallback(
-    (item) => {
-      setViewHR(item);
-    },
-    []
-  );
-
-
-  /* =====================================================
-     DELETE HR
-  ===================================================== */
-
-  const handleDelete = useCallback(
-    async (id) => {
-      try {
-        setLoading(true);
-
-        await dispatch(
-          deleteHRDataActionInitiate(id)
-        );
-
-        await dispatch(
-          getHRDataActionInitiate()
-        );
-
-        /*
-         * Current page empty ayithe
-         * previous page ki move chestham.
-         */
-
-        const remainingRecords =
-          Math.max(
-            hrs.length - 1,
-            0
-          );
-
-        const maxPage = Math.max(
-          0,
-          Math.ceil(
-            remainingRecords /
-              rowsPerPage
-          ) - 1
-        );
-
-        if (page > maxPage) {
-          setPage(maxPage);
-        }
-      } catch (error) {
-        console.error(
-          "Delete HR error:",
-          error
-        );
-
-        toast.error(
-          "Delete failed"
-        );
-      } finally {
-        setLoading(false);
-      }
-    },
-    [
-      dispatch,
-      hrs.length,
-      page,
-      rowsPerPage,
-    ]
-  );
-
-
-  /* =====================================================
-     FORM CHANGE
-  ===================================================== */
-
-  const handleChange = useCallback(
-    (event) => {
-      const {
-        name,
-        value,
-      } = event.target;
-
-      setHr(
-        (previousHR) => ({
-          ...previousHR,
-          [name]: value,
-        })
+      localStorage.setItem(
+        "device_token_saved",
+        "true"
       );
-    },
-    []
-  );
+    } catch (error) {
+      console.error(
+        "Failed to setup notification permission:",
+        error
+      );
+    }
+  };
+
+  setupNotificationPermission();
+}, [dispatch]);
+  // console.log("NOTIFICATIONS", notifications);
+
+ 
+// useEffect(() => {
+
+//   dispatch(getNotificationDataActionInitiate());
+
+// }, [dispatch]);
 
 
-  /* =====================================================
-     PAGE CHANGE
-  ===================================================== */
+  // ADD HR
+ const handleAdd = useCallback(() => {
+  setType("add");
+  setHr(createInitialHR());
+  setShowForm(true);
+}, []);
+  // EDIT HR
+  const handleEdit = useCallback((item) => {
+  setType("edit");
+  setHr({
+    ...item,
+    password: ""
+  });
+  setShowForm(true);
+}, []);
+ const handleView = useCallback((item) => {
+  setViewHR(item);
+}, []);
+  // DELETE HR
+const handleDelete = useCallback(async (id) => {
+  try {
+    await dispatch(deleteHRDataActionInitiate(id));
+    await dispatch(getHRDataActionInitiate());
+  } catch (error) {
+    toast.error("Delete failed");
+  }
+}, [dispatch]);
+  const handleChange = useCallback((e) => {
+  const { name, value } = e.target;
 
-  const handleChangePage =
-    useCallback(
-      (event, newPage) => {
-        setPage(newPage);
-      },
-      []
-    );
+  setHr((prev) => ({
+    ...prev,
+    [name]: value
+  }));
+}, []);
+ const handleChangePage = useCallback((event, newPage) => {
+  setPage(newPage);
+}, []);
+ const handleChangeRowsPerPage = useCallback((event) => {
+  setRowsPerPage(parseInt(event.target.value, 10));
+  setPage(0);
+}, []);
+const handleClose = useCallback(() => {
+  setShowForm(false);
+  setHr(createInitialHR());
+}, []);
+const submitHandle = useCallback(
+  async ({ formData, id }) => {
+    setLoading(true);
 
+    try {
+      if (type === "add") {
+        await dispatch(addHRDataActionInitiate(formData));
 
-  /* =====================================================
-     ROWS PER PAGE
-  ===================================================== */
+        // Add tarvata list fresh ga fetch cheyyali
+        await dispatch(getHRDataActionInitiate());
+      } else {
+        // Update tarvata Redux lo direct ga list update avutundi
+        await dispatch(updateHRDataActionInitiate(id, formData));
+      }
 
-  const handleChangeRowsPerPage =
-    useCallback(
-      (event) => {
-        const newRowsPerPage =
-          parseInt(
-            event.target.value,
-            10
-          );
-
-        setRowsPerPage(
-          newRowsPerPage
-        );
-
-        setPage(0);
-      },
-      []
-    );
-
-
-  /* =====================================================
-     CLOSE FORM
-  ===================================================== */
-
-  const handleClose =
-    useCallback(() => {
+      setHr(createInitialHR());
       setShowForm(false);
 
-      setHr(
-        createInitialHR()
-      );
-    }, []);
+     
+    } catch (error) {
+      console.error("HR submit error:", error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  },
+  [type, dispatch]
+);
+ 
 
-
-  /* =====================================================
-     SUBMIT HR
-  ===================================================== */
-
-  const submitHandle =
-    useCallback(
-      async ({
-        formData,
-        id,
-      }) => {
-        try {
-          setLoading(true);
-
-          if (type === "add") {
-            /*
-             * ADD HR
-             */
-
-            await dispatch(
-              addHRDataActionInitiate(
-                formData
-              )
-            );
-
-            /*
-             * Fresh HR list
-             */
-
-            await dispatch(
-              getHRDataActionInitiate()
-            );
-
-            /*
-             * New HR add ayyaka
-             * first page ki return.
-             */
-
-            setPage(0);
-          } else {
-            /*
-             * UPDATE HR
-             */
-
-            await dispatch(
-              updateHRDataActionInitiate(
-                id,
-                formData
-              )
-            );
-
-            /*
-             * Update tarvata
-             * fresh data fetch.
-             */
-
-            await dispatch(
-              getHRDataActionInitiate()
-            );
-          }
-
-          setHr(
-            createInitialHR()
-          );
-
-          setShowForm(false);
-
-          toast.success(
-            type === "add"
-              ? "HR added successfully"
-              : "HR updated successfully"
-          );
-        } catch (error) {
-          console.error(
-            "HR submit error:",
-            error
-          );
-
-          toast.error(
-            "Something went wrong"
-          );
-        } finally {
-          setLoading(false);
-        }
-      },
-      [type, dispatch]
-    );
-
-
-  /* =====================================================
-     RENDER
-  ===================================================== */
 
   return (
     <>
-      {/* =================================================
-          APP BAR
-      ================================================= */}
-
+    
       <AppBarr
         roled="company"
         darkMode={darkMode}
@@ -502,34 +202,14 @@ function CompanyDashboard({
         setThemeColor={setThemeColor}
         setShowHRs={setShowHRs}
       />
-
-
-      {/* =================================================
-          MAIN CONTENT
-      ================================================= */}
-
       <Box
-        component="main"
         sx={{
           p: 2,
-
-          /*
-           * Navbar height kosam top spacing.
-           */
-
-          pt: 10,
-
-          background:
-            color.background,
-
-          minHeight: "100vh",
+          background: color.background,
+          // height: { xs: "500px", sm: "830px", md: "1300px", lg: "1400px", xl: "697px" },
+          minHeight: { xs: "100vh", xl: "697px" }
         }}
       >
-
-        {/* =================================================
-            HR TABLE
-        ================================================= */}
-
         {showHRs && (
           <HrTable
             data={hrData}
@@ -538,323 +218,183 @@ function CompanyDashboard({
             handleEdit={handleEdit}
             handleDelete={handleDelete}
             handleView={handleView}
-            loading={loading}
+             loading={loading}
           />
         )}
-
-
-        {/* =================================================
-            HR VIEW DIALOG
-        ================================================= */}
-
         {viewHR && (
+
           <Dialog
             open={Boolean(viewHR)}
-            onClose={() =>
-              setViewHR(null)
-            }
+            onClose={() => setViewHR(null)}
             maxWidth="xs"
             fullWidth
           >
 
-            {/* HEADER */}
-
             <DialogTitle
               sx={{
-                textAlign:
-                  "center",
-
-                fontSize:
-                  Theme.font20Bold,
-
-                backgroundColor:
-                  color.navbar,
-
-                color:
-                  color.text,
+                textAlign: "center",
+                fontSize: Theme.font20Bold,
+                bgcolor: color.navbar,
+                color: color.text
               }}
             >
               HR Details
             </DialogTitle>
-
-
-            {/* CONTENT */}
-
-            <DialogContent
-              sx={{
-                p: 4,
-              }}
-            >
-
-              {/* PROFILE IMAGE */}
-
+            <DialogContent sx={{ p: 4 }}>
               <Box
                 sx={{
-                  display:
-                    "flex",
-
-                  justifyContent:
-                    "center",
-
-                  mb: 3,
+                  display: "flex",
+                  justifyContent: "center",
+                  mb: 3
                 }}
               >
-
                 <Avatar
-                  src={
-                    viewHR.profile_image_url ||
-                    ""
-                  }
-                  alt={
-                    viewHR.name ||
-                    "HR profile"
-                  }
+                  src={viewHR.profile_image_url || ""}
                   sx={{
                     width: 100,
                     height: 100,
-
-                    bgcolor:
-                      color.headings,
-
-                    mt: 2,
-
-                    fontSize: 40,
+                    bgcolor: color.headings,
+                    mt:2
                   }}
+
                 >
-                  {viewHR.name
-                    ?.charAt(0)
-                    .toUpperCase()}
+                  {
+                    viewHR.name?.charAt(0).toUpperCase()
+                  }
                 </Avatar>
-
               </Box>
-
-
-              {/* HR DETAILS */}
-
               <Box
                 sx={{
-                  display:
-                    "flex",
-
-                  flexDirection:
-                    "column",
-
-                  gap: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2
                 }}
               >
-
-                {/* NAME */}
-
                 <Box
                   sx={{
-                    display:
-                      "flex",
-
+                    display: "flex",
                     gap: 2,
-
-                    borderBottom:
-                      "1px solid #ddd",
-
-                    pb: 1,
+                    borderBottom: "1px solid #ddd",
+                    pb: 1
                   }}
                 >
-
-                  <Typography
-                    sx={{
-                      fontSize:
-                        Theme.font16Bold,
-
-                      minWidth: 65,
-                    }}
-                  >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
                     Name:
                   </Typography>
-
-                  <Typography
-                    sx={{
-                      wordBreak:
-                        "break-word",
-                    }}
-                  >
+                  <Typography>
                     {viewHR.name}
                   </Typography>
 
                 </Box>
-
-
-                {/* EMAIL */}
-
                 <Box
                   sx={{
-                    display:
-                      "flex",
-
+                    display: "flex",
                     gap: 2,
-
-                    borderBottom:
-                      "1px solid #ddd",
-
-                    pb: 1,
+                    borderBottom: "1px solid #ddd",
+                    pb: 1
                   }}
                 >
-
-                  <Typography
-                    sx={{
-                      fontSize:
-                        Theme.font16Bold,
-
-                      minWidth: 65,
-                    }}
-                  >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
                     Email:
                   </Typography>
 
-                  <Typography
-                    sx={{
-                      wordBreak:
-                        "break-word",
-                    }}
-                  >
+                  <Typography>
                     {viewHR.email}
                   </Typography>
 
                 </Box>
-
-
-                {/* ADDRESS */}
-
                 <Box
                   sx={{
-                    display:
-                      "flex",
-
+                    display: "flex",
                     gap: 2,
-
-                    borderBottom:
-                      "1px solid #ddd",
-
-                    pb: 1,
+                    borderBottom: "1px solid #ddd",
+                    pb: 1
                   }}
                 >
 
-                  <Typography
-                    sx={{
-                      fontSize:
-                        Theme.font16Bold,
-
-                      minWidth: 65,
-                    }}
-                  >
+                  <Typography sx={{ fontSize: Theme.font16Bold }}>
                     Address:
                   </Typography>
 
-                  <Typography
-                    sx={{
-                      wordBreak:
-                        "break-word",
-                    }}
-                  >
+                  <Typography>
                     {viewHR.address}
                   </Typography>
 
                 </Box>
 
+
+
               </Box>
+
 
             </DialogContent>
 
 
-            {/* ACTIONS */}
-
             <DialogActions
               sx={{
-                justifyContent:
-                  "center",
-
-                pb: 3,
+                justifyContent: "center",
+                pb: 3
               }}
             >
 
               <CommonButton
-                onClick={() =>
-                  setViewHR(null)
-                }
+                onClick={() => setViewHR(null)}
                 sx={{
-                  backgroundColor:
-                    color.navbar,
-
-                  color:
-                    color.text,
+                  bgcolor: color.navbar,
+                  color: color.text
                 }}
               >
+
                 Close
+
               </CommonButton>
+
 
             </DialogActions>
 
+
           </Dialog>
+
         )}
 
 
-        {/* =================================================
-            ADD / EDIT HR FORM
-        ================================================= */}
 
-        <HrForm
-          darkMode={darkMode}
-          hr={hr}
-          handleChange={handleChange}
-          submitHandle={submitHandle}
-          show={showForm}
-          handleClose={handleClose}
-          type={type}
-          loading={loading}
+        {type !== "view" && (
+
+         <HrForm
+  darkMode={darkMode}
+  hr={hr}
+  handleChange={handleChange}
+  submitHandle={submitHandle}
+  show={showForm}
+  handleClose={handleClose}
+  type={type}
+  loading={loading}
+/>
+
+        )}
+
+        <TablePagination
+          component="div"
+          count={hrs.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{
+            mt: 2,
+            color: color.text,
+          }}
         />
 
-
-        {/* =================================================
-            PAGINATION
-        ================================================= */}
-
-        {showHRs && (
-          <TablePagination
-            component="div"
-
-            count={
-              hrs.length
-            }
-
-            page={page}
-
-            rowsPerPage={
-              rowsPerPage
-            }
-
-            rowsPerPageOptions={[
-              5,
-              10,
-              25,
-            ]}
-
-            onPageChange={
-              handleChangePage
-            }
-
-            onRowsPerPageChange={
-              handleChangeRowsPerPage
-            }
-
-            sx={{
-              mt: 2,
-              color:
-                color.text,
-            }}
-          />
-        )}
-
       </Box>
+
     </>
-  );
+
+  )
+
+
 }
 
 
