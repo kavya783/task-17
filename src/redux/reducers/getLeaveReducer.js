@@ -23,6 +23,21 @@ export const getLeaveReducer = (state = initialState, action) => {
         error: null,
       };
 
+    // Update existing leave directly in GET state
+    case types.UPDATE_LEAVE_DATA_SUCCESS:
+      return {
+        ...state,
+        data: state.data.map((item) =>
+          item.id === action.payload.id
+            ? {
+                ...item,
+                ...action.payload,
+              }
+            : item
+        ),
+        error: null,
+      };
+
     case types.LOAD_LEAVE_DATA_ERROR:
       return {
         ...state,

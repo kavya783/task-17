@@ -1,6 +1,5 @@
 import * as types from "./actionTypes";
 import { updateLeaveData } from "../apis/updateLeaveApi";
-import { getLeaveDataActionInitiate } from "./getLeaveAction";
 
 export const updateLeaveDataStart = () => ({
   type: types.UPDATE_LEAVE_DATA_START,
@@ -16,47 +15,21 @@ export const updateLeaveDataError = (error) => ({
   payload: error,
 });
 
-export const updateLeaveDataActionInitiate = (
-  leave,
-  id,
-  appliedBy
-) => {
+export const updateLeaveDataActionInitiate = (leave, id) => {
   return async (dispatch) => {
     dispatch(updateLeaveDataStart());
 
     try {
-      const response = await updateLeaveData(leave, id);
+      // Update API
+      const res = await updateLeaveData(leave, id);
 
-      // Backend response:
-      // {
-      //   message: "...",
-      //   leave: {...}
-      // }
+      // Update success
+      // This will update the Redux list immediately
+      dispatch(updateLeaveDataSuccess(res));
 
-      const updatedLeave = response.leave;
-
-      dispatch(updateLeaveDataSuccess(updatedLeave));
-
-      const refreshAppliedBy =
-        appliedBy ||
-        (localStorage.getItem("role") === "employee"
-          ? "employee"
-          : "hr");
-
-      // IMPORTANT: wait until latest data comes
-      await dispatch(
-        getLeaveDataActionInitiate(refreshAppliedBy)
-      );
-
-      return updatedLeave;
+      return res;
     } catch (error) {
-      dispatch(
-        updateLeaveDataError(
-          error.response?.data?.error ||
-          error.message
-        )
-      );
-
+      dispatch(updateLeaveDataError(error.message));
       throw error;
     }
   };
