@@ -249,18 +249,20 @@ export default function HRLeave({ darkMode, setDarkMode }) {
 
 
 
-              <TableContainer
-                component={Paper}
-                sx={{
-                  borderRadius: 4,
-                  width: "70%",
-                  mx: "auto"
-                }}
-              >
-
-
-                <Table>
-
+             <TableContainer
+  component={Paper}
+  sx={{
+    borderRadius: 4,
+    width: "90%",
+    mx: "auto",
+    overflowX: "auto",
+  }}
+>
+  <Table
+    sx={{
+      minWidth: 1000,
+    }}
+  >
 
                   <TableHead sx={{ bgcolor: color.headings, height: 50 }}>
 
