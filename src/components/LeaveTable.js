@@ -223,255 +223,375 @@ export default function LeaveTable({
         </Box>
       ) : (
         /* ================= DESKTOP ================= */
-        <Box
-          sx={{
-            mt: 2,
-            width: { lg: "65%" },
-            ml: { md: "25%", lg: "20%" },
-          }}
-        >
-          <TableContainer
-           component={Paper}
+     <Box
+  sx={{
+    mt: 2,
+
+    width: {
+      xs: "100%",
+      md: "75%",
+      lg: "80%",
+    },
+
+    ml: {
+      xs: 0,
+      md: "25%",
+      lg: "20%",
+    },
+
+    boxSizing: "border-box",
+  }}
+>
+ <TableContainer
+  component={Paper}
+  sx={{
+    width: {
+      xs: "100%",
+      md: "100%",
+      lg: "90%",
+    },
+    maxWidth: "100%",
+    overflowX: "auto",
+    overflowY: "hidden",
+
+    borderRadius: 3,
+    boxShadow: 2,
+
+    backgroundColor: color.background,
+
+    borderLeft: "1px solid white",
+    borderRight: "1px solid white", 
+    borderBottom:"1px solid white",
+    boxSizing: "border-box",
+  }}
+>
+    <Table
+      sx={{
+        bgcolor: color.background,
+        minWidth: 900,
+      }}
+    >
+      <TableHead
+        sx={{
+          backgroundColor: color.headings,
+
+          // Sticky header while scrolling
+          position: "sticky",
+          top: 0,
+          zIndex: 2,
+        }}
+      >
+        <TableRow>
+          <TableCell
             sx={{
-              width: "90%",
-                  mx: "auto",
-                  overflowX: "auto",
-              borderRadius: 3,
-              boxShadow: 2,
-              backgroundColor: color.background,
-              borderRight: "1px solid white",
-              borderLeft: "1px solid white",
+              color: color.text,
+              fontSize: Theme.font16Bold,
+              fontWeight: 600,
+              py: 0,
+              px: 2,
+              minWidth: 70,
             }}
           >
-            <Table
-                             sx={{
-                             
-                               bgcolor: color.background,
-                               
-                             }}
-                           >
-              <TableHead
+            S.No
+          </TableCell>
+
+          <TableCell
+            sx={{
+              color: color.text,
+              fontSize: Theme.font16Bold,
+              fontWeight: 600,
+              py: 0,
+              px: 2,
+              minWidth: 50,
+            }}
+          >
+            Name
+          </TableCell>
+
+          <TableCell
+            sx={{
+              color: color.text,
+              fontSize: Theme.font16Bold,
+              fontWeight: 600,
+              py: 2,
+              px: 2,
+              minWidth: 50,
+            }}
+          >
+            Leave Type
+          </TableCell>
+
+          <TableCell
+            sx={{
+              color: color.text,
+              fontSize: Theme.font16Bold,
+              fontWeight: 600,
+              py: 2,
+              px: 2,
+              minWidth: 50,
+            }}
+          >
+            From
+          </TableCell>
+
+          <TableCell
+            sx={{
+              color: color.text,
+              fontSize: Theme.font16Bold,
+              fontWeight: 600,
+              py: 2,
+              px: 2,
+              minWidth: 50,
+            }}
+          >
+            To
+          </TableCell>
+
+          <TableCell
+            sx={{
+              color: color.text,
+              fontSize: Theme.font16Bold,
+              fontWeight: 600,
+              py: 2,
+              px: 2,
+              minWidth: 50,
+            }}
+          >
+            Status
+          </TableCell>
+
+          <TableCell
+            align="center"
+            sx={{
+              color: color.text,
+              fontSize: Theme.font16Bold,
+              fontWeight: 600,
+              py: 2,
+              px: 2,
+              minWidth: 50,
+            }}
+          >
+            Action
+          </TableCell>
+        </TableRow>
+      </TableHead>
+
+      <TableBody>
+        {leaveData.length === 0 ? (
+          <TableRow>
+            <TableCell
+              colSpan={7}
+              align="center"
+              sx={{
+                color: color.text,
+                fontSize: Theme.font16Bold,
+                py: 5,
+                borderBottom: "none",
+              }}
+            >
+              No Leaves Found
+            </TableCell>
+          </TableRow>
+        ) : (
+          leaveData.map((item, index) => (
+            <TableRow
+              key={item.id}
+              sx={{
+                "&:last-child td": {
+                  borderBottom: 0,
+                },
+
+             
+                
+              
+              }}
+            >
+              {/* S.No */}
+              <TableCell
                 sx={{
-                  backgroundColor: color.headings,
+                  color: color.text,
+                  fontSize: Theme.font14Regular,
+                  py: 1.8,
+                  px: 2,
+                  whiteSpace: "nowrap",
                 }}
               >
-                <TableRow>
-                  <TableCell
+                {page * rowsPerPage + index + 1}
+              </TableCell>
+
+              {/* Name */}
+              <TableCell
+                sx={{
+                  color: color.text,
+                  fontSize: Theme.font14Regular,
+                  py: 1.8,
+                  px: 2,
+                  maxWidth: 180,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  <Typography
                     sx={{
                       color: color.text,
-                      fontSize: Theme.font16Bold,
+                      fontSize: Theme.font14Regular,
+                      overflow: "hidden",
+                      
                     }}
                   >
-                    S.No
-                  </TableCell>
+                    {item.employeename}
+                  </Typography>
+                </Box>
+              </TableCell>
 
-                  <TableCell
+              {/* Leave Type */}
+              <TableCell
+                sx={{
+                  color: color.text,
+                  fontSize: Theme.font14Regular,
+                  py: 1.8,
+                  px: 2,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.leaveType}
+              </TableCell>
+
+              {/* From */}
+              <TableCell
+                sx={{
+                  color: color.text,
+                  fontSize: Theme.font14Regular,
+                  py: 1.8,
+                  px: 2,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.from_date}
+              </TableCell>
+
+              {/* To */}
+              <TableCell
+                sx={{
+                  color: color.text,
+                  fontSize: Theme.font14Regular,
+                  py: 1.8,
+                  px: 2,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.to_date}
+              </TableCell>
+
+              {/* Status */}
+              <TableCell
+                sx={{
+                  color: color.text,
+                  fontSize: Theme.font14Regular,
+                  py: 1.8,
+                  px: 2,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color:
+                      item.status === "approved"
+                        ? "green"
+                        : item.status === "rejected"
+                        ? "red"
+                        : "orange",
+
+                    fontWeight: "bold",
+                    fontSize: Theme.font14Regular,
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {item.status}
+                </Typography>
+              </TableCell>
+
+              {/* Actions */}
+              <TableCell
+                align="center"
+                sx={{
+                  py: 1.8,
+                  px: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 1,
+                    flexWrap: "nowrap",
+                  }}
+                >
+                  <CommonButton
+                    onClick={() => handleView(item)}
                     sx={{
+                      backgroundColor: color.headings,
                       color: color.text,
-                      fontSize: Theme.font16Bold,
+                      minWidth: 65,
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    Name
-                  </TableCell>
+                    View
+                  </CommonButton>
 
-                  <TableCell
+                  <CommonButton
+                    onClick={() =>
+                      updateLeave(item, "approved")
+                    }
                     sx={{
+                      backgroundColor:
+                        item.status === "approved"
+                          ? color.navbar
+                          : color.background,
                       color: color.text,
-                      fontSize: Theme.font16Bold,
+                      minWidth: 85,
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    Leave Type
-                  </TableCell>
+                    {item.status === "approved"
+                      ? "Approved"
+                      : "Approve"}
+                  </CommonButton>
 
-                  <TableCell
+                  <CommonButton
+                    onClick={() =>
+                      updateLeave(item, "rejected")
+                    }
                     sx={{
+                      backgroundColor:
+                        item.status === "rejected"
+                          ? color.navbar
+                          : color.background,
                       color: color.text,
-                      fontSize: Theme.font16Bold,
+                      minWidth: 80,
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    From
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      color: color.text,
-                      fontSize: Theme.font16Bold,
-                    }}
-                  >
-                    To
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      color: color.text,
-                      fontSize: Theme.font16Bold,
-                    }}
-                  >
-                    Status
-                  </TableCell>
-
-                  <TableCell
-                    align="center"
-                    sx={{
-                      color: color.text,
-                      fontSize: Theme.font16Bold,
-                    }}
-                  >
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {leaveData.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      align="center"
-                      sx={{
-                        color: color.text,
-                        fontSize: Theme.font16Bold,
-                        py: 3,
-                      }}
-                    >
-                      No Leaves Found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  leaveData.map((item, index) => (
-                    <TableRow key={item.id}>
-                      <TableCell sx={{ color: color.text }}>
-                        {page * rowsPerPage + index + 1}
-                      </TableCell>
-
-                      <TableCell sx={{ color: color.text }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                          }}
-                        >
-                          {item.employeename}
-                        </Box>
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          color: color.text,
-                          fontSize: Theme.font14Regular,
-                        }}
-                      >
-                        {item.leaveType}
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          color: color.text,
-                          fontSize: Theme.font14Regular,
-                        }}
-                      >
-                        {item.from_date}
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          color: color.text,
-                          fontSize: Theme.font14Regular,
-                        }}
-                      >
-                        {item.to_date}
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          color: color.text,
-                          fontSize: Theme.font14Regular,
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            color:
-                              item.status === "approved"
-                                ? "green"
-                                : item.status === "rejected"
-                                  ? "red"
-                                  : "orange",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {item.status}
-                        </Typography>
-                      </TableCell>
-
-                      <TableCell>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            gap: 1,
-                          }}
-                        >
-                          <CommonButton
-                            onClick={() =>
-                              handleView(item)
-                            }
-                            sx={{
-                              backgroundColor:
-                                color.headings,
-                              color: color.text,
-                            }}
-                          >
-                            View
-                          </CommonButton>
-
-                          <CommonButton
-                            onClick={() =>
-                              updateLeave(
-                                item,
-                                "approved"
-                              )
-                            }
-                            sx={{
-                              backgroundColor:
-                                item.status === "approved"
-                                  ? color.navbar
-                                  : color.background,
-                              color: color.text,
-                            }}
-                          >
-                            {item.status === "approved"
-                              ? "Approved"
-                              : "Approve"}
-                          </CommonButton>
-
-                          <CommonButton
-                            onClick={() =>
-                              updateLeave(
-                                item,
-                                "rejected"
-                              )
-                            }
-                            sx={{
-                              backgroundColor:
-                                item.status === "rejected"
-                                  ? color.navbar
-                                  : color.background,
-                              color: color.text,
-                            }}
-                          >
-                            {item.status === "rejected"
-                              ? "Rejected"
-                              : "Reject"}
-                          </CommonButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+                    {item.status === "rejected"
+                      ? "Rejected"
+                      : "Reject"}
+                  </CommonButton>
+                </Box>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
+      </TableBody>
+    </Table>
+  </TableContainer>
+</Box>
       )}
     </>
   );
