@@ -252,18 +252,21 @@ export default function HRLeave({ darkMode, setDarkMode }) {
               <TableContainer
                 component={Paper}
                 sx={{
-                  borderRadius: 4,
+                  
                   width: "90%",
                   mx: "auto",
                   overflowX: "auto",
+                   borderLeft: "1px solid white",
+                    borderRight: "1px solid white",
+                     boxShadow: 2,
+               borderRadius: 2,
                 }}
               >
                 <Table
                   sx={{
                     minWidth: 1000,
                     bgcolor: color.background,
-                   borderLeft: "1px solid white",
-                    borderRight: "1px solid white",
+                    tableLayout: "fixed",
                   }}
                 >
 

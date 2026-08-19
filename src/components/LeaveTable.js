@@ -230,7 +230,11 @@ export default function LeaveTable({
           }}
         >
           <TableContainer
+           component={Paper}
             sx={{
+              width: "90%",
+                  mx: "auto",
+                  overflowX: "auto",
               borderRadius: 3,
               boxShadow: 2,
               backgroundColor: color.background,
@@ -238,7 +242,13 @@ export default function LeaveTable({
               borderLeft: "1px solid white",
             }}
           >
-            <Table size="small">
+            <Table
+                             sx={{
+                               minWidth: 1000,
+                               bgcolor: color.background,
+                               tableLayout: "fixed",
+                             }}
+                           >
               <TableHead
                 sx={{
                   backgroundColor: color.headings,

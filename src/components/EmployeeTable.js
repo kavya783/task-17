@@ -43,29 +43,13 @@ function EmployeeTable({
 
   const color = Colors(darkMode);
 
-  /*
-   * Make sure data is always an array.
-   *
-   * If API directly sends an array:
-   * data = [...]
-   *
-   * If parent accidentally sends undefined/null:
-   * []
-   */
+  
   const employeeData = Array.isArray(data) ? data : [];
 
-  /*
-   * Only employees should be displayed.
-   *
-   * HR users are removed from this table.
-   */
   const filteredData = employeeData.filter(
     (item) => item?.role?.toLowerCase() !== "hr"
   );
 
-  /*
-   * Profile image
-   */
   const getProfileImage = (item) => {
     return (
       item?.profile_image_url ||
@@ -74,9 +58,7 @@ function EmployeeTable({
     );
   };
 
-  /*
-   * Open Delete Dialog
-   */
+  
   const handleOpenDelete = (id) => {
     if (!id) {
       console.error("Employee ID is missing:", id);
@@ -87,26 +69,20 @@ function EmployeeTable({
     setOpenDelete(true);
   };
 
-  /*
-   * Close Delete Dialog
-   */
+ 
   const handleCloseDelete = () => {
     setOpenDelete(false);
     setSelectedId(null);
   };
 
-  /*
-   * Confirm Delete
-   */
+  
   const handleConfirmDelete = async () => {
     if (!selectedId) {
       return;
     }
 
     try {
-      /*
-       * Send actual employee/user ID to parent.
-       */
+      
       await handleDelete(selectedId);
 
       handleCloseDelete();
@@ -117,10 +93,7 @@ function EmployeeTable({
 
   return (
     <>
-      {/* =====================================================
-          HEADER
-      ====================================================== */}
-
+     
       <Box
         sx={{
           display: "flex",
@@ -142,8 +115,7 @@ function EmployeeTable({
           mt: 15,
         }}
       >
-        {/* Desktop Heading */}
-
+       
         <Typography
           sx={{
             mr: {
@@ -166,7 +138,7 @@ function EmployeeTable({
           Employee List:
         </Typography>
 
-        {/* Mobile Heading */}
+    
 
         <Typography
           sx={{
@@ -190,7 +162,7 @@ function EmployeeTable({
           Employee List:
         </Typography>
 
-        {/* Mobile Add Employee */}
+       
 
         <CommonButton
           variant="contained"
@@ -210,7 +182,7 @@ function EmployeeTable({
           Add Employee
         </CommonButton>
 
-        {/* Desktop Add Employee */}
+        
 
         <CommonButton
           variant="contained"
@@ -231,9 +203,7 @@ function EmployeeTable({
         </CommonButton>
       </Box>
 
-      {/* =====================================================
-          MOBILE VIEW
-      ====================================================== */}
+     
 
       {isMobile ? (
         <Box>
@@ -293,7 +263,7 @@ function EmployeeTable({
                     />
                   </Box>
 
-                  {/* Employee Name */}
+                 
 
                   <Typography
                     sx={{
@@ -304,7 +274,7 @@ function EmployeeTable({
                     Name: {item.employeename || item.name}
                   </Typography>
 
-                  {/* Role */}
+                  
 
                   <Typography
                     sx={{
@@ -405,9 +375,7 @@ function EmployeeTable({
           )}
         </Box>
       ) : (
-        /* =====================================================
-           DESKTOP VIEW
-        ====================================================== */
+       
 
         <Box
           sx={{
@@ -424,7 +392,10 @@ function EmployeeTable({
           }}
         >
           <TableContainer
+           component={Paper}
             sx={{
+              mx: "auto",
+              overflowX: "auto",
               width: "100%",
               boxShadow: 2,
               borderRadius: 2,
@@ -439,9 +410,7 @@ function EmployeeTable({
                 width: "100%",
               }}
             >
-              {/* =====================================================
-                  TABLE HEADER
-              ====================================================== */}
+              
 
               <TableHead
                 sx={{
@@ -521,9 +490,7 @@ function EmployeeTable({
                 </TableRow>
               </TableHead>
 
-              {/* =====================================================
-                  TABLE BODY
-              ====================================================== */}
+             
 
               <TableBody>
                 {filteredData.length === 0 ? (
@@ -543,9 +510,7 @@ function EmployeeTable({
                 ) : (
                   filteredData.map((item, index) => (
                     <TableRow key={item.id}>
-                      {/* =================================================
-                          S.NO
-                      ================================================== */}
+                    
 
                       <TableCell
                         sx={{
@@ -555,9 +520,7 @@ function EmployeeTable({
                         {index + 1}
                       </TableCell>
 
-                      {/* =================================================
-                          EMPLOYEE
-                      ================================================== */}
+                     
 
                       <TableCell
                         sx={{
@@ -602,9 +565,7 @@ function EmployeeTable({
                         </Box>
                       </TableCell>
 
-                      {/* =================================================
-                          ROLE
-                      ================================================== */}
+                      
 
                       <TableCell
                         sx={{
@@ -614,9 +575,7 @@ function EmployeeTable({
                         {item.role}
                       </TableCell>
 
-                      {/* =================================================
-                          SALARY
-                      ================================================== */}
+                      
 
                       <TableCell
                         sx={{
@@ -626,9 +585,7 @@ function EmployeeTable({
                         {item.salary}
                       </TableCell>
 
-                      {/* =================================================
-                          ADDRESS
-                      ================================================== */}
+                     
 
                       <TableCell
                         sx={{
@@ -650,9 +607,7 @@ function EmployeeTable({
                         </Tooltip>
                       </TableCell>
 
-                      {/* =================================================
-                          EMAIL
-                      ================================================== */}
+                      
 
                       <TableCell
                         sx={{
@@ -674,9 +629,7 @@ function EmployeeTable({
                         </Tooltip>
                       </TableCell>
 
-                      {/* =================================================
-                          ACTIONS
-                      ================================================== */}
+                     
 
                       <TableCell>
                         <Box
@@ -737,9 +690,7 @@ function EmployeeTable({
         </Box>
       )}
 
-      {/* =====================================================
-          DELETE DIALOG
-      ====================================================== */}
+
 
       <Dialog
         open={openDelete}
