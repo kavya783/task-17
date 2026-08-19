@@ -289,7 +289,7 @@ export default function LeaveTable({
               fontWeight: 600,
               py: 0,
               px: 2,
-              minWidth: 70,
+              minWidth: 30,
             }}
           >
             S.No
