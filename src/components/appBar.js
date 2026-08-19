@@ -18,6 +18,7 @@ import {
   Divider,
   Badge,
   Popover,
+  CircularProgress,
 } from "@mui/material";
 
 import API from "../API/API";
@@ -59,6 +60,7 @@ function AppBarr({
   setSearch: setParentSearch,
 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const api = useMemo(() => new API(), []);
 
@@ -75,12 +77,17 @@ function AppBarr({
   );
 
   const unreadNotifications = useMemo(
-    () => leaveNotifications.filter((item) => !item.read),
+    () =>
+      leaveNotifications.filter(
+        (item) => !item.read
+      ),
     [leaveNotifications]
   );
 
   const [themeColor, setThemeColor] = useState(
-    localStorage.getItem("themeColor") || "#7DB9B6"
+    () =>
+      localStorage.getItem("themeColor") ||
+      "#7DB9B6"
   );
 
   const [open, setOpen] = useState(false);
@@ -89,14 +96,8 @@ function AppBarr({
   const [notificationAnchor, setNotificationAnchor] =
     useState(null);
 
-  const navigate = useNavigate();
-
-  const color = useMemo(
-    () => Colors(darkMode, themeColor),
-    [darkMode, themeColor]
-  );
-
-  const role = localStorage.getItem("role")?.toLowerCase();
+  const role =
+    localStorage.getItem("role")?.toLowerCase();
 
   const titleMap = {
     company: "COMPANY DASHBOARD",
@@ -106,8 +107,17 @@ function AppBarr({
 
   const title = titleMap[role] || "PORTAL";
 
-  const userEmail = localStorage.getItem("email") || "";
-  const firstLetter = userEmail.charAt(0).toUpperCase();
+  const userEmail =
+    localStorage.getItem("email") || "";
+
+  const firstLetter = userEmail
+    .charAt(0)
+    .toUpperCase();
+
+  const color = useMemo(
+    () => Colors(darkMode, themeColor),
+    [darkMode, themeColor]
+  );
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -122,16 +132,26 @@ function AppBarr({
     navigate("/", { replace: true });
   };
 
-  // Fetch notifications
+  /*
+   * Load notifications after initial render.
+   * This avoids adding notification API work
+   * to the critical rendering path.
+   */
   useEffect(() => {
-    if (role === "company") return;
+    if (role === "company") {
+      return;
+    }
 
     const timer = setTimeout(() => {
-      dispatch(getNotificationDataActionInitiate());
+      dispatch(
+        getNotificationDataActionInitiate()
+      );
     }, 1500);
 
     const interval = setInterval(() => {
-      dispatch(getNotificationDataActionInitiate());
+      dispatch(
+        getNotificationDataActionInitiate()
+      );
     }, 60000);
 
     return () => {
@@ -140,14 +160,19 @@ function AppBarr({
     };
   }, [dispatch, role]);
 
-  // Welcome notification
+  /*
+   * Welcome notification is intentionally delayed
+   * so it does not affect initial page rendering.
+   */
   useEffect(() => {
     const timer = setTimeout(() => {
       api
         .get("notifications/welcome")
         .then((response) => {
           if (response.data) {
-            toast.success(response.data.message);
+            toast.success(
+              response.data.message
+            );
 
             api.put(
               `notifications/${response.data.id}/mark_as_read`,
@@ -156,10 +181,17 @@ function AppBarr({
             );
           }
         })
-        .catch(console.log);
+        .catch((error) => {
+          console.error(
+            "Welcome notification error:",
+            error
+          );
+        });
     }, 30000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [api]);
 
   return (
@@ -177,7 +209,7 @@ function AppBarr({
             justifyContent: "space-between",
           }}
         >
-          {/* Left */}
+          {/* LEFT */}
           <Box
             sx={{
               display: "flex",
@@ -189,7 +221,10 @@ function AppBarr({
               aria-label="Open navigation menu"
               onClick={() => setOpen(true)}
               sx={{
-                display: { xs: "flex", md: "none" },
+                display: {
+                  xs: "flex",
+                  md: "none",
+                },
                 color: color.text,
               }}
             >
@@ -199,13 +234,16 @@ function AppBarr({
             <WorkIcon
               sx={{
                 color: color.text,
-                display: { xs: "none", md: "block" },
+                display: {
+                  xs: "none",
+                  md: "block",
+                },
                 mr: 1,
               }}
             />
           </Box>
 
-          {/* Center - Desktop */}
+          {/* DESKTOP TITLE */}
           <Typography
             sx={{
               flexGrow: 1,
@@ -224,7 +262,7 @@ function AppBarr({
             {title}
           </Typography>
 
-          {/* Center - Mobile */}
+          {/* MOBILE TITLE */}
           <Typography
             sx={{
               flexGrow: 1,
@@ -243,7 +281,7 @@ function AppBarr({
             {title}
           </Typography>
 
-          {/* Right */}
+          {/* RIGHT */}
           <Box
             sx={{
               display: "flex",
@@ -251,20 +289,24 @@ function AppBarr({
               gap: 0,
             }}
           >
-            {/* Notifications */}
+            {/* NOTIFICATIONS */}
             {role !== "company" && (
               <>
                 <IconButton
                   aria-label={`Notifications, ${unreadNotifications.length} unread`}
-                  onClick={(e) =>
-                    setNotificationAnchor(e.currentTarget)
+                  onClick={(event) =>
+                    setNotificationAnchor(
+                      event.currentTarget
+                    )
                   }
                   sx={{
                     color: color.text,
                   }}
                 >
                   <Badge
-                    badgeContent={unreadNotifications.length}
+                    badgeContent={
+                      unreadNotifications.length
+                    }
                     color="error"
                   >
                     <NotificationsIcon />
@@ -272,7 +314,9 @@ function AppBarr({
                 </IconButton>
 
                 <Popover
-                  open={Boolean(notificationAnchor)}
+                  open={Boolean(
+                    notificationAnchor
+                  )}
                   anchorEl={notificationAnchor}
                   onClose={() =>
                     setNotificationAnchor(null)
@@ -288,97 +332,101 @@ function AppBarr({
                       p: 2,
                     }}
                   >
-                    {leaveNotifications.length === 0 ? (
+                    {leaveNotifications.length ===
+                    0 ? (
                       <Typography>
                         No Notifications
                       </Typography>
                     ) : (
-                      leaveNotifications.map((item) => (
-                        <Box
-                          key={item.id}
-                          onClick={async () => {
-                            if (!item.read) {
-                              await api.put(
-                                `notifications/${item.id}/mark_as_read`
-                              );
+                      leaveNotifications.map(
+                        (item) => (
+                          <Box
+                            key={item.id}
+                            onClick={async () => {
+                              if (!item.read) {
+                                await api.put(
+                                  `notifications/${item.id}/mark_as_read`
+                                );
 
-                              dispatch(
-                                getNotificationDataActionInitiate()
-                              );
-                            }
-                          }}
-                          sx={{
-                            p: 2,
-                            mb: 1.5,
-                            cursor: "pointer",
-
-                            border: item.read
-                              ? `1px solid ${color.white}`
-                              : `2px solid ${color.red}`,
-
-                            borderRadius: "10px",
-
-                            boxShadow: item.read
-                              ? "none"
-                              : `0 0 5px ${color.red}`,
-
-                            "&:hover": {
-                              background: color.white,
-                            },
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontWeight: "bold",
-                              color: color.card,
-                            }}
-                          >
-                            {item.title}
-                          </Typography>
-
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              mt: 0.5,
-                              color: color.card,
-                            }}
-                          >
-                            {item.message}
-                          </Typography>
-
-                          <IconButton
-                            aria-label={`Delete notification from ${item.title}`}
-                            onClick={async (e) => {
-                              e.stopPropagation();
-
-                              await api.delete(
-                                `notifications/${item.id}`
-                              );
-
-                              dispatch(
-                                getNotificationDataActionInitiate()
-                              );
+                                dispatch(
+                                  getNotificationDataActionInitiate()
+                                );
+                              }
                             }}
                             sx={{
-                              ml: 30,
-                              color: color.red,
+                              p: 2,
+                              mb: 1.5,
+                              cursor: "pointer",
+                              border: item.read
+                                ? `1px solid ${color.white}`
+                                : `2px solid ${color.red}`,
+                              borderRadius: "10px",
+                              boxShadow: item.read
+                                ? "none"
+                                : `0 0 5px ${color.red}`,
+                              "&:hover": {
+                                background:
+                                  color.white,
+                              },
                             }}
                           >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      ))
+                            <Typography
+                              sx={{
+                                fontWeight: "bold",
+                                color: color.card,
+                              }}
+                            >
+                              {item.title}
+                            </Typography>
+
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                mt: 0.5,
+                                color: color.card,
+                              }}
+                            >
+                              {item.message}
+                            </Typography>
+
+                            <IconButton
+                              aria-label={`Delete notification from ${item.title}`}
+                              onClick={async (
+                                event
+                              ) => {
+                                event.stopPropagation();
+
+                                await api.delete(
+                                  `notifications/${item.id}`
+                                );
+
+                                dispatch(
+                                  getNotificationDataActionInitiate()
+                                );
+                              }}
+                              sx={{
+                                ml: 30,
+                                color: color.red,
+                              }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
+                        )
+                      )
                     )}
                   </Box>
                 </Popover>
               </>
             )}
 
-            {/* Theme Color */}
+            {/* COLOR PICKER */}
             <IconButton
               aria-label="Change theme color"
-              onClick={(e) =>
-                setColorAnchor(e.currentTarget)
+              onClick={(event) =>
+                setColorAnchor(
+                  event.currentTarget
+                )
               }
               sx={{
                 color: color.text,
@@ -390,28 +438,37 @@ function AppBarr({
             <Menu
               anchorEl={colorAnchor}
               open={Boolean(colorAnchor)}
-              onClose={() => setColorAnchor(null)}
+              onClose={() =>
+                setColorAnchor(null)
+              }
             >
               <Box sx={{ p: 2 }}>
                 <Suspense
                   fallback={
                     <Box
                       sx={{
-                        p: 2,
-                        mr: 20,
+                        p: 3,
+                        display: "flex",
+                        justifyContent: "center",
                       }}
                     >
-                      Loading...
+                      <CircularProgress
+                        size={25}
+                      />
                     </Box>
                   }
                 >
                   <SketchPicker
                     color={themeColor}
-                    onChangeComplete={(updatedColor) => {
+                    onChangeComplete={(
+                      updatedColor
+                    ) => {
                       const selectedColor =
                         updatedColor.hex;
 
-                      setThemeColor(selectedColor);
+                      setThemeColor(
+                        selectedColor
+                      );
 
                       localStorage.setItem(
                         "themeColor",
@@ -425,7 +482,7 @@ function AppBarr({
               </Box>
             </Menu>
 
-            {/* Dark Mode */}
+            {/* DARK MODE */}
             <IconButton
               aria-label={
                 darkMode
@@ -446,7 +503,7 @@ function AppBarr({
               )}
             </IconButton>
 
-            {/* Profile */}
+            {/* PROFILE */}
             <IconButton
               aria-label="Open profile menu"
               onClick={handleOpen}
@@ -465,7 +522,7 @@ function AppBarr({
               </Avatar>
             </IconButton>
 
-            {/* Profile Menu */}
+            {/* PROFILE MENU */}
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -484,22 +541,23 @@ function AppBarr({
                 disabled
                 sx={{
                   display: "flex",
-                  alignItems: "flex-start",
+                  alignItems:
+                    "flex-start",
                   gap: 1,
                   whiteSpace: "normal",
                 }}
               >
                 <AccountCircleIcon
-                  sx={{
-                    mt: 0.5,
-                  }}
+                  sx={{ mt: 0.5 }}
                 />
 
                 <Typography
                   sx={{
                     fontSize: 15,
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
+                    wordBreak:
+                      "break-word",
+                    overflowWrap:
+                      "anywhere",
                     maxWidth: 250,
                     mt: 0.5,
                   }}
@@ -517,9 +575,7 @@ function AppBarr({
                 }}
               >
                 <LogoutIcon
-                  sx={{
-                    mr: 1,
-                  }}
+                  sx={{ mr: 1 }}
                 />
 
                 Logout
@@ -529,7 +585,7 @@ function AppBarr({
         </Toolbar>
       </AppBar>
 
-      {/* Navigation */}
+      {/* NAVIGATION */}
       <NavBar
         darkMode={darkMode}
         open={open}
