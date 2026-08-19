@@ -142,7 +142,8 @@ export default function HRLeave({ darkMode, setDarkMode }) {
               ...Theme.font24Bold,
               bgcolor: color.headings,
               WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent"
+              WebkitTextFillColor: "transparent",
+              ml:{xs:0,lg:10}
             }}
           >
             HR Leave Status
@@ -247,26 +248,54 @@ export default function HRLeave({ darkMode, setDarkMode }) {
 
             ) : (
 
-
+            <Box
+             sx={{
+               mt: 2,
+           
+               width: {
+                 xs: "100%",
+                 md: "90%",
+                 lg: "90%",
+               },
+           
+               ml: {
+                 xs: 0,
+                 md: "8%",
+                 lg: "10%",
+               },
+           
+               boxSizing: "border-box",
+             }}
+           >
 
               <TableContainer
-                component={Paper}
-                sx={{
-                  
-                  width: "90%",
-                  mx: "auto",
-                  overflowX: "auto",
-                   borderLeft: "1px solid white",
-                    borderRight: "1px solid white",
-                     boxShadow: 2,
-               borderRadius: 2,
-                }}
-              >
+               component={Paper}
+               sx={{
+                 width: {
+                   xs: "100%",
+                   md: "100%",
+                   lg: "90%",
+                 },
+                 maxWidth: "100%",
+                 overflowX: "auto",
+                 overflowY: "hidden",
+             
+                 borderRadius: 3,
+                 boxShadow: 2,
+             
+                 backgroundColor: color.background,
+             
+                 borderLeft: "1px solid white",
+                 borderRight: "1px solid white", 
+                 borderBottom:"1px solid white",
+                 boxSizing: "border-box",
+               }}
+             >
                 <Table
                   sx={{
-                    minWidth: 1000,
+                    minWidth: 900,
                     bgcolor: color.background,
-                    tableLayout: "fixed",
+                    
                   }}
                 >
 
@@ -275,32 +304,32 @@ export default function HRLeave({ darkMode, setDarkMode }) {
                     <TableRow>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
+                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 30, }}>
                         S.No
                       </TableCell>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
+                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
                         Name
                       </TableCell>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
+                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
                         Leave Type
                       </TableCell>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
+                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
                         From Date
                       </TableCell>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
+                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
                         To Date
                       </TableCell>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold }}>
+                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
                         Status
                       </TableCell>
 
@@ -409,7 +438,7 @@ export default function HRLeave({ darkMode, setDarkMode }) {
 
 
               </TableContainer>
-
+</Box>
 
 
             )
