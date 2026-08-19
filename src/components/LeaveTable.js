@@ -245,9 +245,9 @@ export default function LeaveTable({
           >
             <Table
                              sx={{
-                               minWidth: 1000,
+                             
                                bgcolor: color.background,
-                               tableLayout: "fixed",
+                               
                              }}
                            >
               <TableHead
