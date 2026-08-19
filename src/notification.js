@@ -7,12 +7,16 @@ import { messaging } from "./firebase";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export const saveFcmToken = async () => {
-
+// Request notification permission + generate/save FCM token
+export const requestNotificationPermission = async () => {
   try {
-
     if (!messaging) {
       console.error("Firebase messaging is not initialized");
+      return null;
+    }
+
+    if (!("Notification" in window)) {
+      console.error("This browser does not support notifications");
       return null;
     }
 
@@ -23,13 +27,9 @@ export const saveFcmToken = async () => {
       return null;
     }
 
-    const token = await getToken(
-      messaging,
-      {
-        vapidKey:
-          process.env.REACT_APP_FIREBASE_VAPID_KEY
-      }
-    );
+    const token = await getToken(messaging, {
+      vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY
+    });
 
     if (!token) {
       console.warn("FCM token was not generated");
@@ -38,14 +38,10 @@ export const saveFcmToken = async () => {
 
     console.log("FCM TOKEN:", token);
 
-    const authToken =
-      localStorage.getItem("token");
+    const authToken = localStorage.getItem("token");
 
     if (!authToken) {
-      console.warn(
-        "User authentication token not found"
-      );
-
+      console.warn("User authentication token not found");
       return token;
     }
 
@@ -68,7 +64,6 @@ export const saveFcmToken = async () => {
     const data = await response.json();
 
     if (!response.ok) {
-
       console.error(
         "Failed to save FCM token:",
         data
@@ -85,7 +80,6 @@ export const saveFcmToken = async () => {
     return token;
 
   } catch (error) {
-
     console.error(
       "FCM token error:",
       error
@@ -96,7 +90,18 @@ export const saveFcmToken = async () => {
 };
 
 
+// Keep this function if other files are already using saveFcmToken
+export const saveFcmToken = async () => {
+  return requestNotificationPermission();
+};
+
+
+// Foreground notifications
 export const listenForMessages = () => {
+  if (!messaging) {
+    console.error("Firebase messaging is not initialized");
+    return () => {};
+  }
 
   const unsubscribe = onMessage(
     messaging,
@@ -116,18 +121,17 @@ export const listenForMessages = () => {
         "";
 
       if (
+        "Notification" in window &&
         Notification.permission === "granted"
       ) {
-
         new Notification(
           title,
           {
-            body: body
+            body: body,
+            icon: "/hr.png"
           }
         );
-
       }
-
     }
   );
 
