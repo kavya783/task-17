@@ -1,18 +1,12 @@
-import {
-  getToken,
-  onMessage
-} from "firebase/messaging";
-
-import { messaging } from "./firebase";
+import { getFirebaseMessaging } from "./firebase";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 export const requestNotificationPermission = async () => {
   try {
-    console.log("========== FCM START ==========");
+    const messaging = await getFirebaseMessaging();
 
     if (!messaging) {
-      console.error("Firebase messaging is not initialized");
       return null;
     }
 
@@ -21,21 +15,16 @@ export const requestNotificationPermission = async () => {
       return null;
     }
 
-    // Ask permission
     let permission = Notification.permission;
 
     if (permission !== "granted") {
       permission = await Notification.requestPermission();
     }
 
-    console.log("Notification permission:", permission);
-
     if (permission !== "granted") {
-      console.warn("Notification permission denied");
       return null;
     }
 
-    // Make sure service worker exists
     if (!("serviceWorker" in navigator)) {
       console.error("Service Worker is not supported");
       return null;
@@ -46,91 +35,48 @@ export const requestNotificationPermission = async () => {
         "/firebase-messaging-sw.js"
       );
 
-    console.log(
-      "Firebase service worker registered:",
-      registration
+    const { getToken } = await import(
+      "firebase/messaging"
     );
 
-    // Get FCM token
-    const token = await getToken(
-      messaging,
-      {
-        vapidKey:
-          process.env.REACT_APP_FIREBASE_VAPID_KEY,
-
-        serviceWorkerRegistration:
-          registration
-      }
-    );
+    const token = await getToken(messaging, {
+      vapidKey:
+        process.env.REACT_APP_FIREBASE_VAPID_KEY,
+      serviceWorkerRegistration: registration,
+    });
 
     if (!token) {
-      console.error("FCM token was not generated");
       return null;
     }
 
-    console.log("========== FCM TOKEN ==========");
-    console.log(token);
-    console.log("===============================");
-
-    // Rails JWT token
-    const authToken =
-      localStorage.getItem("token");
-
-    console.log(
-      "Auth token exists:",
-      !!authToken
-    );
+    const authToken = localStorage.getItem("token");
 
     if (!authToken) {
-      console.error(
-        "JWT token not found in localStorage"
-      );
-
       return token;
     }
 
-    // Save FCM token in Rails
     const response = await fetch(
       `${API_URL}/api/device_tokens`,
       {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`
+          Authorization: `Bearer ${authToken}`,
         },
-
         body: JSON.stringify({
-          token: token
-        })
+          token,
+        }),
       }
-    );
-
-    const data = await response.json();
-
-    console.log(
-      "Device token API response:",
-      response.status,
-      data
     );
 
     if (!response.ok) {
       console.error(
-        "Failed to save FCM token:",
-        data
+        "Failed to save FCM token"
       );
-
-      return token;
     }
 
-    console.log(
-      "========== FCM TOKEN SAVED =========="
-    );
-
     return token;
-
   } catch (error) {
-
     console.error(
       "FCM initialization error:",
       error
@@ -140,56 +86,50 @@ export const requestNotificationPermission = async () => {
   }
 };
 
-
-// Keep this also because other files may use it
 export const saveFcmToken = async () => {
   return requestNotificationPermission();
 };
 
+export const listenForMessages = async () => {
+  try {
+    const messaging =
+      await getFirebaseMessaging();
 
-// Foreground notification
-export const listenForMessages = () => {
+    if (!messaging) {
+      return () => {};
+    }
 
-  if (!messaging) {
+    const { onMessage } = await import(
+      "firebase/messaging"
+    );
+
+    return onMessage(
+      messaging,
+      (payload) => {
+        const title =
+          payload.notification?.title ||
+          "HR Portal";
+
+        const body =
+          payload.notification?.body || "";
+
+        if (
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ) {
+          new Notification(title, {
+            body,
+            icon: "/hr.png",
+          });
+        }
+      }
+    );
+  } catch (error) {
     console.error(
-      "Firebase messaging is not initialized"
+      "Foreground notification initialization failed:",
+      error
     );
 
     return () => {};
   }
-
-  const unsubscribe = onMessage(
-    messaging,
-    (payload) => {
-
-      console.log(
-        "Foreground FCM message:",
-        payload
-      );
-
-      const title =
-        payload.notification?.title ||
-        "HR Portal";
-
-      const body =
-        payload.notification?.body ||
-        "";
-
-      if (
-        "Notification" in window &&
-        Notification.permission === "granted"
-      ) {
-
-        new Notification(
-          title,
-          {
-            body: body,
-            icon: "/hr.png"
-          }
-        );
-      }
-    }
-  );
-
-  return unsubscribe;
 };

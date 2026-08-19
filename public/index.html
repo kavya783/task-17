@@ -19,7 +19,7 @@
 
     <title>HR Portal</title>
 
-    <!-- Google Analytics loaded after page load -->
+    <!-- Load Google Analytics after the page becomes interactive -->
     <script>
       window.addEventListener("load", function () {
         setTimeout(function () {
@@ -29,18 +29,20 @@
           script.src =
             "https://www.googletagmanager.com/gtag/js?id=G-BHCMLCTZEQ";
 
+          script.onload = function () {
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+              window.dataLayer.push(arguments);
+            }
+
+            window.gtag = gtag;
+
+            gtag("js", new Date());
+            gtag("config", "G-BHCMLCTZEQ");
+          };
+
           document.head.appendChild(script);
-
-          window.dataLayer = window.dataLayer || [];
-
-          function gtag() {
-            dataLayer.push(arguments);
-          }
-
-          window.gtag = gtag;
-
-          gtag("js", new Date());
-          gtag("config", "G-BHCMLCTZEQ");
         }, 3500);
       });
     </script>

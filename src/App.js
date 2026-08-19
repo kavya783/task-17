@@ -1,16 +1,26 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect, useState, lazy, Suspense } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+
+import {
+  useEffect,
+  useState,
+  lazy,
+  Suspense,
+} from "react";
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Loader from "./components/Loader";
-
 
 const ToastContainer = lazy(() =>
   import("react-toastify").then((module) => ({
     default: module.ToastContainer,
   }))
 );
+
 const Authentication = lazy(() =>
   import("./pages/Authentication")
 );
@@ -44,38 +54,43 @@ const EmployeeLeave = lazy(() =>
 );
 
 function App() {
-
- useEffect(() => {
-  let unsubscribe;
-
-  const initNotifications = async () => {
-    try {
-      const { listenForMessages } = await import("./notification");
-
-      unsubscribe = listenForMessages();
-    } catch (error) {
-      console.error("Notification initialization failed:", error);
-    }
-  };
-
-  initNotifications();
-
-  return () => {
-    if (unsubscribe) {
-      unsubscribe();
-    }
-  };
-}, []);
-
   const [darkMode, setDarkMode] = useState(false);
 
+  useEffect(() => {
+    let unsubscribe;
+
+    const initNotifications = async () => {
+      try {
+        const { listenForMessages } =
+  await import("./notification");
+
+unsubscribe = await listenForMessages();
+      } catch (error) {
+        console.error(
+          "Notification initialization failed:",
+          error
+        );
+      }
+    };
+
+    // Don't initialize Firebase during the critical render.
+    const timer = setTimeout(() => {
+      initNotifications();
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []);
+
   return (
-    <>
-      <ErrorBoundary>
+    <ErrorBoundary>
       <BrowserRouter>
-
         <Suspense fallback={<Loader />}>
-
           <Routes>
 
             <Route
@@ -134,7 +149,9 @@ function App() {
             <Route
               path="/leave"
               element={
-                <ProtectedRoute roleAllowed={["hr", "company"]}>
+                <ProtectedRoute
+                  roleAllowed={["hr", "company"]}
+                >
                   <LeavePage
                     darkMode={darkMode}
                     setDarkMode={setDarkMode}
@@ -146,7 +163,9 @@ function App() {
             <Route
               path="/employee"
               element={
-                <ProtectedRoute roleAllowed={["employee"]}>
+                <ProtectedRoute
+                  roleAllowed={["employee"]}
+                >
                   <EmployeeDashboard
                     darkMode={darkMode}
                     setDarkMode={setDarkMode}
@@ -158,7 +177,9 @@ function App() {
             <Route
               path="/leave/form"
               element={
-                <ProtectedRoute roleAllowed={["employee", "hr"]}>
+                <ProtectedRoute
+                  roleAllowed={["employee", "hr"]}
+                >
                   <LeaveForm
                     darkMode={darkMode}
                     setDarkMode={setDarkMode}
@@ -170,7 +191,9 @@ function App() {
             <Route
               path="/leave/status"
               element={
-                <ProtectedRoute roleAllowed={["employee"]}>
+                <ProtectedRoute
+                  roleAllowed={["employee"]}
+                >
                   <EmployeeLeave
                     darkMode={darkMode}
                     setDarkMode={setDarkMode}
@@ -180,14 +203,13 @@ function App() {
             />
 
           </Routes>
-
         </Suspense>
-
       </BrowserRouter>
-      </ErrorBoundary>
 
-      <ToastContainer />
-    </>
+      <Suspense fallback={null}>
+        <ToastContainer />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 

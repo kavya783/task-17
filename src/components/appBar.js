@@ -4,7 +4,6 @@ import React, {
   useMemo,
   lazy,
   Suspense,
-  useCallback,
 } from "react";
 
 import {
@@ -19,7 +18,6 @@ import {
   Divider,
   Badge,
   Popover,
-  TextField,
 } from "@mui/material";
 
 import API from "../API/API";
@@ -58,51 +56,55 @@ function AppBarr({
   darkMode,
   setDarkMode,
   setShowHRs,
-  setSearch: setParentSearch
+  setSearch: setParentSearch,
 }) {
   const dispatch = useDispatch();
+
   const api = useMemo(() => new API(), []);
 
   const { notifications = [] } = useSelector(
     (state) => state.getnotificationdata
   );
 
- const leaveNotifications = useMemo(
-  () =>
-    notifications.filter(
-      (item) => item.notification_type !== "welcome"
-    ),
-  [notifications]
-);
+  const leaveNotifications = useMemo(
+    () =>
+      notifications.filter(
+        (item) => item.notification_type !== "welcome"
+      ),
+    [notifications]
+  );
 
-const unreadNotifications = useMemo(
-  () => leaveNotifications.filter((item) => !item.read),
-  [leaveNotifications]
-);
+  const unreadNotifications = useMemo(
+    () => leaveNotifications.filter((item) => !item.read),
+    [leaveNotifications]
+  );
 
   const [themeColor, setThemeColor] = useState(
     localStorage.getItem("themeColor") || "#7DB9B6"
   );
+
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [colorAnchor, setColorAnchor] = useState(null);
+  const [notificationAnchor, setNotificationAnchor] =
+    useState(null);
 
   const navigate = useNavigate();
+
   const color = useMemo(
-  () => Colors(darkMode, themeColor),
-  [darkMode, themeColor]
-);
-  const [colorAnchor, setColorAnchor] = useState(null);
- 
-  const [notificationAnchor, setNotificationAnchor] = useState(null);
+    () => Colors(darkMode, themeColor),
+    [darkMode, themeColor]
+  );
+
   const role = localStorage.getItem("role")?.toLowerCase();
 
-const titleMap = {
-  company: "COMPANY DASHBOARD",
-  hr: "HR PORTAL",
-  employee: "EMPLOYEE PORTAL",
-};
+  const titleMap = {
+    company: "COMPANY DASHBOARD",
+    hr: "HR PORTAL",
+    employee: "EMPLOYEE PORTAL",
+  };
 
-const title = titleMap[role] || "PORTAL";
+  const title = titleMap[role] || "PORTAL";
 
   const userEmail = localStorage.getItem("email") || "";
   const firstLetter = userEmail.charAt(0).toUpperCase();
@@ -119,43 +121,30 @@ const title = titleMap[role] || "PORTAL";
     localStorage.clear();
     navigate("/", { replace: true });
   };
-  const handleResize = useCallback(() => {
-    console.log("Window width:", window.innerWidth);
-  }, []);
 
-  useEffect(() => {
-    let lastRun = 0;
-
-    const throttledResize = () => {
-      const now = Date.now();
-
-      if (now - lastRun >= 300) {
-        handleResize();
-        lastRun = now;
-      }
-    };
-
-    window.addEventListener("resize", throttledResize);
-
-    return () => {
-      window.removeEventListener("resize", throttledResize);
-    };
-  }, [handleResize]);
+  // Fetch notifications
   useEffect(() => {
     if (role === "company") return;
 
-    dispatch(getNotificationDataActionInitiate());
+    const timer = setTimeout(() => {
+      dispatch(getNotificationDataActionInitiate());
+    }, 1500);
 
     const interval = setInterval(() => {
       dispatch(getNotificationDataActionInitiate());
     }, 60000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, [dispatch, role]);
 
+  // Welcome notification
   useEffect(() => {
     const timer = setTimeout(() => {
-      api.get("notifications/welcome")
+      api
+        .get("notifications/welcome")
         .then((response) => {
           if (response.data) {
             toast.success(response.data.message);
@@ -172,7 +161,6 @@ const title = titleMap[role] || "PORTAL";
 
     return () => clearTimeout(timer);
   }, [api]);
-  console.log("Notification State:", notifications);
 
   return (
     <>
@@ -217,7 +205,7 @@ const title = titleMap[role] || "PORTAL";
             />
           </Box>
 
-          {/* Center */}
+          {/* Center - Desktop */}
           <Typography
             sx={{
               flexGrow: 1,
@@ -227,11 +215,16 @@ const title = titleMap[role] || "PORTAL";
               letterSpacing: 1,
               ml: 2,
               fontSize: Theme.font24Bold,
-              display: { xs: "none", md: "block" },
+              display: {
+                xs: "none",
+                md: "block",
+              },
             }}
           >
             {title}
           </Typography>
+
+          {/* Center - Mobile */}
           <Typography
             sx={{
               flexGrow: 1,
@@ -241,28 +234,34 @@ const title = titleMap[role] || "PORTAL";
               letterSpacing: 1,
               ml: 2,
               fontSize: Theme.font14Bold,
-              display: { xs: "block", md: "none" },
+              display: {
+                xs: "block",
+                md: "none",
+              },
             }}
           >
             {title}
           </Typography>
-
 
           {/* Right */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 0
+              gap: 0,
             }}
           >
-           
+            {/* Notifications */}
             {role !== "company" && (
               <>
                 <IconButton
                   aria-label={`Notifications, ${unreadNotifications.length} unread`}
-                  onClick={(e) => setNotificationAnchor(e.currentTarget)}
-                  sx={{ color: color.text }}
+                  onClick={(e) =>
+                    setNotificationAnchor(e.currentTarget)
+                  }
+                  sx={{
+                    color: color.text,
+                  }}
                 >
                   <Badge
                     badgeContent={unreadNotifications.length}
@@ -275,34 +274,38 @@ const title = titleMap[role] || "PORTAL";
                 <Popover
                   open={Boolean(notificationAnchor)}
                   anchorEl={notificationAnchor}
-                  onClose={() => setNotificationAnchor(null)}
+                  onClose={() =>
+                    setNotificationAnchor(null)
+                  }
                   anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right",
                   }}
                 >
-                  <Box sx={{ width: 300, p: 2 }}>
+                  <Box
+                    sx={{
+                      width: 300,
+                      p: 2,
+                    }}
+                  >
                     {leaveNotifications.length === 0 ? (
-                      <Typography>No Notifications</Typography>
+                      <Typography>
+                        No Notifications
+                      </Typography>
                     ) : (
                       leaveNotifications.map((item) => (
                         <Box
                           key={item.id}
                           onClick={async () => {
-
                             if (!item.read) {
-
                               await api.put(
                                 `notifications/${item.id}/mark_as_read`
                               );
 
-
                               dispatch(
                                 getNotificationDataActionInitiate()
                               );
-
                             }
-
                           }}
                           sx={{
                             p: 2,
@@ -324,7 +327,6 @@ const title = titleMap[role] || "PORTAL";
                             },
                           }}
                         >
-
                           <Typography
                             sx={{
                               fontWeight: "bold",
@@ -333,7 +335,6 @@ const title = titleMap[role] || "PORTAL";
                           >
                             {item.title}
                           </Typography>
-
 
                           <Typography
                             variant="body2"
@@ -345,15 +346,18 @@ const title = titleMap[role] || "PORTAL";
                             {item.message}
                           </Typography>
 
-
                           <IconButton
                             aria-label={`Delete notification from ${item.title}`}
                             onClick={async (e) => {
                               e.stopPropagation();
 
-                              await api.delete(`notifications/${item.id}`);
+                              await api.delete(
+                                `notifications/${item.id}`
+                              );
 
-                              dispatch(getNotificationDataActionInitiate());
+                              dispatch(
+                                getNotificationDataActionInitiate()
+                              );
                             }}
                             sx={{
                               ml: 30,
@@ -362,7 +366,6 @@ const title = titleMap[role] || "PORTAL";
                           >
                             <DeleteIcon />
                           </IconButton>
-
                         </Box>
                       ))
                     )}
@@ -370,27 +373,50 @@ const title = titleMap[role] || "PORTAL";
                 </Popover>
               </>
             )}
+
+            {/* Theme Color */}
             <IconButton
               aria-label="Change theme color"
-              onClick={(e) => setColorAnchor(e.currentTarget)}
-              sx={{ color: color.text }}
+              onClick={(e) =>
+                setColorAnchor(e.currentTarget)
+              }
+              sx={{
+                color: color.text,
+              }}
             >
               <PaletteIcon />
             </IconButton>
+
             <Menu
               anchorEl={colorAnchor}
               open={Boolean(colorAnchor)}
               onClose={() => setColorAnchor(null)}
             >
               <Box sx={{ p: 2 }}>
-                <Suspense fallback={<Box sx={{ p: 2,mr:20 }}>Loading...</Box>}>
+                <Suspense
+                  fallback={
+                    <Box
+                      sx={{
+                        p: 2,
+                        mr: 20,
+                      }}
+                    >
+                      Loading...
+                    </Box>
+                  }
+                >
                   <SketchPicker
                     color={themeColor}
                     onChangeComplete={(updatedColor) => {
-                      const selectedColor = updatedColor.hex;
+                      const selectedColor =
+                        updatedColor.hex;
 
                       setThemeColor(selectedColor);
-                      localStorage.setItem("themeColor", selectedColor);
+
+                      localStorage.setItem(
+                        "themeColor",
+                        selectedColor
+                      );
 
                       window.location.reload();
                     }}
@@ -398,14 +424,29 @@ const title = titleMap[role] || "PORTAL";
                 </Suspense>
               </Box>
             </Menu>
+
+            {/* Dark Mode */}
             <IconButton
-              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-              onClick={() => setDarkMode(!darkMode)}
-              sx={{ color: color.text }}
+              aria-label={
+                darkMode
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              onClick={() =>
+                setDarkMode(!darkMode)
+              }
+              sx={{
+                color: color.text,
+              }}
             >
-              {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              {darkMode ? (
+                <LightModeIcon />
+              ) : (
+                <DarkModeIcon />
+              )}
             </IconButton>
 
+            {/* Profile */}
             <IconButton
               aria-label="Open profile menu"
               onClick={handleOpen}
@@ -424,6 +465,7 @@ const title = titleMap[role] || "PORTAL";
               </Avatar>
             </IconButton>
 
+            {/* Profile Menu */}
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -447,7 +489,11 @@ const title = titleMap[role] || "PORTAL";
                   whiteSpace: "normal",
                 }}
               >
-                <AccountCircleIcon sx={{ mt: 0.5 }} />
+                <AccountCircleIcon
+                  sx={{
+                    mt: 0.5,
+                  }}
+                />
 
                 <Typography
                   sx={{
@@ -455,12 +501,11 @@ const title = titleMap[role] || "PORTAL";
                     wordBreak: "break-word",
                     overflowWrap: "anywhere",
                     maxWidth: 250,
-                    mt: 0.5
+                    mt: 0.5,
                   }}
                 >
                   {userEmail}
                 </Typography>
-
               </MenuItem>
 
               <Divider />
@@ -471,7 +516,12 @@ const title = titleMap[role] || "PORTAL";
                   color: "red",
                 }}
               >
-                <LogoutIcon sx={{ mr: 1 }} />
+                <LogoutIcon
+                  sx={{
+                    mr: 1,
+                  }}
+                />
+
                 Logout
               </MenuItem>
             </Menu>
@@ -479,7 +529,7 @@ const title = titleMap[role] || "PORTAL";
         </Toolbar>
       </AppBar>
 
-
+      {/* Navigation */}
       <NavBar
         darkMode={darkMode}
         open={open}
