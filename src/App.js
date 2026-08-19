@@ -4,7 +4,7 @@ import { useEffect, useState, lazy, Suspense } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Loader from "./components/Loader";
-import { listenForMessages } from "./notification";
+
 
 const ToastContainer = lazy(() =>
   import("react-toastify").then((module) => ({
@@ -45,13 +45,27 @@ const EmployeeLeave = lazy(() =>
 
 function App() {
 
-  useEffect(() => {
-    const unsubscribe = listenForMessages();
+ useEffect(() => {
+  let unsubscribe;
 
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, []);
+  const initNotifications = async () => {
+    try {
+      const { listenForMessages } = await import("./notification");
+
+      unsubscribe = listenForMessages();
+    } catch (error) {
+      console.error("Notification initialization failed:", error);
+    }
+  };
+
+  initNotifications();
+
+  return () => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
+}, []);
 
   const [darkMode, setDarkMode] = useState(false);
 

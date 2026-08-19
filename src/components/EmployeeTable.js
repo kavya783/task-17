@@ -115,16 +115,20 @@ const VirtualizedRow = ({ index, style }) => {
                 gap: 1,
               }}
             >
-              <img
-                src={getProfileImage(item)}
-                alt="profile"
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                }}
-              />
+             <img
+  src={getProfileImage(item)}
+  alt="profile"
+  width="80"
+  height="80"
+  fetchPriority="high"
+  decoding="async"
+  style={{
+    width: 80,
+    height: 80,
+    borderRadius: "50%",
+    objectFit: "cover",
+  }}
+/>
 
               <Tooltip
                 title={item.employeename || ""}
@@ -380,16 +384,21 @@ const VirtualizedRow = ({ index, style }) => {
                       mb: 1,
                     }}
                   >
-                    <img
-                      src={getProfileImage(item)}
-                      alt="profile"
-                      style={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                      }}
-                    />
+                 <img
+  src={getProfileImage(item)}
+  alt="profile"
+  width="80"
+  height="80"
+  fetchPriority="high"
+  decoding="async"
+  style={{
+    width: 80,
+    height: 80,
+    borderRadius: "50%",
+    objectFit: "cover",
+  }}
+/>
+
                   </Box>
 
                   <Typography
