@@ -78,71 +78,170 @@ export default function AuthenticationForm({ darkMode }) {
     return valid;
   };
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!validate()) return;
 
   try {
-    const res = await dispatch(loginActionInitiate(employee));
+    const res = await dispatch(
+      loginActionInitiate(employee)
+    );
 
     console.log("LOGIN RESPONSE:", res);
 
-    localStorage.setItem("token", res.token);
+    // ------------------------------------
+    // Save JWT token
+    // ------------------------------------
 
-    // Company Login
-   if (res.type === "company") {
+    localStorage.setItem(
+      "token",
+      res.token
+    );
 
-  localStorage.setItem("type", "company");
-  localStorage.setItem("role", "company");
-  localStorage.setItem("email", res.company.email);
-  localStorage.setItem("company_id", res.company.id);
+    // ------------------------------------
+    // COMPANY LOGIN
+    // ------------------------------------
 
-  navigate("/company-dashboard", {
-    replace: true,
-  });
+    if (res.type === "company") {
+      const companyId = res.company.id;
+      const companyEmail = res.company.email;
 
-  return;
-}
+      localStorage.setItem(
+        "type",
+        "company"
+      );
 
+      localStorage.setItem(
+        "role",
+        "company"
+      );
 
-    // User Login (HR / Employee)
+      localStorage.setItem(
+        "email",
+        companyEmail
+      );
+
+      localStorage.setItem(
+        "company_id",
+        String(companyId)
+      );
+
+      console.log(
+        "COMPANY ID:",
+        localStorage.getItem("company_id")
+      );
+
+      // ------------------------------------
+      // FCM Notification
+      // ------------------------------------
+
+      console.log(
+        "🔥 Starting FCM for COMPANY..."
+      );
+
+      const fcmToken =
+        await requestNotificationPermission();
+
+      console.log(
+        "COMPANY FCM TOKEN:",
+        fcmToken
+      );
+
+      // ------------------------------------
+      // Navigate
+      // ------------------------------------
+
+      navigate(
+        "/company-dashboard",
+        {
+          replace: true,
+        }
+      );
+
+      return;
+    }
+
+    // ------------------------------------
+    // USER LOGIN
+    // HR / EMPLOYEE
+    // ------------------------------------
 
     const email = res.user.email;
     const role = res.role;
     const userId = res.user.id;
 
-   localStorage.setItem("type", "user");
-localStorage.setItem("email", email);
-localStorage.setItem("role", role);
-localStorage.setItem("user_id", String(userId));
-
-
-// verify
-console.log(
-  "USER ID FROM STORAGE:",
-  localStorage.getItem("user_id")
-);
-
-
-await requestNotificationPermission(dispatch, userId);
-
-
-    if (role === "hr") {
-      navigate("/hr/dashboard", { replace: true });
-    } else {
-      navigate("/employee", { replace: true });
-    }
-
-
-  } catch (error) {
-
-    console.log(error);
-
-    toast.error(
-      error.response?.data?.error || "Login Failed"
+    localStorage.setItem(
+      "type",
+      "user"
     );
 
+    localStorage.setItem(
+      "email",
+      email
+    );
+
+    localStorage.setItem(
+      "role",
+      role
+    );
+
+    localStorage.setItem(
+      "user_id",
+      String(userId)
+    );
+
+    console.log(
+      "USER ID FROM STORAGE:",
+      localStorage.getItem("user_id")
+    );
+
+    // ------------------------------------
+    // FCM Notification
+    // ------------------------------------
+
+    console.log(
+      `🔥 Starting FCM for ${role.toUpperCase()}...`
+    );
+
+    const fcmToken =
+      await requestNotificationPermission();
+
+    console.log(
+      "USER FCM TOKEN:",
+      fcmToken
+    );
+
+    // ------------------------------------
+    // Navigate according to role
+    // ------------------------------------
+
+    if (role === "hr") {
+      navigate(
+        "/hr/dashboard",
+        {
+          replace: true,
+        }
+      );
+    } else {
+      navigate(
+        "/employee",
+        {
+          replace: true,
+        }
+      );
+    }
+
+  } catch (error) {
+    console.log(
+      "LOGIN ERROR:",
+      error
+    );
+
+    toast.error(
+      error.response?.data?.error ||
+      "Login Failed"
+    );
   }
 };
 
