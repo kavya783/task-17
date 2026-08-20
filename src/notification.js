@@ -5,32 +5,13 @@ import {
   onMessage,
 } from "firebase/messaging";
 
-
 /* =========================================================
    API URL
    ========================================================= */
 
-const RAW_API_URL =
-  process.env.REACT_APP_API_URL ||
-  "http://localhost:3000/api";
-
-
-/*
-  Remove trailing slash
-*/
-const CLEAN_API_URL =
-  RAW_API_URL.replace(/\/+$/, "");
-
-
-/*
-  If API URL already ends with /api,
-  keep it only once.
-*/
-const API_URL =
-  CLEAN_API_URL.endsWith("/api")
-    ? CLEAN_API_URL
-    : `${CLEAN_API_URL}/api`;
-
+const API_URL = (
+  process.env.REACT_APP_API_URL || ""
+).replace(/\/+$/, "");
 
 /* =========================================================
    FIREBASE VAPID KEY
@@ -38,7 +19,6 @@ const API_URL =
 
 const VAPID_KEY =
   process.env.REACT_APP_FIREBASE_VAPID_KEY;
-
 
 /* =========================================================
    DEBUG LOGS
@@ -54,13 +34,13 @@ console.log(
 );
 
 console.log(
-  "RAW API URL:",
-  RAW_API_URL
+  "FINAL API URL:",
+  API_URL
 );
 
 console.log(
-  "FINAL API URL:",
-  API_URL
+  "DEVICE TOKEN URL:",
+  `${API_URL}/device_tokens`
 );
 
 
@@ -118,7 +98,7 @@ export const requestNotificationPermission =
       if (!API_URL) {
 
         console.error(
-          "❌ API URL is missing"
+          "❌ REACT_APP_API_URL is missing"
         );
 
         return null;
@@ -202,7 +182,7 @@ export const requestNotificationPermission =
       if (permission !== "granted") {
 
         console.log(
-          "⏳ Requesting notification permission..."
+          " Requesting notification permission..."
         );
 
         permission =
@@ -219,7 +199,7 @@ export const requestNotificationPermission =
       if (permission !== "granted") {
 
         console.error(
-          "❌ Notification permission denied"
+          " Notification permission denied"
         );
 
         return null;
@@ -227,16 +207,14 @@ export const requestNotificationPermission =
 
 
       console.log(
-        "✅ Notification permission granted"
+        " Notification permission granted"
       );
 
 
-      /* =====================================================
-         SERVICE WORKER
-      ===================================================== */
+  
 
       console.log(
-        "⏳ Registering Firebase Service Worker..."
+        " Registering Firebase Service Worker..."
       );
 
 
@@ -262,12 +240,9 @@ export const requestNotificationPermission =
       );
 
 
-      /* =====================================================
-         GENERATE FCM TOKEN
-      ===================================================== */
 
       console.log(
-        "⏳ Generating FCM token..."
+        " Generating FCM token..."
       );
 
 
@@ -304,9 +279,6 @@ export const requestNotificationPermission =
       );
 
 
-      /* =====================================================
-         GET JWT TOKEN
-      ===================================================== */
 
       const authToken =
         localStorage.getItem("token");
@@ -321,19 +293,17 @@ export const requestNotificationPermission =
       if (!authToken) {
 
         console.warn(
-          "⚠️ JWT token missing"
+          " JWT token missing"
         );
 
         return token;
       }
 
 
-      /* =====================================================
-         SAVE FCM TOKEN TO RAILS
-      ===================================================== */
+
 
       console.log(
-        "🚀 Saving FCM token to backend..."
+        " Saving FCM token to backend..."
       );
 
 
@@ -461,15 +431,12 @@ export const requestNotificationPermission =
   };
 
 
-/* =========================================================
-   FOREGROUND FCM LISTENER
-   ========================================================= */
+
 
 export const listenForForegroundNotifications =
   async (callback) => {
 
     try {
-
 
       console.log(
         "🔥 Setting up foreground FCM listener..."
@@ -507,7 +474,6 @@ export const listenForForegroundNotifications =
         onMessage(
           messaging,
           (payload) => {
-
 
             console.log(
               "🔥🔥 FOREGROUND FCM MESSAGE RECEIVED 🔥🔥"
@@ -564,6 +530,7 @@ export const listenForForegroundNotifications =
                 message,
                 payload,
               });
+
             }
 
 
@@ -576,7 +543,6 @@ export const listenForForegroundNotifications =
               Notification.permission ===
                 "granted"
             ) {
-
 
               console.log(
                 "🔔 Showing browser notification..."
@@ -603,6 +569,7 @@ export const listenForForegroundNotifications =
                   window.focus();
 
                   browserNotification.close();
+
                 };
 
 
@@ -611,7 +578,9 @@ export const listenForForegroundNotifications =
               console.warn(
                 "⚠️ Browser notification permission is not granted"
               );
+
             }
+
           }
         );
 
@@ -625,7 +594,6 @@ export const listenForForegroundNotifications =
 
 
     } catch (error) {
-
 
       console.error(
         "❌ Foreground FCM listener error:",
