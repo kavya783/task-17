@@ -5,71 +5,52 @@ import {
   onMessage,
 } from "firebase/messaging";
 
-/* =========================================================
-   API URL
-   ========================================================= */
+
 
 const API_URL = (
   process.env.REACT_APP_API_URL || ""
 ).replace(/\/+$/, "");
 
-/* =========================================================
-   FIREBASE VAPID KEY
-   ========================================================= */
 
 const VAPID_KEY =
   process.env.REACT_APP_FIREBASE_VAPID_KEY;
 
-/* =========================================================
-   DEBUG LOGS
-   ========================================================= */
-
-console.log(
-  "🔥🔥 NEW NOTIFICATION FILE LOADED 🔥🔥"
-);
-
-console.log(
-  "ENV API URL:",
-  process.env.REACT_APP_API_URL
-);
-
-console.log(
-  "FINAL API URL:",
-  API_URL
-);
-
-console.log(
-  "DEVICE TOKEN URL:",
-  `${API_URL}/device_tokens`
-);
 
 
-/* =========================================================
-   REQUEST NOTIFICATION PERMISSION
-   + SAVE FCM TOKEN
-   ========================================================= */
+// console.log(
+//   " NEW NOTIFICATION FILE LOADED "
+// );
+
+// console.log(
+//   "ENV API URL:",
+//   process.env.REACT_APP_API_URL
+// );
+
+// console.log(
+//   "FINAL API URL:",
+//   API_URL
+// );
+
+// console.log(
+//   "DEVICE TOKEN URL:",
+//   `${API_URL}/device_tokens`
+// );
+
+
+
 
 export const requestNotificationPermission =
   async () => {
 
     try {
 
-      console.log(
-        "================================="
-      );
+    
 
-      console.log(
-        "🔥 FCM STARTED"
-      );
+      // console.log(
+      //   " FCM STARTED"
+      // );
 
-      console.log(
-        "================================="
-      );
-
-
-      /* =====================================================
-         CHECK VAPID KEY
-      ===================================================== */
+    
 
       console.log(
         "VAPID KEY EXISTS:",
@@ -78,73 +59,61 @@ export const requestNotificationPermission =
 
       if (!VAPID_KEY) {
 
-        console.error(
-          "❌ Firebase VAPID key is missing"
-        );
+        // console.error(
+        //   " Firebase VAPID key is missing"
+        // );
 
         return null;
       }
 
 
-      /* =====================================================
-         CHECK API URL
-      ===================================================== */
 
-      console.log(
-        "API URL:",
-        API_URL
-      );
+      // console.log(
+      //   "API URL:",
+      //   API_URL
+      // );
 
       if (!API_URL) {
 
-        console.error(
-          "❌ REACT_APP_API_URL is missing"
-        );
+        // console.error(
+        //   " REACT_APP_API_URL is missing"
+        // );
 
         return null;
       }
 
 
-      /* =====================================================
-         CHECK BROWSER NOTIFICATION SUPPORT
-      ===================================================== */
 
       if (!("Notification" in window)) {
 
-        console.error(
-          "❌ Browser notifications are not supported"
-        );
+        // console.error(
+        //   " Browser notifications are not supported"
+        // );
 
         return null;
       }
 
 
-      /* =====================================================
-         CHECK SERVICE WORKER
-      ===================================================== */
+     
 
       if (!("serviceWorker" in navigator)) {
 
-        console.error(
-          "❌ Service Worker is not supported"
-        );
+        // console.error(
+        //   " Service Worker is not supported"
+        // );
 
         return null;
       }
 
 
-      console.log(
-        "✅ Browser supports notifications"
-      );
+      // console.log(
+      //   " Browser supports notifications"
+      // );
 
 
-      /* =====================================================
-         FIREBASE MESSAGING
-      ===================================================== */
-
-      console.log(
-        "⏳ Getting Firebase Messaging..."
-      );
+      // console.log(
+      //   " Getting Firebase Messaging..."
+      // );
 
       const messaging =
         await getFirebaseMessaging();
@@ -152,22 +121,15 @@ export const requestNotificationPermission =
 
       if (!messaging) {
 
-        console.error(
-          "❌ Firebase Messaging unavailable"
-        );
+        // console.error(
+        //   " Firebase Messaging unavailable"
+        // );
 
         return null;
       }
 
 
-      console.log(
-        "✅ Firebase Messaging initialized"
-      );
-
-
-      /* =====================================================
-         NOTIFICATION PERMISSION
-      ===================================================== */
+     
 
       let permission =
         Notification.permission;
@@ -181,19 +143,19 @@ export const requestNotificationPermission =
 
       if (permission !== "granted") {
 
-        console.log(
-          " Requesting notification permission..."
-        );
+        // console.log(
+        //   " Requesting notification permission..."
+        // );
 
         permission =
           await Notification.requestPermission();
       }
 
 
-      console.log(
-        "FCM permission:",
-        permission
-      );
+      // console.log(
+      //   "FCM permission:",
+      //   permission
+      // );
 
 
       if (permission !== "granted") {

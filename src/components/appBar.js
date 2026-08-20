@@ -94,7 +94,7 @@ const unreadNotifications = useMemo(
   [darkMode, themeColor]
 );
   const [colorAnchor, setColorAnchor] = useState(null);
-
+ 
 
   const [notificationAnchor, setNotificationAnchor] = useState(null);
 
@@ -297,7 +297,7 @@ const title = titleMap[role] || "PORTAL";
               gap: 0
             }}
           >
-           
+            
             {role !== "company" && (
               <>
                 <IconButton
