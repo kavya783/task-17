@@ -2,23 +2,19 @@ import * as types from "./actionTypes";
 import { saveHRData } from "../apis/addHRApi";
 import { getHRDataActionInitiate } from "./getHRAction";
 
-
 export const addHRDataStart = () => ({
   type: types.CREATE_HR_DATA_START,
 });
-
 
 export const addHRDataSuccess = (hr) => ({
   type: types.CREATE_HR_DATA_SUCCESS,
   payload: hr,
 });
 
-
 export const addHRDataError = (error) => ({
   type: types.CREATE_HR_DATA_ERROR,
   payload: error,
 });
-
 
 export const addHRDataActionInitiate = (hr) => {
 
@@ -32,15 +28,16 @@ export const addHRDataActionInitiate = (hr) => {
 
       dispatch(addHRDataSuccess(res));
 
-      // refresh HR list
-      dispatch(getHRDataActionInitiate());
+      // IMPORTANT: latest HR list fetch
+      await dispatch(getHRDataActionInitiate());
+
+      return res;
 
     } catch (error) {
 
       dispatch(addHRDataError(error.message));
 
+      throw error;
     }
-
   };
-
 };

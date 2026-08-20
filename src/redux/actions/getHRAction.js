@@ -46,11 +46,8 @@ export const getHRDataActionInitiate = () => {
         )
       );
 
-      /*
-       * Important:
-       * Error ni parent component ki
-       * kuda propagate chestundi.
-       */
+    
+    
       throw error;
     }
   };

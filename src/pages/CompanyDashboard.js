@@ -164,25 +164,41 @@ const submitHandle = useCallback(
     setLoading(true);
 
     try {
-      if (type === "add") {
-        await dispatch(addHRDataActionInitiate(formData));
 
-        // Add tarvata list fresh ga fetch cheyyali
-        await dispatch(getHRDataActionInitiate());
+      if (type === "add") {
+
+        await dispatch(
+          addHRDataActionInitiate(formData)
+        );
+
+        // New HR first page lo kanipinchali
+        setPage(0);
+
       } else {
-        // Update tarvata Redux lo direct ga list update avutundi
-        await dispatch(updateHRDataActionInitiate(id, formData));
+
+        await dispatch(
+          updateHRDataActionInitiate(id, formData)
+        );
+
+        // Update tarvata latest data fetch
+        await dispatch(
+          getHRDataActionInitiate()
+        );
+
       }
 
       setHr(createInitialHR());
       setShowForm(false);
 
-     
     } catch (error) {
+
       console.error("HR submit error:", error);
       toast.error("Something went wrong");
+
     } finally {
+
       setLoading(false);
+
     }
   },
   [type, dispatch]
