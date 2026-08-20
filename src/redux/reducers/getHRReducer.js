@@ -7,7 +7,9 @@ const initialState = {
 };
 
 const getHRReducer = (state = initialState, action) => {
+
   switch (action.type) {
+
     case types.LOAD_HR_DATA_START:
       return {
         ...state,
@@ -30,8 +32,19 @@ const getHRReducer = (state = initialState, action) => {
         error: action.payload,
       };
 
-    // IMPORTANT:
-    // PUT success vachinappudu existing HR ni immediate ga update chestundi
+    // ADD HR
+    case types.CREATE_HR_DATA_SUCCESS: {
+      const newHR = action.payload.user;
+
+      return {
+        ...state,
+        loading: false,
+        hrs: [newHR, ...state.hrs],
+        error: null,
+      };
+    }
+
+    // UPDATE HR
     case types.UPDATE_HR_DATA_SUCCESS: {
       const updatedHR = action.payload;
 
@@ -48,6 +61,20 @@ const getHRReducer = (state = initialState, action) => {
             : item
         ),
 
+        error: null,
+      };
+    }
+
+    // DELETE HR
+    case types.DELETE_HR_DATA_SUCCESS: {
+      const deletedId = action.payload;
+
+      return {
+        ...state,
+        loading: false,
+        hrs: state.hrs.filter(
+          (item) => item.id !== deletedId
+        ),
         error: null,
       };
     }

@@ -161,6 +161,7 @@ const handleClose = useCallback(() => {
 }, []);
 const submitHandle = useCallback(
   async ({ formData, id }) => {
+
     setLoading(true);
 
     try {
@@ -171,18 +172,12 @@ const submitHandle = useCallback(
           addHRDataActionInitiate(formData)
         );
 
-        // New HR first page lo kanipinchali
         setPage(0);
 
       } else {
 
         await dispatch(
           updateHRDataActionInitiate(id, formData)
-        );
-
-        // Update tarvata latest data fetch
-        await dispatch(
-          getHRDataActionInitiate()
         );
 
       }
@@ -200,6 +195,7 @@ const submitHandle = useCallback(
       setLoading(false);
 
     }
+
   },
   [type, dispatch]
 );
