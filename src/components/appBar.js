@@ -64,38 +64,22 @@ function AppBarr({
   const api = useMemo(() => new API(), []);
 
   const { notifications = [] } = useSelector(
-  (state) => state.getnotificationdata
-);
+    (state) => state.getnotificationdata
+  );
 
-const role = localStorage.getItem("role")?.toLowerCase();
+ const role = localStorage.getItem("role")?.toLowerCase();
 
 const leaveNotifications = useMemo(() => {
-  if (role === "hr") {
-    return notifications.filter(
-      (item) =>
-        item.notification_type !== "welcome" &&
-        item.recipient_type === "hr"
-    );
-  }
-
-  if (role === "employee") {
-    return notifications.filter(
-      (item) =>
-        item.notification_type !== "welcome" &&
-        item.recipient_type === "employee"
-    );
-  }
-
-  return [];
-}, [notifications, role]);
-
+  return notifications.filter(
+    (item) =>
+      item?.notification_type?.toLowerCase() === "leave"
+  );
+}, [notifications]);
 const unreadNotifications = useMemo(
-  () =>
-    leaveNotifications.filter(
-      (item) => !item.read
-    ),
+  () => leaveNotifications.filter((item) => !item.read),
   [leaveNotifications]
 );
+
   const [themeColor, setThemeColor] = useState(
     localStorage.getItem("themeColor") || "#7DB9B6"
   );
@@ -108,9 +92,10 @@ const unreadNotifications = useMemo(
   [darkMode, themeColor]
 );
   const [colorAnchor, setColorAnchor] = useState(null);
+  const [search, setSearch] = useState("");
 
   const [notificationAnchor, setNotificationAnchor] = useState(null);
- 
+
 
 const titleMap = {
   company: "COMPANY DASHBOARD",
@@ -272,7 +257,16 @@ const title = titleMap[role] || "PORTAL";
               gap: 0
             }}
           >
-            
+            <TextField
+              size="small"
+              placeholder="Search Employee..."
+              value={search}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+                setParentSearch?.(value);
+              }}
+            />
             {role !== "company" && (
               <>
                 <IconButton
