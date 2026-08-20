@@ -216,14 +216,13 @@ export const requestNotificationPermission = async () => {
       "🚀 Saving FCM token to backend..."
     );
 
-    console.log(
-      "Endpoint:",
-      `${API_URL}/api/device_tokens`
-    );
+   console.log(
+  "Endpoint:",
+  `${API_URL}/device_tokens`
+);
 
-    const response =
-      await fetch(
-        `${API_URL}/api/device_tokens`,
+   const response = await fetch(
+  `${API_URL}/device_tokens`,
         {
           method: "POST",
 
