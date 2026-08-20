@@ -7,219 +7,102 @@ const API_URL =
 const VAPID_KEY =
   process.env.REACT_APP_FIREBASE_VAPID_KEY;
 
-console.log("🔥🔥 NEW NOTIFICATION FILE LOADED 🔥🔥");
-console.log("ENV API URL:", process.env.REACT_APP_API_URL);
-console.log("FINAL API URL:", API_URL);
+
+
+
+
 
 export const requestNotificationPermission = async () => {
   try {
-    console.log("=================================");
-    console.log("🔥 FCM 1 - started");
-    console.log("=================================");
-
-    console.log("VAPID KEY EXISTS:", !!VAPID_KEY);
-    console.log("VAPID KEY:", VAPID_KEY);
+  
 
     if (!VAPID_KEY) {
-      console.error(
-        "❌ Firebase VAPID key is missing"
-      );
-
+      // console.error(" Firebase VAPID key is missing");
       return null;
     }
 
-    console.log("API URL:", API_URL);
-
-    if (!API_URL) {
-      console.error(
-        "❌ REACT_APP_API_URL is missing"
-      );
-
-      return null;
-    }
-
-   
     if (!("Notification" in window)) {
-      console.error(
-        "❌ Browser notifications are not supported"
-      );
-
+      // console.error(" Browser notifications are not supported");
       return null;
     }
 
     if (!("serviceWorker" in navigator)) {
-      console.error(
-        "❌ Service Worker is not supported"
-      );
-
+      // console.error("Service Worker is not supported");
       return null;
     }
 
-    console.log("✅ Browser supports notifications");
-    console.log("✅ Service Worker supported");
 
+    let permission = Notification.permission;
 
-    console.log(
-      "⏳ Getting Firebase Messaging..."
-    );
+    // console.log("Current permission:", permission);
+
+    if (permission !== "granted") {
+      permission = await Notification.requestPermission();
+    }
+
+    // console.log("Final permission:", permission);
+
+    if (permission !== "granted") {
+      // console.error(" Notification permission denied");
+      return null;
+    }
+
+    // console.log("Notification permission granted");
+
+   
 
     const messaging = await getFirebaseMessaging();
 
     if (!messaging) {
-      console.error(
-        "❌ Firebase Messaging unavailable"
-      );
-
+      // console.error(" Firebase Messaging unavailable");
       return null;
     }
 
-    console.log(
-      "✅ Firebase Messaging initialized"
-    );
-
-    
-    let permission = Notification.permission;
-
-    console.log(
-      "Current notification permission:",
-      permission
-    );
-
-    if (permission !== "granted") {
-      console.log(
-        "⏳ Requesting notification permission..."
-      );
-
-      permission =
-        await Notification.requestPermission();
-    }
-
-    console.log(
-      "FCM permission:",
-      permission
-    );
-
-    if (permission !== "granted") {
-      console.error(
-        "❌ Notification permission denied"
-      );
-
-      return null;
-    }
-
-    console.log(
-      "✅ Notification permission granted"
-    );
 
    
-
-    console.log(
-      "⏳ Registering Firebase Service Worker..."
-    );
 
     const registration =
       await navigator.serviceWorker.register(
         "/firebase-messaging-sw.js"
       );
 
-    console.log(
-      "✅ Service Worker registered successfully"
-    );
+    // console.log(
+    //   "Firebase Service Worker registered:",
+    //   registration
+    // );
 
-    console.log(
-      "Service Worker registration:",
-      registration
-    );
-
-    // Wait until service worker is ready
     const readyRegistration =
       await navigator.serviceWorker.ready;
 
-    console.log(
-      "✅ Service Worker is ready:",
-      readyRegistration
-    );
+    // console.log(
+    //   " Service Worker ready:",
+    //   readyRegistration
+    // );
 
-    // ------------------------------------
-    // 7. Import Firebase getToken
-    // ------------------------------------
-    console.log(
-      "⏳ Loading Firebase getToken..."
-    );
-
+   
     const { getToken } =
       await import("firebase/messaging");
 
-    console.log(
-      "✅ Firebase getToken loaded"
-    );
-
-    // ------------------------------------
-    // 8. Generate FCM Token
-    // ------------------------------------
-    console.log(
-      "================================="
-    );
-
-    console.log(
-      "🔥 BEFORE GET TOKEN"
-    );
-
-    console.log(
-      "Messaging:",
-      messaging
-    );
-
-    console.log(
-      "VAPID key exists:",
-      !!VAPID_KEY
-    );
-
-    console.log(
-      "Service Worker:",
-      readyRegistration
-    );
-
-    console.log(
-      "================================="
-    );
-
+    
     const token = await getToken(
       messaging,
       {
         vapidKey: VAPID_KEY,
-        serviceWorkerRegistration:
-          readyRegistration,
+        serviceWorkerRegistration: readyRegistration,
       }
     );
 
-    console.log(
-      "🔥 AFTER GET TOKEN"
-    );
+    // console.log(" FCM TOKEN:", token);
 
-    console.log(
-      "FCM TOKEN:",
-      token
-    );
-
-    // ------------------------------------
-    // 9. Check token
-    // ------------------------------------
     if (!token) {
-      console.error(
-        "❌ FCM TOKEN IS EMPTY"
-      );
-
+      // console.error(" FCM TOKEN EMPTY");
       return null;
     }
 
-    console.log(
-      "✅ FCM TOKEN GENERATED SUCCESSFULLY"
-    );
+    // console.log(" FCM TOKEN GENERATED");
 
-    // ------------------------------------
-    // 10. Get JWT token
-    // ------------------------------------
+   
+
     const authToken =
       localStorage.getItem("token");
 
@@ -229,36 +112,23 @@ export const requestNotificationPermission = async () => {
     );
 
     if (!authToken) {
-      console.warn(
-        "⚠️ JWT token missing"
-      );
-
-      console.log(
-        "Returning FCM token without saving to backend"
-      );
+      // console.warn(
+      //   " JWT token missing. Token not saved."
+      // );
 
       return token;
     }
 
-    // ------------------------------------
-    // 11. Save FCM token to Rails backend
-    // ------------------------------------
-    console.log(
-      "================================="
-    );
+    
 
-    console.log(
-      "🚀 Calling /api/device_tokens..."
-    );
+    // console.log(
+    //   " Saving FCM token to backend..."
+    // );
 
-    console.log(
-      "Endpoint:",
-      `${API_URL}/api/device_tokens`
-    );
-
-    console.log(
-      "================================="
-    );
+    // console.log(
+    //   "Endpoint:",
+    //   `${API_URL}/api/device_tokens`
+    // );
 
     const response = await fetch(
       `${API_URL}/api/device_tokens`,
@@ -266,8 +136,7 @@ export const requestNotificationPermission = async () => {
         method: "POST",
 
         headers: {
-          "Content-Type":
-            "application/json",
+          "Content-Type": "application/json",
 
           Authorization:
             `Bearer ${authToken}`,
@@ -279,97 +148,169 @@ export const requestNotificationPermission = async () => {
       }
     );
 
-    console.log(
-      "device_tokens status:",
-      response.status
-    );
+    // console.log(
+    //   "Device token status:",
+    //   response.status
+    // );
 
-    // ------------------------------------
-    // 12. Read response safely
-    // ------------------------------------
     const responseText =
       await response.text();
 
-    console.log(
-      "device_tokens raw response:",
-      responseText
-    );
+    // console.log(
+    //   "Device token response:",
+    //   responseText
+    // );
 
-    let data = null;
-
-    try {
-      data = JSON.parse(responseText);
-    } catch (parseError) {
-      console.warn(
-        "⚠️ Response is not JSON"
-      );
-    }
-
-    console.log(
-      "device_tokens response:",
-      data
-    );
-
-    // ------------------------------------
-    // 13. Check backend response
-    // ------------------------------------
     if (!response.ok) {
-      console.error(
-        "❌ Failed to save FCM token"
-      );
-
       throw new Error(
         `Device token API failed: ${response.status}`
       );
     }
 
-    console.log(
-      "================================="
-    );
+    // console.log(
+    //   "================================="
+    // );
 
-    console.log(
-      "✅ FCM TOKEN SAVED SUCCESSFULLY"
-    );
+    // console.log(
+    //   " FCM TOKEN SAVED SUCCESSFULLY"
+    // );
 
-    console.log(
-      "================================="
-    );
+    // console.log(
+    //   "================================="
+    // );
 
     return token;
 
   } catch (error) {
-    console.error(
-      "================================="
-    );
 
-    console.error(
-      "❌ FCM ERROR"
-    );
+   
 
-    console.error(
-      "Error:",
-      error
-    );
+    // console.error(
+    //   " FCM TOKEN ERROR:",
+    //   error
+    // );
 
-    console.error(
-      "Error message:",
-      error?.message
-    );
+    // console.error(
+    //   "MESSAGE:",
+    //   error?.message
+    // );
 
-    console.error(
-      "Error code:",
-      error?.code
-    );
+    // console.error(
+    //   "CODE:",
+    //   error?.code
+    // );
 
-    console.error(
-      "Error stack:",
-      error?.stack
-    );
-
-    console.error(
-      "================================="
-    );
+ 
 
     return null;
   }
 };
+
+
+
+
+export const listenForForegroundNotifications =
+  async (callback) => {
+
+    try {
+
+      // console.log(
+      //   " Setting up foreground FCM listener..."
+      // );
+
+      const messaging =
+        await getFirebaseMessaging();
+
+      if (!messaging) {
+        // console.error(
+        //   " Messaging unavailable for foreground listener"
+        // );
+
+        return () => {};
+      }
+
+      const { onMessage } =
+        await import("firebase/messaging");
+
+      const unsubscribe =
+        onMessage(
+          messaging,
+          (payload) => {
+
+            // console.log(
+            //   " FOREGROUND FCM MESSAGE RECEIVED "
+            // );
+
+            // console.log(
+            //   "FCM PAYLOAD:",
+            //   payload
+            // );
+
+            const notification =
+              payload?.notification || {};
+
+            const title =
+              notification.title ||
+              payload?.data?.title ||
+              "Notification";
+
+            const message =
+              notification.body ||
+              payload?.data?.message ||
+              "";
+
+            // console.log(
+            //   "Notification title:",
+            //   title
+            // );
+
+            // console.log(
+            //   "Notification message:",
+            //   message
+            // );
+
+            // Send data to AppBar
+            if (callback) {
+              callback({
+                title,
+                message,
+                payload,
+              });
+            }
+
+          
+
+            // if (
+            //   Notification.permission ===
+            //   "granted"
+            // ) {
+
+            //   new Notification(
+            //     title,
+            //     {
+            //       body: message,
+            //       icon: "/logo192.png",
+            //     }
+            //   );
+
+            // }
+
+          }
+        );
+
+      // console.log(
+      //   " Foreground FCM listener ready"
+      // );
+
+      return unsubscribe;
+
+    } catch (error) {
+
+      // console.error(
+      //   " Foreground FCM listener error:",
+      //   error
+      // );
+
+      return () => {};
+    }
+  };

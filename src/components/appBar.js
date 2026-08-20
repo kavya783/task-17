@@ -33,7 +33,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import WorkIcon from "@mui/icons-material/Work";
 import PaletteIcon from "@mui/icons-material/Palette";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import {
+  listenForForegroundNotifications,
+} from "../notification";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -121,7 +123,7 @@ const title = titleMap[role] || "PORTAL";
     navigate("/", { replace: true });
   };
   const handleResize = useCallback(() => {
-    console.log("Window width:", window.innerWidth);
+    // console.log("Window width:", window.innerWidth);
   }, []);
 
   useEffect(() => {
@@ -173,7 +175,45 @@ const title = titleMap[role] || "PORTAL";
 
     return () => clearTimeout(timer);
   }, [api]);
-  console.log("Notification State:", notifications);
+  useEffect(() => {
+  let unsubscribe = null;
+
+  const setupFCMListener = async () => {
+
+    unsubscribe =
+      await listenForForegroundNotifications(
+        ({ title, message }) => {
+
+          console.log(
+            " APPBAR RECEIVED FCM:",
+            title,
+            message
+          );
+
+          toast.success(
+            `${title}: ${message}`
+          );
+
+          // Immediately refresh notification list
+          dispatch(
+            getNotificationDataActionInitiate()
+          );
+        }
+      );
+  };
+
+  setupFCMListener();
+
+  return () => {
+
+    if (unsubscribe) {
+      unsubscribe();
+    }
+
+  };
+
+}, [dispatch]);
+  // console.log("Notification State:", notifications);
 
   return (
     <>
