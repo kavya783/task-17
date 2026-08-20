@@ -108,7 +108,6 @@ const unreadNotifications = useMemo(
   [darkMode, themeColor]
 );
   const [colorAnchor, setColorAnchor] = useState(null);
-  const [search, setSearch] = useState("");
 
   const [notificationAnchor, setNotificationAnchor] = useState(null);
  
@@ -273,16 +272,7 @@ const title = titleMap[role] || "PORTAL";
               gap: 0
             }}
           >
-            <TextField
-              size="small"
-              placeholder="Search Employee..."
-              value={search}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearch(value);
-                setParentSearch?.(value);
-              }}
-            />
+            
             {role !== "company" && (
               <>
                 <IconButton
