@@ -74,13 +74,12 @@ export default function HRLeave({ darkMode, setDarkMode }) {
 
 
   // HR own leaves
-  const filteredData = data;
+  const filteredData = data || [];
+
   const paginatedLeaves = filteredData.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-
-
   const getStatusColor = (status) => {
 
     if (status === "approved")
@@ -143,7 +142,7 @@ export default function HRLeave({ darkMode, setDarkMode }) {
               bgcolor: color.headings,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              ml:{xs:0,lg:10}
+              ml: { xs: 0, lg: 10 }
             }}
           >
             HR Leave Status
@@ -248,176 +247,156 @@ export default function HRLeave({ darkMode, setDarkMode }) {
 
             ) : (
 
-            <Box
-             sx={{
-               mt: 2,
-           
-               width: {
-                 xs: "100%",
-                 md: "90%",
-                 lg: "90%",
-               },
-           
-               ml: {
-                 xs: 0,
-                 md: "8%",
-                 lg: "10%",
-               },
-           
-               boxSizing: "border-box",
-             }}
-           >
+              <Box
+                sx={{
+                  mt: 2,
 
-              <TableContainer
-               component={Paper}
-               sx={{
-                 width: {
-                   xs: "100%",
-                   md: "100%",
-                   lg: "90%",
-                 },
-                 maxWidth: "100%",
-                 overflowX: "auto",
-                 overflowY: "hidden",
-             
-                 borderRadius: 3,
-                 boxShadow: 2,
-             
-                 backgroundColor: color.background,
-             
-                 borderLeft: "1px solid white",
-                 borderRight: "1px solid white", 
-                 borderBottom:"1px solid white",
-                 boxSizing: "border-box",
-               }}
-             >
-                <Table
+                  width: {
+                    xs: "100%",
+                    md: "90%",
+                    lg: "90%",
+                  },
+
+                  ml: {
+                    xs: 0,
+                    md: "8%",
+                    lg: "10%",
+                  },
+
+                  boxSizing: "border-box",
+                }}
+              >
+
+                <TableContainer
+                  component={Paper}
                   sx={{
-                    minWidth: 900,
-                    bgcolor: color.background,
-                    
+                    width: {
+                      xs: "100%",
+                      md: "100%",
+                      lg: "90%",
+                    },
+                    maxWidth: "100%",
+                    overflowX: "auto",
+                    overflowY: "hidden",
+
+                    borderRadius: 3,
+                    boxShadow: 2,
+
+                    backgroundColor: color.background,
+
+                    borderLeft: "1px solid white",
+                    borderRight: "1px solid white",
+                    borderBottom: "1px solid white",
+                    boxSizing: "border-box",
                   }}
                 >
+                  <Table
+                    sx={{
+                      minWidth: 900,
+                      bgcolor: color.background,
 
-                  <TableHead sx={{ bgcolor: color.headings, height: 50 }}>
+                    }}
+                  >
 
-                    <TableRow>
+                    <TableHead sx={{ bgcolor: color.headings, height: 50 }}>
 
-
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 30, }}>
-                        S.No
-                      </TableCell>
-
-
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
-                        Name
-                      </TableCell>
+                      <TableRow>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
-                        Leave Type
-                      </TableCell>
+                        <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold, minWidth: 30, }}>
+                          S.No
+                        </TableCell>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
-                        From Date
-                      </TableCell>
+                        <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold, minWidth: 50, }}>
+                          Name
+                        </TableCell>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
-                        To Date
-                      </TableCell>
+                        <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold, minWidth: 50, }}>
+                          Leave Type
+                        </TableCell>
 
 
-                      <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold,minWidth: 50, }}>
-                        Status
-                      </TableCell>
+                        <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold, minWidth: 50, }}>
+                          From Date
+                        </TableCell>
 
 
-                    </TableRow>
+                        <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold, minWidth: 50, }}>
+                          To Date
+                        </TableCell>
 
 
-                  </TableHead>
+                        <TableCell sx={{ color: color.text, fontSize: Theme.font16Bold, minWidth: 50, }}>
+                          Status
+                        </TableCell>
+
+
+                      </TableRow>
+
+
+                    </TableHead>
 
 
 
-                  <TableBody sx={{bgcolor:color.background}}>
+                    <TableBody sx={{ bgcolor: color.background }}>
 
 
-                    {
-                      filteredData.length === 0 ? (
-
-
+                      {filteredData.length === 0 ? (
                         <TableRow>
-
-
-                          <TableCell
-                            colSpan={6}
-                            align="center"
-                          >
-
+                          <TableCell colSpan={6} align="center">
                             <Typography align="center" sx={{ color: color.card }}>
                               No Leaves Found
                             </Typography>
-
                           </TableCell>
-
-
                         </TableRow>
-
-
                       ) : (
-
-
-                        filteredData.map((item, index) => (
+                        paginatedLeaves.map((item, index) => (
                           <TableRow key={item.id} hover>
-
-
-                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
+                            <TableCell>
                               {page * rowsPerPage + index + 1}
                             </TableCell>
-
-
-                            <TableCell sx={{  color: color.text, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
                               {item.employeename}
                             </TableCell>
 
 
-                            <TableCell sx={{  color: color.text, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
                               {item.leaveType}
                             </TableCell>
 
 
-                            <TableCell sx={{  color: color.text, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
                               {item.from_date}
                             </TableCell>
 
 
-                            <TableCell sx={{  color: color.text, fontSize: Theme.font14Regular }}>
+                            <TableCell sx={{ color: color.text, fontSize: Theme.font14Regular }}>
                               {item.to_date}
                             </TableCell>
 
 
                             <TableCell sx={{ color: color.card, fontSize: Theme.font14Regular }}>
-                                                     <CommonButton
-                                                       variant="contained"
-                                                       size="small"
-                                                       sx={{
-                                                         textTransform: "capitalize",
-                                                         fontSize: Theme.font12Bold,
-                                                         borderRadius: "20px",
-                                                         backgroundColor:
-                                                           item.status === "approved"
-                                                             ? color.navbar
-                                                             : item.status === "rejected"
-                                                               ? color.headings
-                                                               : color.card,
-                           
-                                                       }}
-                                                     >
-                                                       {item.status || "pending"}
-                                                     </CommonButton>
-                                                   </TableCell>
+                              <CommonButton
+                                variant="contained"
+                                size="small"
+                                sx={{
+                                  textTransform: "capitalize",
+                                  fontSize: Theme.font12Bold,
+                                  borderRadius: "20px",
+                                  backgroundColor:
+                                    item.status === "approved"
+                                      ? color.navbar
+                                      : item.status === "rejected"
+                                        ? color.headings
+                                        : color.card,
+
+                                }}
+                              >
+                                {item.status || "pending"}
+                              </CommonButton>
+                            </TableCell>
 
 
                           </TableRow>
@@ -427,18 +406,18 @@ export default function HRLeave({ darkMode, setDarkMode }) {
 
 
                       )
-                    }
+                      }
 
 
-                  </TableBody>
+                    </TableBody>
 
 
 
-                </Table>
+                  </Table>
 
 
-              </TableContainer>
-</Box>
+                </TableContainer>
+              </Box>
 
 
             )
