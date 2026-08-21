@@ -155,19 +155,19 @@ function HrTable({
                                                 gap: 1
                                             }}
                                         >
-                                           
+
                                         </Box>
-                                       <Avatar
-  src={item.profileImage || item.profile_image_url || ""}
-  alt={item.name}
-  sx={{
-    width: 45,
-    height: 45,
-    ml: 12
-  }}
->
-  {item.name?.charAt(0).toUpperCase()}
-</Avatar>
+                                        <Avatar
+                                            src={item.profileImage || item.profile_image_url || ""}
+                                            alt={item.name}
+                                            sx={{
+                                                width: 45,
+                                                height: 45,
+                                                ml: 12
+                                            }}
+                                        >
+                                            {item.name?.charAt(0).toUpperCase()}
+                                        </Avatar>
 
                                         <Typography sx={{ color: color.card, fontSize: Theme.font16Bold }}>
                                             Name:{item.name}
@@ -252,7 +252,7 @@ function HrTable({
                             </TableHead>
                             <TableBody>
                                 {
-                                    data.length === 0 ? (
+                                    filteredData.length === 0 ? (
                                         <TableRow>
                                             <TableCell
                                                 colSpan={7}
@@ -281,16 +281,16 @@ function HrTable({
 
                                                         }}
                                                     >
-                                                       <Avatar
-  src={item.profileImage || item.profile_image_url || ""}
-  alt={item.name}
-  sx={{
-    width: 35,
-    height: 35
-  }}
->
-  {item.name?.charAt(0).toUpperCase()}
-</Avatar>
+                                                        <Avatar
+                                                            src={item.profileImage || item.profile_image_url || ""}
+                                                            alt={item.name}
+                                                            sx={{
+                                                                width: 35,
+                                                                height: 35
+                                                            }}
+                                                        >
+                                                            {item.name?.charAt(0).toUpperCase()}
+                                                        </Avatar>
                                                         <Tooltip title={item.name}>
 
                                                             <Typography
