@@ -22,7 +22,7 @@ const analytics = getAnalytics(app);
 export const getFirebaseMessaging = async () => {
   try {
     if (!("serviceWorker" in navigator)) {
-      console.log("Service Worker not supported");
+     
       return null;
     }
 

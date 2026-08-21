@@ -6,7 +6,6 @@ importScripts(
   "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js"
 );
 
-console.log("🔥 Firebase Messaging Service Worker Loaded");
 
 firebase.initializeApp({
   apiKey:
@@ -34,16 +33,10 @@ firebase.initializeApp({
 const messaging =
   firebase.messaging();
 
-console.log(
-  "✅ Firebase Messaging initialized in Service Worker"
-);
+
 
 messaging.onBackgroundMessage(
   (payload) => {
-    console.log(
-      "🔥 Background message received:",
-      payload
-    );
 
     const notificationTitle =
       payload.notification?.title ||

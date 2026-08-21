@@ -29,7 +29,7 @@ export const fetchLeaveData = async (
     return response.data;
 
   } catch (error) {
-    console.error("LEAVE API ERROR:", error);
+   
     throw error;
   }
 };

@@ -22,12 +22,11 @@ export const updateHRDataActionInitiate = (id, hr) => {
     try {
       const res = await updateHRData(id, hr);
 
-      console.log("UPDATE HR RESPONSE:", res);
 
-      // API response lo actual HR res.user lo undi
+
+
       const updatedHR = res.user;
 
-      // Actual HR object ni Redux ki pampisthunnam
       dispatch(updateHRDataSuccess(updatedHR));
 
       return updatedHR;

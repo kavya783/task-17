@@ -88,12 +88,7 @@ const handleSubmit = async (e) => {
       loginActionInitiate(employee)
     );
 
-    console.log("LOGIN RESPONSE:", res);
-
-    // ------------------------------------
-    // Save JWT token
-    // ------------------------------------
-
+   
     localStorage.setItem(
       "token",
       res.token
@@ -127,30 +122,13 @@ const handleSubmit = async (e) => {
         String(companyId)
       );
 
-      console.log(
-        "COMPANY ID:",
-        localStorage.getItem("company_id")
-      );
-
-      // ------------------------------------
-      // FCM Notification
-      // ------------------------------------
-
-      console.log(
-        "🔥 Starting FCM for COMPANY..."
-      );
+     
 
       const fcmToken =
         await requestNotificationPermission();
 
-      console.log(
-        "COMPANY FCM TOKEN:",
-        fcmToken
-      );
-
-      // ------------------------------------
-      // Navigate
-      // ------------------------------------
+      
+  
 
       navigate(
         "/company-dashboard",
@@ -162,10 +140,7 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    // ------------------------------------
-    // USER LOGIN
-    // HR / EMPLOYEE
-    // ------------------------------------
+   
 
     const email = res.user.email;
     const role = res.role;
@@ -191,30 +166,11 @@ const handleSubmit = async (e) => {
       String(userId)
     );
 
-    console.log(
-      "USER ID FROM STORAGE:",
-      localStorage.getItem("user_id")
-    );
-
-    // ------------------------------------
-    // FCM Notification
-    // ------------------------------------
-
-    console.log(
-      `🔥 Starting FCM for ${role.toUpperCase()}...`
-    );
-
+   
     const fcmToken =
       await requestNotificationPermission();
 
-    console.log(
-      "USER FCM TOKEN:",
-      fcmToken
-    );
-
-    // ------------------------------------
-    // Navigate according to role
-    // ------------------------------------
+    
 
     if (role === "hr") {
       navigate(
@@ -233,10 +189,7 @@ const handleSubmit = async (e) => {
     }
 
   } catch (error) {
-    console.log(
-      "LOGIN ERROR:",
-      error
-    );
+   
 
     toast.error(
       error.response?.data?.error ||

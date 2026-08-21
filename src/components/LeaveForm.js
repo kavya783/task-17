@@ -180,8 +180,8 @@ const handleSubmit = async (e) => {
     );
 
    
-console.log("role:", role);
-console.log("navigating...");
+// console.log("role:", role);
+// console.log("navigating...");
     navigate(role === "hr" ? "/hr" : "/employee");
   } catch (error) {
     toast.error("Failed to submit leave");

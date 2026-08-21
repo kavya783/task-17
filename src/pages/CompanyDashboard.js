@@ -179,7 +179,7 @@ const submitHandle = useCallback(
 
      
     } catch (error) {
-      console.error("HR submit error:", error);
+    
       toast.error("Something went wrong");
     } finally {
       setLoading(false);

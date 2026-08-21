@@ -33,9 +33,7 @@ export const getEmployeeDataActionInitiate = () => {
 
       const data = await fetchEmployeeData();
 
-      console.log("FRESH API DATA:", data);
-
-      sessionStorage.setItem(
+       sessionStorage.setItem(
         "employees",
         JSON.stringify(data)
       );

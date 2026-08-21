@@ -22,7 +22,7 @@ export const updateEmployeeDataActionInitiate = (employee, id) => {
     try {
       const res = await updateEmployeeData(employee, id);
 
-      console.log("UPDATED EMPLOYEE RESPONSE:", res);
+      .log("UPDATED EMPLOYEE RESPONSE:", res);
 
       dispatch(updateEmployeeDataSuccess(res));
 

@@ -168,17 +168,9 @@ export const requestNotificationPermission =
       }
 
 
-      console.log(
-        " Notification permission granted"
-      );
-
-
   
 
-      console.log(
-        " Registering Firebase Service Worker..."
-      );
-
+    
 
       const registration =
         await navigator.serviceWorker.register(
@@ -186,27 +178,15 @@ export const requestNotificationPermission =
         );
 
 
-      console.log(
-        "✅ Service Worker registered successfully",
-        registration
-      );
-
-
+      
       const readyRegistration =
         await navigator.serviceWorker.ready;
 
 
-      console.log(
-        "✅ Service Worker is ready:",
-        readyRegistration
-      );
+     
 
 
-
-      console.log(
-        " Generating FCM token..."
-      );
-
+     
 
       const token =
         await getToken(
@@ -220,25 +200,15 @@ export const requestNotificationPermission =
         );
 
 
-      console.log(
-        "FCM TOKEN:",
-        token
-      );
-
 
       if (!token) {
 
-        console.error(
-          "❌ FCM TOKEN IS EMPTY"
-        );
-
+        
         return null;
       }
 
 
-      console.log(
-        "✅ FCM TOKEN GENERATED SUCCESSFULLY"
-      );
+      
 
 
 
@@ -246,17 +216,11 @@ export const requestNotificationPermission =
         localStorage.getItem("token");
 
 
-      console.log(
-        "AUTH TOKEN EXISTS:",
-        !!authToken
-      );
-
+      
 
       if (!authToken) {
 
-        console.warn(
-          " JWT token missing"
-        );
+        
 
         return token;
       }
@@ -264,31 +228,16 @@ export const requestNotificationPermission =
 
 
 
-      console.log(
-        " Saving FCM token to backend..."
-      );
+      
 
 
       const deviceTokenEndpoint =
         `${API_URL}/device_tokens`;
 
 
-      console.log(
-        "================================="
-      );
+     
 
-      console.log(
-        "DEVICE TOKEN ENDPOINT:"
-      );
-
-      console.log(
-        deviceTokenEndpoint
-      );
-
-      console.log(
-        "================================="
-      );
-
+     
 
       const response =
         await fetch(
@@ -312,20 +261,14 @@ export const requestNotificationPermission =
         );
 
 
-      console.log(
-        "device_tokens status:",
-        response.status
-      );
+      
 
 
       const responseText =
         await response.text();
 
 
-      console.log(
-        "device_tokens raw response:",
-        responseText
-      );
+      
 
 
       if (!response.ok) {
@@ -336,17 +279,13 @@ export const requestNotificationPermission =
       }
 
 
-      console.log(
-        "================================="
-      );
+     
 
-      console.log(
-        "✅ FCM TOKEN SAVED SUCCESSFULLY"
-      );
+      // console.log(
+      //   "FCM TOKEN SAVED SUCCESSFULLY"
+      // );
 
-      console.log(
-        "================================="
-      );
+     
 
 
       return token;
@@ -355,36 +294,10 @@ export const requestNotificationPermission =
     } catch (error) {
 
 
-      console.error(
-        "================================="
-      );
-
-      console.error(
-        "❌ FCM ERROR"
-      );
-
-      console.error(
-        "Error:",
-        error
-      );
-
-      console.error(
-        "Error message:",
-        error?.message
-      );
-
+    
       console.error(
         "Error code:",
         error?.code
-      );
-
-      console.error(
-        "Error stack:",
-        error?.stack
-      );
-
-      console.error(
-        "================================="
       );
 
 
@@ -400,57 +313,29 @@ export const listenForForegroundNotifications =
 
     try {
 
-      console.log(
-        "🔥 Setting up foreground FCM listener..."
-      );
+    
 
 
-      /* =====================================================
-         GET FIREBASE MESSAGING
-      ===================================================== */
-
+     
       const messaging =
         await getFirebaseMessaging();
 
 
       if (!messaging) {
 
-        console.error(
-          "❌ Firebase Messaging unavailable"
-        );
-
+       
         return () => {};
       }
 
 
-      console.log(
-        "✅ Firebase Messaging available for foreground"
-      );
-
-
-      /* =====================================================
-         ON MESSAGE
-      ===================================================== */
+    
 
       const unsubscribe =
         onMessage(
           messaging,
           (payload) => {
 
-            console.log(
-              "🔥🔥 FOREGROUND FCM MESSAGE RECEIVED 🔥🔥"
-            );
-
-
-            console.log(
-              "FCM PAYLOAD:",
-              payload
-            );
-
-
-            /* =================================================
-               GET NOTIFICATION DATA
-            ================================================= */
+           
 
             const notification =
               payload?.notification || {};
@@ -469,21 +354,7 @@ export const listenForForegroundNotifications =
               "You have a new notification.";
 
 
-            console.log(
-              "Notification title:",
-              title
-            );
-
-
-            console.log(
-              "Notification message:",
-              message
-            );
-
-
-            /* =================================================
-               SEND TO APPBAR
-            ================================================= */
+           
 
             if (callback) {
 
@@ -496,9 +367,7 @@ export const listenForForegroundNotifications =
             }
 
 
-            /* =================================================
-               BROWSER PUSH
-            ================================================= */
+        
 
             if (
               "Notification" in window &&
@@ -506,10 +375,7 @@ export const listenForForegroundNotifications =
                 "granted"
             ) {
 
-              console.log(
-                "🔔 Showing browser notification..."
-              );
-
+             
 
               const browserNotification =
                 new Notification(
@@ -537,9 +403,6 @@ export const listenForForegroundNotifications =
 
             } else {
 
-              console.warn(
-                "⚠️ Browser notification permission is not granted"
-              );
 
             }
 
@@ -547,9 +410,7 @@ export const listenForForegroundNotifications =
         );
 
 
-      console.log(
-        "✅ Foreground FCM listener ready"
-      );
+      
 
 
       return unsubscribe;
@@ -557,11 +418,7 @@ export const listenForForegroundNotifications =
 
     } catch (error) {
 
-      console.error(
-        "❌ Foreground FCM listener error:",
-        error
-      );
-
+     
 
       return () => {};
     }

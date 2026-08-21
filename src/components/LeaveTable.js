@@ -74,7 +74,7 @@ export default function LeaveTable({
 
      
     } catch (error) {
-      console.log(error);
+     
       toast.error("Failed to update leave");
     }
   };

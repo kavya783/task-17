@@ -36,7 +36,6 @@ function LeavePage({
 }) {
   const color = Colors(darkMode, themeColor);
 
-  // console.log("LeavePage rendered");
 
 
   const dispatch = useDispatch();
@@ -97,7 +96,7 @@ const { data, loading } = useSelector(selectLeaveData);
   if (loading) {
     return <Loader />;
   }
-  // console.log(data);
+ 
   return (
     <>
       <AppBarr

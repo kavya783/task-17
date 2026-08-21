@@ -236,17 +236,17 @@ const handleImageChange = (e) => {
             profileImage: "",
           }));
 
-          console.log(
-            "Original size:",
-            (file.size / 1024 / 1024).toFixed(2),
-            "MB"
-          );
+          // console.log(
+          //   "Original size:",
+          //   (file.size / 1024 / 1024).toFixed(2),
+          //   "MB"
+          // );
 
-          console.log(
-            "Compressed size:",
-            (compressedFile.size / 1024 / 1024).toFixed(2),
-            "MB"
-          );
+          // console.log(
+          //   "Compressed size:",
+          //   (compressedFile.size / 1024 / 1024).toFixed(2),
+          //   "MB"
+          // );
         },
         "image/jpeg",
         0.7

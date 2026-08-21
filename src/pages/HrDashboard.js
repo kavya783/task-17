@@ -118,7 +118,7 @@ const [debouncedSearch, setDebouncedSearch] = useState("");
     }
 
   }, [dispatch]);
-  console.log("HR NOTIFICATIONS", notifications);
+ 
 
 
 
@@ -182,7 +182,7 @@ const submitHandle = async ({ formData, id }) => {
     setShow(false);
 
   } catch (error) {
-    console.error("Employee update error:", error);
+   
     toast.error("Something went wrong");
   } finally {
     setLoading(false);
