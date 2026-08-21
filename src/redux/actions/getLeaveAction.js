@@ -15,14 +15,20 @@ export const getLeaveDataError = (error) => ({
   payload: error,
 });
 
-export const getLeaveDataActionInitiate = (appliedBy) => {
+export const getLeaveDataActionInitiate = (
+  appliedBy,
+  forceRefresh = false
+) => {
   return async (dispatch) => {
 
     dispatch(getLeaveDataStart());
 
     try {
 
-      const res = await fetchLeaveData(appliedBy);
+      const res = await fetchLeaveData(
+        appliedBy,
+        forceRefresh
+      );
 
       const list = Array.isArray(res)
         ? res
@@ -33,11 +39,15 @@ export const getLeaveDataActionInitiate = (appliedBy) => {
 
       dispatch(getLeaveDataSuccess(list));
 
+      return list;
+
     } catch (error) {
 
-      dispatch(getLeaveDataError(error.message));
+      dispatch(
+        getLeaveDataError(error.message)
+      );
 
+      throw error;
     }
-
   };
 };

@@ -5,12 +5,15 @@ const api = new API();
 // API response cache
 const leaveCache = new Map();
 
-export const fetchLeaveData = async (appliedBy) => {
+export const fetchLeaveData = async (
+  appliedBy,
+  forceRefresh = false
+) => {
   try {
     const cacheKey = appliedBy || "all";
 
-    // Already fetched data unte API call cheyyakunda cache nunchi return
-    if (leaveCache.has(cacheKey)) {
+    // Cache only when forceRefresh is false
+    if (!forceRefresh && leaveCache.has(cacheKey)) {
       return leaveCache.get(cacheKey);
     }
 
@@ -20,7 +23,7 @@ export const fetchLeaveData = async (appliedBy) => {
 
     const response = await api.get(url);
 
-    // Store response in cache
+    // Update cache with latest response
     leaveCache.set(cacheKey, response.data);
 
     return response.data;

@@ -33,9 +33,11 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import WorkIcon from "@mui/icons-material/Work";
 import PaletteIcon from "@mui/icons-material/Palette";
 import DeleteIcon from "@mui/icons-material/Delete";
+
 import {
   listenForForegroundNotifications,
 } from "../notification";
+
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -63,49 +65,58 @@ function AppBarr({
   setSearch: setParentSearch
 }) {
   const dispatch = useDispatch();
+
   const api = useMemo(() => new API(), []);
 
   const { notifications = [] } = useSelector(
     (state) => state.getnotificationdata
   );
 
- const role = localStorage.getItem("role")?.toLowerCase();
+  const role = localStorage.getItem("role")?.toLowerCase();
 
-const leaveNotifications = useMemo(() => {
-  return notifications.filter(
-    (item) =>
-      item?.notification_type?.toLowerCase() === "leave"
+  // Leave notifications for company, HR and employee
+  const leaveNotifications = useMemo(() => {
+    return notifications.filter(
+      (item) =>
+        item?.notification_type?.toLowerCase() === "leave"
+    );
+  }, [notifications]);
+
+  const unreadNotifications = useMemo(
+    () =>
+      leaveNotifications.filter(
+        (item) => !item.read
+      ),
+    [leaveNotifications]
   );
-}, [notifications]);
-const unreadNotifications = useMemo(
-  () => leaveNotifications.filter((item) => !item.read),
-  [leaveNotifications]
-);
 
   const [themeColor, setThemeColor] = useState(
     localStorage.getItem("themeColor") || "#7DB9B6"
   );
+
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const navigate = useNavigate();
+
   const color = useMemo(
-  () => Colors(darkMode, themeColor),
-  [darkMode, themeColor]
-);
+    () => Colors(darkMode, themeColor),
+    [darkMode, themeColor]
+  );
+
   const [colorAnchor, setColorAnchor] = useState(null);
  
 
-  const [notificationAnchor, setNotificationAnchor] = useState(null);
+  const [notificationAnchor, setNotificationAnchor] =
+    useState(null);
 
+  const titleMap = {
+    company: "COMPANY DASHBOARD",
+    hr: "HR PORTAL",
+    employee: "EMPLOYEE PORTAL",
+  };
 
-const titleMap = {
-  company: "COMPANY DASHBOARD",
-  hr: "HR PORTAL",
-  employee: "EMPLOYEE PORTAL",
-};
-
-const title = titleMap[role] || "PORTAL";
+  const title = titleMap[role] || "PORTAL";
 
   const userEmail = localStorage.getItem("email") || "";
   const firstLetter = userEmail.charAt(0).toUpperCase();
@@ -122,6 +133,7 @@ const title = titleMap[role] || "PORTAL";
     localStorage.clear();
     navigate("/", { replace: true });
   };
+
   const handleResize = useCallback(() => {
     // console.log("Window width:", window.innerWidth);
   }, []);
@@ -138,30 +150,47 @@ const title = titleMap[role] || "PORTAL";
       }
     };
 
-    window.addEventListener("resize", throttledResize);
+    window.addEventListener(
+      "resize",
+      throttledResize
+    );
 
     return () => {
-      window.removeEventListener("resize", throttledResize);
+      window.removeEventListener(
+        "resize",
+        throttledResize
+      );
     };
   }, [handleResize]);
-  useEffect(() => {
-    if (role === "company") return;
 
-    dispatch(getNotificationDataActionInitiate());
+
+
+  useEffect(() => {
+   
+    dispatch(
+      getNotificationDataActionInitiate()
+    );
 
     const interval = setInterval(() => {
-      dispatch(getNotificationDataActionInitiate());
+      dispatch(
+        getNotificationDataActionInitiate()
+      );
     }, 60000);
 
     return () => clearInterval(interval);
   }, [dispatch, role]);
 
+
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      api.get("notifications/welcome")
+      api
+        .get("notifications/welcome")
         .then((response) => {
           if (response.data) {
-            toast.success(response.data.message);
+            toast.success(
+              response.data.message
+            );
 
             api.put(
               `notifications/${response.data.id}/mark_as_read`,
@@ -175,45 +204,45 @@ const title = titleMap[role] || "PORTAL";
 
     return () => clearTimeout(timer);
   }, [api]);
+
+
+
   useEffect(() => {
-  let unsubscribe = null;
+    let unsubscribe = null;
 
-  const setupFCMListener = async () => {
+    const setupFCMListener = async () => {
+      unsubscribe =
+        await listenForForegroundNotifications(
+          ({ title, message }) => {
 
-    unsubscribe =
-      await listenForForegroundNotifications(
-        ({ title, message }) => {
+            console.log(
+              "APPBAR RECEIVED FCM:",
+              title,
+              message
+            );
 
-          console.log(
-            " APPBAR RECEIVED FCM:",
-            title,
-            message
-          );
+            toast.success(
+              `${title}: ${message}`
+            );
 
-          toast.success(
-            `${title}: ${message}`
-          );
+            dispatch(
+              getNotificationDataActionInitiate()
+            );
+          }
+        );
+    };
 
-          // Immediately refresh notification list
-          dispatch(
-            getNotificationDataActionInitiate()
-          );
-        }
-      );
-  };
+    setupFCMListener();
 
-  setupFCMListener();
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [dispatch]);
 
-  return () => {
 
-    if (unsubscribe) {
-      unsubscribe();
-    }
 
-  };
-
-}, [dispatch]);
-  // console.log("Notification State:", notifications);
 
   return (
     <>
@@ -230,7 +259,9 @@ const title = titleMap[role] || "PORTAL";
             justifyContent: "space-between",
           }}
         >
+
           {/* Left */}
+
           <Box
             sx={{
               display: "flex",
@@ -238,11 +269,15 @@ const title = titleMap[role] || "PORTAL";
               width: { md: 240 },
             }}
           >
+
             <IconButton
               aria-label="Open navigation menu"
               onClick={() => setOpen(true)}
               sx={{
-                display: { xs: "flex", md: "none" },
+                display: {
+                  xs: "flex",
+                  md: "none"
+                },
                 color: color.text,
               }}
             >
@@ -252,13 +287,19 @@ const title = titleMap[role] || "PORTAL";
             <WorkIcon
               sx={{
                 color: color.text,
-                display: { xs: "none", md: "block" },
+                display: {
+                  xs: "none",
+                  md: "block"
+                },
                 mr: 1,
               }}
             />
+
           </Box>
 
+
           {/* Center */}
+
           <Typography
             sx={{
               flexGrow: 1,
@@ -268,11 +309,15 @@ const title = titleMap[role] || "PORTAL";
               letterSpacing: 1,
               ml: 2,
               fontSize: Theme.font24Bold,
-              display: { xs: "none", md: "block" },
+              display: {
+                xs: "none",
+                md: "block"
+              },
             }}
           >
             {title}
           </Typography>
+
           <Typography
             sx={{
               flexGrow: 1,
@@ -282,7 +327,10 @@ const title = titleMap[role] || "PORTAL";
               letterSpacing: 1,
               ml: 2,
               fontSize: Theme.font14Bold,
-              display: { xs: "block", md: "none" },
+              display: {
+                xs: "block",
+                md: "none"
+              },
             }}
           >
             {title}
@@ -290,6 +338,7 @@ const title = titleMap[role] || "PORTAL";
 
 
           {/* Right */}
+
           <Box
             sx={{
               display: "flex",
@@ -297,173 +346,294 @@ const title = titleMap[role] || "PORTAL";
               gap: 0
             }}
           >
-            
-            {role !== "company" && (
-              <>
-                <IconButton
-                  aria-label={`Notifications, ${unreadNotifications.length} unread`}
-                  onClick={(e) => setNotificationAnchor(e.currentTarget)}
-                  sx={{ color: color.text }}
-                >
-                  <Badge
-                    badgeContent={unreadNotifications.length}
-                    color="error"
-                  >
-                    <NotificationsIcon />
-                  </Badge>
-                </IconButton>
 
-                <Popover
-                  open={Boolean(notificationAnchor)}
-                  anchorEl={notificationAnchor}
-                  onClose={() => setNotificationAnchor(null)}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                >
-                  <Box sx={{ width: 300, p: 2 }}>
-                    {leaveNotifications.length === 0 ? (
-                      <Typography>No Notifications</Typography>
-                    ) : (
-                      leaveNotifications.map((item) => (
-                        <Box
-                          key={item.id}
-                          onClick={async () => {
-
-                            if (!item.read) {
-
-                              await api.put(
-                                `notifications/${item.id}/mark_as_read`
-                              );
+           
 
 
-                              dispatch(
-                                getNotificationDataActionInitiate()
-                              );
+           
 
-                            }
+            <IconButton
+              aria-label={`Notifications, ${unreadNotifications.length} unread`}
+              onClick={(e) =>
+                setNotificationAnchor(
+                  e.currentTarget
+                )
+              }
+              sx={{
+                color: color.text
+              }}
+            >
 
-                          }}
-                          sx={{
-                            p: 2,
-                            mb: 1.5,
-                            cursor: "pointer",
+              <Badge
+                badgeContent={
+                  unreadNotifications.length
+                }
+                color="error"
+              >
 
-                            border: item.read
+                <NotificationsIcon />
+
+              </Badge>
+
+            </IconButton>
+
+
+          
+            <Popover
+              open={Boolean(notificationAnchor)}
+              anchorEl={notificationAnchor}
+              onClose={() =>
+                setNotificationAnchor(null)
+              }
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+            >
+
+              <Box
+                sx={{
+                  width: 300,
+                  p: 2
+                }}
+              >
+
+                {leaveNotifications.length === 0 ? (
+
+                  <Typography>
+                    No Notifications
+                  </Typography>
+
+                ) : (
+
+                  leaveNotifications.map(
+                    (item) => (
+
+                      <Box
+                        key={item.id}
+
+                        onClick={async () => {
+
+                          if (!item.read) {
+
+                            await api.put(
+                              `notifications/${item.id}/mark_as_read`
+                            );
+
+                            dispatch(
+                              getNotificationDataActionInitiate()
+                            );
+                          }
+
+                        }}
+
+                        sx={{
+                          p: 2,
+                          mb: 1.5,
+                          cursor: "pointer",
+
+                          border:
+                            item.read
                               ? `1px solid ${color.white}`
                               : `2px solid ${color.red}`,
 
-                            borderRadius: "10px",
+                          borderRadius:
+                            "10px",
 
-                            boxShadow: item.read
+                          boxShadow:
+                            item.read
                               ? "none"
                               : `0 0 5px ${color.red}`,
 
-                            "&:hover": {
-                              background: color.white,
-                            },
+                          "&:hover": {
+                            background:
+                              color.white,
+                          },
+                        }}
+                      >
+
+                        <Typography
+                          sx={{
+                            fontWeight:
+                              "bold",
+                            color:
+                              color.card,
+                          }}
+                        >
+                          {item.title}
+                        </Typography>
+
+
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            mt: 0.5,
+                            color:
+                              color.card,
+                          }}
+                        >
+                          {item.message}
+                        </Typography>
+
+
+                        <IconButton
+                          aria-label={`Delete notification from ${item.title}`}
+                          onClick={async (e) => {
+
+                            e.stopPropagation();
+
+                            await api.delete(
+                              `notifications/${item.id}`
+                            );
+
+                            dispatch(
+                              getNotificationDataActionInitiate()
+                            );
+
+                          }}
+                          sx={{
+                            ml: 30,
+                            color:
+                              color.red,
                           }}
                         >
 
-                          <Typography
-                            sx={{
-                              fontWeight: "bold",
-                              color: color.card,
-                            }}
-                          >
-                            {item.title}
-                          </Typography>
+                          <DeleteIcon />
+
+                        </IconButton>
+
+                      </Box>
+
+                    )
+                  )
+
+                )}
+
+              </Box>
+
+            </Popover>
 
 
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              mt: 0.5,
-                              color: color.card,
-                            }}
-                          >
-                            {item.message}
-                          </Typography>
+            {/* Theme */}
 
-
-                          <IconButton
-                            aria-label={`Delete notification from ${item.title}`}
-                            onClick={async (e) => {
-                              e.stopPropagation();
-
-                              await api.delete(`notifications/${item.id}`);
-
-                              dispatch(getNotificationDataActionInitiate());
-                            }}
-                            sx={{
-                              ml: 30,
-                              color: color.red,
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-
-                        </Box>
-                      ))
-                    )}
-                  </Box>
-                </Popover>
-              </>
-            )}
             <IconButton
               aria-label="Change theme color"
-              onClick={(e) => setColorAnchor(e.currentTarget)}
-              sx={{ color: color.text }}
+              onClick={(e) =>
+                setColorAnchor(
+                  e.currentTarget
+                )
+              }
+              sx={{
+                color: color.text
+              }}
             >
               <PaletteIcon />
             </IconButton>
+
+
             <Menu
               anchorEl={colorAnchor}
               open={Boolean(colorAnchor)}
-              onClose={() => setColorAnchor(null)}
+              onClose={() =>
+                setColorAnchor(null)
+              }
             >
+
               <Box sx={{ p: 2 }}>
-                <Suspense fallback={<Box sx={{ p: 2,mr:20 }}>Loading...</Box>}>
+
+                <Suspense
+                  fallback={
+                    <Box
+                      sx={{
+                        p: 2,
+                        mr: 20
+                      }}
+                    >
+                      Loading...
+                    </Box>
+                  }
+                >
+
                   <SketchPicker
                     color={themeColor}
-                    onChangeComplete={(updatedColor) => {
-                      const selectedColor = updatedColor.hex;
 
-                      setThemeColor(selectedColor);
-                      localStorage.setItem("themeColor", selectedColor);
+                    onChangeComplete={
+                      (updatedColor) => {
 
-                      window.location.reload();
-                    }}
+                        const selectedColor =
+                          updatedColor.hex;
+
+                        setThemeColor(
+                          selectedColor
+                        );
+
+                        localStorage.setItem(
+                          "themeColor",
+                          selectedColor
+                        );
+
+                        window.location.reload();
+                      }
+                    }
                   />
+
                 </Suspense>
+
               </Box>
+
             </Menu>
+
+
+            {/* Dark mode */}
+
             <IconButton
-              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-              onClick={() => setDarkMode(!darkMode)}
-              sx={{ color: color.text }}
+              aria-label={
+                darkMode
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              onClick={() =>
+                setDarkMode(
+                  !darkMode
+                )
+              }
+              sx={{
+                color: color.text
+              }}
             >
-              {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+
+              {darkMode
+                ? <LightModeIcon />
+                : <DarkModeIcon />}
+
             </IconButton>
+
+
+            {/* Profile */}
 
             <IconButton
               aria-label="Open profile menu"
               onClick={handleOpen}
             >
+
               <Avatar
                 alt="User profile"
                 sx={{
-                  bgcolor: color.headings,
-                  color: color.text,
+                  bgcolor:
+                    color.headings,
+                  color:
+                    color.text,
                   width: 40,
                   height: 40,
-                  fontWeight: "bold",
+                  fontWeight:
+                    "bold",
                 }}
               >
                 {firstLetter}
               </Avatar>
+
             </IconButton>
+
 
             <Menu
               anchorEl={anchorEl}
@@ -479,22 +649,30 @@ const title = titleMap[role] || "PORTAL";
                 },
               }}
             >
+
               <MenuItem
                 disabled
                 sx={{
                   display: "flex",
-                  alignItems: "flex-start",
+                  alignItems:
+                    "flex-start",
                   gap: 1,
-                  whiteSpace: "normal",
+                  whiteSpace:
+                    "normal",
                 }}
               >
-                <AccountCircleIcon sx={{ mt: 0.5 }} />
+
+                <AccountCircleIcon
+                  sx={{ mt: 0.5 }}
+                />
 
                 <Typography
                   sx={{
                     fontSize: 15,
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
+                    wordBreak:
+                      "break-word",
+                    overflowWrap:
+                      "anywhere",
                     maxWidth: 250,
                     mt: 0.5
                   }}
@@ -504,7 +682,9 @@ const title = titleMap[role] || "PORTAL";
 
               </MenuItem>
 
+
               <Divider />
+
 
               <MenuItem
                 onClick={handleLogout}
@@ -512,12 +692,21 @@ const title = titleMap[role] || "PORTAL";
                   color: "red",
                 }}
               >
-                <LogoutIcon sx={{ mr: 1 }} />
+
+                <LogoutIcon
+                  sx={{ mr: 1 }}
+                />
+
                 Logout
+
               </MenuItem>
+
             </Menu>
+
           </Box>
+
         </Toolbar>
+
       </AppBar>
 
 
@@ -527,6 +716,7 @@ const title = titleMap[role] || "PORTAL";
         setOpen={setOpen}
         setShowHRs={setShowHRs}
       />
+
     </>
   );
 }
