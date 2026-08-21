@@ -129,10 +129,26 @@ function AppBarr({
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+ const handleLogout = async () => {
+  try {
+    console.log("LOGOUT STARTED");
+
+    await api.delete("device_tokens");
+
+    console.log("DEVICE TOKEN DEACTIVATED");
+  } catch (error) {
+    console.error(
+      "Device token logout error:",
+      error
+    );
+  } finally {
     localStorage.clear();
-    navigate("/", { replace: true });
-  };
+
+    navigate("/", {
+      replace: true,
+    });
+  }
+};
 
   const handleResize = useCallback(() => {
     // console.log("Window width:", window.innerWidth);
